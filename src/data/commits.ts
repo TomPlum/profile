@@ -99,8 +99,9 @@ export const commits: Commit[] = [
     id: 'sleep',
     branch: 'open-source',
     date: '2024-10-06',
-    title: 'Started charting my own sleep',
-    summary: 'Years of nightly data from my phone, made legible.',
+    title: 'Fixed my sleep, then charted the proof',
+    summary:
+      'Years of nightly Apple Watch data, made legible — with a visible line where things got better.',
     projectId: 'sleep'
   },
   {

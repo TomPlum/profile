@@ -279,32 +279,51 @@ export const mascotStatic = style({
   }
 })
 
-export const chartPreview = style([
+export const sleepPreview = style([
   previewPanel,
   {
-    display: 'flex',
-    alignItems: 'end',
-    gap: '0.45rem'
+    display: 'grid',
+    gridTemplateRows: 'minmax(0, 1fr) auto',
+    gap: '0.55rem'
   }
 ])
 
-const chartBarBase = {
-  flex: 1,
-  height: 'var(--height)',
-  minHeight: '1.4rem',
-  borderRadius: '5px 5px 0 0',
-  border: `1px solid ${vars.colour.line}`,
-  borderBottom: 'none'
-}
-
-export const chartBar = style({
-  ...chartBarBase,
-  backgroundColor: vars.colour.lane.oss
+export const sleepLine = style({
+  fill: 'none',
+  strokeWidth: 1.6,
+  strokeLinejoin: 'round',
+  strokeLinecap: 'round',
+  // preserveAspectRatio="none" scales x/y unevenly; keep strokes crisp.
+  vectorEffect: 'non-scaling-stroke'
 })
 
-export const chartBarAlt = style({
-  ...chartBarBase,
-  backgroundColor: vars.colour.lane.career
+/** Marks the night the sleep fixes took hold. */
+export const sleepShiftLine = style({
+  stroke: vars.colour.inkFaint,
+  strokeWidth: 1,
+  strokeDasharray: '3 3',
+  vectorEffect: 'non-scaling-stroke'
+})
+
+export const sleepLegend = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.35rem 0.9rem',
+  fontFamily: vars.font.mono,
+  fontSize: '0.62rem',
+  color: vars.colour.inkMuted
+})
+
+export const sleepLegendItem = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.4em'
+})
+
+export const sleepLegendDot = style({
+  width: '0.5em',
+  height: '0.5em',
+  borderRadius: '50%'
 })
 
 export const dashboardPreview = style([

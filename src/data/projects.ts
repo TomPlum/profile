@@ -162,14 +162,28 @@ export const projects: Project[] = [
   {
     id: 'sleep',
     name: 'sleep',
-    oneLiner: 'Charts of my own sleep data, night by night, across years.',
+    oneLiner:
+      'Line charts of years of my own nightly sleep data, recorded by my Apple ' +
+      'Watch. Built after a long stretch of sleeping badly — I researched, ' +
+      'experimented, and wanted to see whether the fixes actually worked.',
     whatItShows:
       'I instrument things — including myself — and turn the data into something ' +
-      'legible. Data visualisation with a real, messy dataset.',
+      'legible. The trial and error genuinely paid off, and the charts show the ' +
+      'clear line where my sleep started improving. It was also a welcome excuse ' +
+      'to build something in my free time again.',
     stack: ['React', 'TypeScript'],
+    sections: [
+      {
+        label: 'Under the hood',
+        text:
+          'There is no backend: the ~40MB data export ships in the public ' +
+          'directory, and a web worker parses it off the main thread, posting ' +
+          'progress back as it goes — my first proper foray into workers.'
+      }
+    ],
     preview: {
       kind: 'sleep-chart',
-      caption: 'Years of nightly data reduced to readable rhythm and variance.'
+      caption: 'Deep, light, REM and awake time across the years — with the visible step where the fixes took hold.'
     },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/sleep' },

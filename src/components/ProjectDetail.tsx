@@ -44,6 +44,56 @@ const ActivityChart = () => {
   )
 }
 
+/**
+ * A miniature of the sleep project's compare-metrics view: four stage lines
+ * in the app's own metric colours (src/styles/_colours.scss in the sleep
+ * repo). The shapes echo the real story — a visible step around two-thirds
+ * in where deep sleep rises and awake time falls. Fixed sample data,
+ * aria-hidden; the caption carries meaning.
+ */
+const sleepSeries: { label: string; colour: string; values: number[] }[] = [
+  { label: 'light', colour: '#54EA99', values: [0.58, 0.62, 0.55, 0.6, 0.64, 0.57, 0.61, 0.58, 0.55, 0.6, 0.57, 0.59] },
+  { label: 'deep', colour: '#1596FF', values: [0.18, 0.14, 0.2, 0.16, 0.13, 0.18, 0.15, 0.28, 0.33, 0.3, 0.35, 0.32] },
+  { label: 'rem', colour: '#FF47E7', values: [0.2, 0.24, 0.18, 0.22, 0.19, 0.23, 0.2, 0.25, 0.27, 0.24, 0.28, 0.26] },
+  { label: 'awake', colour: '#FFBC15', values: [0.34, 0.28, 0.38, 0.3, 0.36, 0.32, 0.35, 0.14, 0.1, 0.12, 0.08, 0.1] }
+]
+
+const SleepChart = () => {
+  const W = 100
+  const H = 38
+  const top = 3
+  const bottom = 3
+  const toPath = (values: number[]) =>
+    values
+      .map((v, i) => {
+        const x = (i / (values.length - 1)) * W
+        const y = top + (1 - v) * (H - top - bottom)
+        return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`
+      })
+      .join(' ')
+  // The night the fixes took hold, between samples 6 and 7.
+  const shiftX = (6.5 / 11) * W
+
+  return (
+    <div className={css.sleepPreview} aria-hidden="true">
+      <svg className={css.dashboardSvg} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" focusable="false">
+        <line className={css.sleepShiftLine} x1={shiftX} y1="0" x2={shiftX} y2={H} />
+        {sleepSeries.map((series) => (
+          <path key={series.label} className={css.sleepLine} style={{ stroke: series.colour }} d={toPath(series.values)} />
+        ))}
+      </svg>
+      <div className={css.sleepLegend}>
+        {sleepSeries.map((series) => (
+          <span key={series.label} className={css.sleepLegendItem}>
+            <span className={css.sleepLegendDot} style={{ backgroundColor: series.colour }} />
+            {series.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const ProjectPreview = ({ project }: { project: Project }) => {
   if (!project.preview) return null
 
@@ -113,17 +163,7 @@ const ProjectPreview = ({ project }: { project: Project }) => {
       case 'clock-grid':
         return <ClockGrid />
       case 'sleep-chart':
-        return (
-          <div className={css.chartPreview}>
-            {[42, 64, 55, 72, 48, 81, 68, 58, 76, 62].map((height, index) => (
-              <span
-                key={`${height}-${index}`}
-                className={index % 2 === 0 ? css.chartBar : css.chartBarAlt}
-                style={{ '--height': `${height}%` } as CSSProperties}
-              />
-            ))}
-          </div>
-        )
+        return <SleepChart />
       case 'activity-dashboard':
         return (
           <div className={css.dashboardPreview}>
