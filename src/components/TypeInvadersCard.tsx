@@ -23,7 +23,8 @@ export const TypeInvadersCard = () => (
         <span className={css.word}>jabłko</span>
       </div>
 
-      <img className={css.ship} src="arcade-player.png" alt="" width="56" height="56" aria-hidden="true" />
+      {/* The sprite is 106×80 — keep its native aspect ratio. */}
+      <img className={css.ship} src="arcade-player.png" alt="" width="58" height="44" aria-hidden="true" />
     </div>
     <figcaption className={css.caption}>
       Type Invaders, the app’s arcade mode — I built it to make vocab drilling something I actually want to open.

@@ -106,12 +106,14 @@ export const eyebrow = style({
   }
 })
 
+/* Arcade type is the machine voice: bold uppercase mono, not the serif. */
 export const title = style({
-  fontFamily: vars.font.display,
-  fontWeight: 700,
-  fontSize: '1.25rem',
-  lineHeight: 1.15,
-  letterSpacing: '-0.01em',
+  fontFamily: vars.font.mono,
+  fontWeight: 800,
+  fontSize: '1.02rem',
+  lineHeight: 1.2,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
   color: 'hsl(219 39% 17%)',
   selectors: {
     ':root[data-theme="dark"] &': {
@@ -121,8 +123,9 @@ export const title = style({
 })
 
 export const blurb = style({
-  fontSize: '0.82rem',
-  lineHeight: 1.45,
+  fontFamily: vars.font.mono,
+  fontSize: '0.7rem',
+  lineHeight: 1.55,
   color: 'hsl(210 32% 34%)',
   selectors: {
     ':root[data-theme="dark"] &': {
@@ -134,7 +137,7 @@ export const blurb = style({
 export const invader = style({
   position: 'absolute',
   top: '0.8rem',
-  right: '5.6rem',
+  left: '58%',
   zIndex: 1,
   display: 'grid',
   justifyItems: 'center',
