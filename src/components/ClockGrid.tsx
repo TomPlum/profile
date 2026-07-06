@@ -6,12 +6,13 @@ import * as css from './ClockGrid.css'
  * A miniature of the clocks project's trick: a field of analog clock faces
  * whose hands sweep, decelerate and settle into a picture — here, TOM.
  *
- * Like a digital clock's segments, every hand settles at 12, 3, 6 or
- * 9 o'clock, so each face shows a straight line or a right angle. Faces that
- * aren't part of a letter park at 9 and 3 (one straight horizontal line);
- * the letters emerge from the corners and verticals that break that field.
- * Each face has a shorter hour hand and a longer minute hand, all in one
- * colour (the card's lane colour).
+ * Rendered the way the real ClockClock displays draw type: every letter
+ * stroke is two clocks thick, and the clocks trace the stroke's *outline* —
+ * each face's two hands point at the previous and next cell of a closed
+ * loop around the letter, so straights read as lines through the face and
+ * corners as right angles. Faces outside the letters align with a swirling
+ * field (each points along the tangent of its radius from the grid centre),
+ * and a one-clock ring of that field pads the whole grid.
  *
  * The choreography is hand-rolled requestAnimationFrame, true to the
  * project: every hand spins through whole extra revolutions and eases out
@@ -19,33 +20,86 @@ import * as css from './ClockGrid.css'
  * motion renders the finished word.
  */
 
-/** Hand angles in degrees clockwise where 0 = 3 o'clock (pointing right). */
-type Hands = [hour: number, minute: number]
+/** A closed loop of [row, col] cells; hands point at loop neighbours. */
+type Loop = [row: number, col: number][]
 
-/** The resting pose for faces outside the letters: a 9-to-3 horizontal. */
-const OFF: Hands = [180, 0]
-
-// Letters as 3×3 faces. ┌ = [90, 0], ┐ = [90, 180], └ = [270, 0],
-// ┘ = [270, 180], │ = [270, 90], ─ = [180, 0].
-const T: (Hands | null)[][] = [
-  [[0, 0], [180, 0], [180, 180]], // ╶ ─ ╴  end caps mark the bar's extent
-  [null, [270, 90], null],
-  [null, [270, 90], null]
+// T: a 2×6 bar with a 2-wide stem — one loop around the polyomino.
+const T_LOOP: Loop = [
+  [0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],
+  [1, 5], [1, 4], [1, 3],
+  [2, 3], [3, 3], [4, 3], [5, 3],
+  [5, 2], [4, 2], [3, 2], [2, 2],
+  [1, 2], [1, 1], [1, 0]
 ]
 
-const O: (Hands | null)[][] = [
-  [[90, 0], [180, 0], [90, 180]],
-  [[270, 90], null, [270, 90]],
-  [[270, 0], [180, 0], [270, 180]]
+// O: a 4×6 ring — the outer edge and the inner hole are separate loops.
+const O_OUTER: Loop = [
+  [0, 0], [0, 1], [0, 2], [0, 3],
+  [1, 3], [2, 3], [3, 3], [4, 3], [5, 3],
+  [5, 2], [5, 1], [5, 0],
+  [4, 0], [3, 0], [2, 0], [1, 0]
+]
+const O_INNER: Loop = [
+  [1, 1], [1, 2], [2, 2], [3, 2], [4, 2], [4, 1], [3, 1], [2, 1]
 ]
 
-const M: (Hands | null)[][] = [
-  [[90, 0], [180, 0], [90, 180]],
-  [[270, 90], [270, 90], [270, 90]],
-  [[270, 90], [270, 270], [270, 90]] // centre stem stops short, like an M
+// M: a 2×8 bar with three 2-wide legs (blocky m) — one loop.
+const M_LOOP: Loop = [
+  [0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7],
+  [1, 7], [2, 7], [3, 7], [4, 7], [5, 7],
+  [5, 6], [4, 6], [3, 6], [2, 6],
+  [1, 6], [1, 5], [1, 4],
+  [2, 4], [3, 4], [4, 4], [5, 4],
+  [5, 3], [4, 3], [3, 3], [2, 3],
+  [1, 3], [1, 2], [1, 1],
+  [2, 1], [3, 1], [4, 1], [5, 1],
+  [5, 0], [4, 0], [3, 0], [2, 0], [1, 0]
 ]
 
-const ROWS = 3
+/** Letters and the text column each starts at (1-col gaps between them). */
+const LETTERS: { loops: Loop[]; at: number }[] = [
+  { loops: [T_LOOP], at: 0 },
+  { loops: [O_OUTER, O_INNER], at: 7 },
+  { loops: [M_LOOP], at: 12 }
+]
+
+const TEXT_COLS = 20
+const TEXT_ROWS = 6
+const PAD = 1
+const COLS = TEXT_COLS + PAD * 2
+const ROWS = TEXT_ROWS + PAD * 2
+
+/** Angle (degrees clockwise, 0 = 3 o'clock) from a cell to a neighbour. */
+const directionOf = (from: [number, number], to: [number, number]) => {
+  if (to[1] > from[1]) return 0 // east
+  if (to[0] > from[0]) return 90 // south
+  if (to[1] < from[1]) return 180 // west
+  return 270 // north
+}
+
+const buildTargets = (): Map<number, [number, number]> => {
+  const targets = new Map<number, [number, number]>()
+  LETTERS.forEach((letter) => {
+    letter.loops.forEach((loop) => {
+      loop.forEach((cell, index) => {
+        const prev = loop[(index - 1 + loop.length) % loop.length]!
+        const next = loop[(index + 1) % loop.length]!
+        const row = cell[0] + PAD
+        const col = cell[1] + letter.at + PAD
+        targets.set(row * COLS + col, [directionOf(cell, prev), directionOf(cell, next)])
+      })
+    })
+  })
+  return targets
+}
+
+const LETTER_TARGETS = buildTargets()
+
+/** Field cells align with the tangent of their radius from the grid centre. */
+const fieldAngle = (row: number, col: number) => {
+  const angle = (Math.atan2(row - (ROWS - 1) / 2, col - (COLS - 1) / 2) * 180) / Math.PI + 90
+  return (angle + 360) % 360
+}
 
 interface Cell {
   targetHour: number
@@ -59,16 +113,11 @@ interface Cell {
   duration: number
 }
 
-const buildCells = (): Cell[] => {
-  // Stitch the letters into rows with a one-column gap between them.
-  const gridRows = Array.from({ length: ROWS }, (_, row) =>
-    [T, O, M]
-      .map((letter) => letter[row]!)
-      .reduce((acc, cols) => (acc.length === 0 ? cols : [...acc, null, ...cols]), [] as (Hands | null)[])
-  )
-
-  return gridRows.flat().map((hands, index) => {
-    const [targetHour, targetMinute] = hands ?? OFF
+const buildCells = (): Cell[] =>
+  Array.from({ length: ROWS * COLS }, (_, index) => {
+    const letter = LETTER_TARGETS.get(index)
+    const field = fieldAngle(Math.floor(index / COLS), index % COLS)
+    const [targetHour, targetMinute] = letter ?? [field, field]
     return {
       targetHour,
       targetMinute,
@@ -78,11 +127,10 @@ const buildCells = (): Cell[] => {
       startMinute: (index * 223 + 90) % 360,
       spinsHour: 1 + ((index * 7) % 2),
       spinsMinute: 1 + ((index * 11) % 2),
-      delay: (index % 11) * 50 + ((index * 13) % 5) * 55,
+      delay: (index % COLS) * 40 + ((index * 13) % 5) * 50,
       duration: 1700 + ((index * 29) % 800)
     }
   })
-}
 
 const CELLS = buildCells()
 

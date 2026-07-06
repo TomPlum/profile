@@ -3,15 +3,14 @@ import { vars } from '../styles/theme.css'
 
 export const grid = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(11, minmax(0, 1fr))',
-  gap: '0.32rem',
+  gridTemplateColumns: 'repeat(22, minmax(0, 1fr))',
+  gap: '0.2rem',
   alignContent: 'center',
-  minHeight: '8.5rem',
-  padding: '1rem',
+  padding: '0.85rem',
   '@media': {
     '(max-width: 520px)': {
-      gap: '0.2rem',
-      padding: '0.75rem'
+      gap: '0.1rem',
+      padding: '0.6rem'
     }
   }
 })
@@ -22,7 +21,12 @@ export const face = style({
   border: `1px solid ${vars.colour.line}`,
   backgroundColor: vars.colour.surface,
   position: 'relative',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  '@media': {
+    '(max-width: 520px)': {
+      border: 'none'
+    }
+  }
 })
 
 // All hands share one colour: the card's lane colour (set by ProjectDetail).
@@ -35,15 +39,24 @@ const handBase = {
   transformOrigin: 'left center',
   borderRadius: '999px',
   backgroundColor: 'var(--lane)',
-  willChange: 'transform'
+  willChange: 'transform',
+  '@media': {
+    // Faces are ~12px at phone widths; keep hands hairline-thin there.
+    '(max-width: 520px)': {
+      height: '1px',
+      marginTop: '-0.5px'
+    }
+  }
 }
 
+// Near-equal lengths so letter outlines stay continuous across faces; the
+// hour hand is just slightly shorter.
 export const handHour = style({
   ...handBase,
-  width: '30%'
+  width: '40%'
 })
 
 export const handMinute = style({
   ...handBase,
-  width: '46%'
+  width: '48%'
 })
