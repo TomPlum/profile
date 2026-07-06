@@ -10,10 +10,11 @@ export const profile = {
     'Full-stack engineer with a strong front-end focus — React and TypeScript, ' +
     'backed by Kotlin and Spring Boot services. I like building things properly: ' +
     'well-tested, readable, and easy for the next person to pick up.',
-  photo: {
-    src: 'me.jpeg',
-    alt: 'Thomas Plumpton in the mountains'
-  },
+  // Click the portrait to cycle these; on mobile both render side-by-side.
+  photos: [
+    { src: 'me.jpeg', alt: 'Thomas Plumpton in the mountains', width: 724, height: 1086 },
+    { src: 'me2.jpeg', alt: 'Thomas Plumpton', width: 768, height: 1024 }
+  ],
   stack: ['React', 'TypeScript', 'Cypress', 'Kotlin', 'Java', 'Spring Boot', 'Claude', 'Codex'],
   /** The small human line under the masthead. */
   currently: 'Currently: learning Japanese & Polish, lifting, reading fantasy, building PCs.',

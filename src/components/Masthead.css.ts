@@ -222,6 +222,8 @@ export const portrait = style({
   margin: 0,
   position: 'relative',
   selectors: {
+    // Offset frame behind the single desktop portrait; dropped on mobile
+    // where two photos sit edge-to-edge across the full width.
     '&::before': {
       content: '',
       position: 'absolute',
@@ -233,25 +235,106 @@ export const portrait = style({
   },
   '@media': {
     '(max-width: 760px)': {
-      justifySelf: 'start',
-      width: 'min(56vw, 190px)'
+      justifySelf: 'stretch',
+      width: '100%',
+      selectors: {
+        '&::before': {
+          display: 'none'
+        }
+      }
+    }
+  }
+})
+
+/**
+ * Desktop: a single 3:4 frame; the photos stack and cross-fade on click.
+ * Mobile: a two-column grid so both photos render side-by-side, filling the
+ * row's width (clicking is a no-op there — you can already see both).
+ */
+export const portraitButton = style({
+  display: 'block',
+  position: 'relative',
+  width: '100%',
+  aspectRatio: '3 / 4',
+  padding: 0,
+  margin: 0,
+  border: 'none',
+  background: 'none',
+  cursor: 'pointer',
+  '@media': {
+    '(max-width: 760px)': {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '0.6rem',
+      aspectRatio: 'auto',
+      cursor: 'default'
+    }
+  }
+})
+
+/**
+ * Corner badge that marks the stacked desktop portrait as clickable: a cycle
+ * glyph + "1/2" counter in the mono machine-voice. Always visible so the
+ * affordance reads without a hover; lifts to the accent on hover/focus.
+ * Hidden on mobile, where both photos already show side-by-side.
+ */
+export const portraitCycle = style({
+  position: 'absolute',
+  right: '0.55rem',
+  bottom: '0.55rem',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.35em',
+  fontFamily: vars.font.mono,
+  fontSize: '0.72rem',
+  fontWeight: 500,
+  lineHeight: 1,
+  color: vars.colour.inkMuted,
+  backgroundColor: vars.colour.surface,
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '6px',
+  padding: '0.3rem 0.45rem',
+  pointerEvents: 'none',
+  transition: 'color 0.2s ease, border-color 0.2s ease',
+  selectors: {
+    [`${portraitButton}:hover &, ${portraitButton}:focus-visible &`]: {
+      color: vars.colour.accent,
+      borderColor: vars.colour.accent
+    }
+  },
+  '@media': {
+    '(max-width: 760px)': {
+      display: 'none'
     }
   }
 })
 
 export const portraitImage = style({
   display: 'block',
+  position: 'absolute',
+  inset: 0,
   width: '100%',
-  aspectRatio: '3 / 4',
-  height: 'auto',
+  height: '100%',
   objectFit: 'cover',
   objectPosition: '50% 32%',
   border: `1px solid ${vars.colour.ink}`,
   backgroundColor: vars.colour.inset,
   filter: 'saturate(0.86) contrast(1.04)',
+  opacity: 0,
+  transition: 'opacity 0.45s ease',
+  selectors: {
+    '&[data-active="true"]': {
+      opacity: 1
+    }
+  },
   '@media': {
     '(max-width: 760px)': {
-      aspectRatio: '4 / 5'
+      // Both visible in the grid, each in its own column.
+      position: 'static',
+      inset: 'auto',
+      height: 'auto',
+      aspectRatio: '4 / 5',
+      opacity: 1
     }
   }
 })

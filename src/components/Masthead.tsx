@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import { profile } from '../data/profile'
 import { monoLink } from '../styles/controls.css'
 import { TechIcon } from './TechIcon'
 import * as css from './Masthead.css'
 
-export const Masthead = () => (
+export const Masthead = () => {
+  const [active, setActive] = useState(0)
+  const cyclePhoto = () => setActive((i) => (i + 1) % profile.photos.length)
+
+  return (
   <section className={css.masthead} aria-label="Introduction">
     <div className={css.copy}>
       <p className={css.eyebrow}>
@@ -54,7 +59,33 @@ export const Masthead = () => (
     </div>
 
     <figure className={css.portrait}>
-      <img className={css.portraitImage} src={profile.photo.src} alt={profile.photo.alt} width="724" height="1086" />
+      <button
+        type="button"
+        className={css.portraitButton}
+        onClick={cyclePhoto}
+        aria-label="Show another photo of Thomas"
+        title="Show another photo"
+      >
+        {profile.photos.map((photo, i) => (
+          <img
+            key={photo.src}
+            className={css.portraitImage}
+            data-active={i === active}
+            src={photo.src}
+            alt={photo.alt}
+            width={photo.width}
+            height={photo.height}
+          />
+        ))}
+        <span className={css.portraitCycle} aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            <path d="M21 3v5h-5" />
+          </svg>
+          {active + 1}/{profile.photos.length}
+        </span>
+      </button>
     </figure>
   </section>
-)
+  )
+}
