@@ -69,10 +69,10 @@ export const commits: Commit[] = [
   {
     id: 'natomski',
     branch: 'languages',
-    date: '2024-06-01', // TODO(tom): real date; repo isn't public so I couldn't verify
-    dateLabel: '2024',
+    date: '2026-05-09',
     title: 'Built natomski — games for learning Polish',
-    summary: 'The Japanese-tooling playbook, run again for my second language.',
+    summary:
+      'The Japanese-tooling playbook, run again for my second language. Live at natomski.uk.',
     projectId: 'natomski'
   },
   {
@@ -86,7 +86,9 @@ export const commits: Commit[] = [
   {
     id: 'joined-matillion',
     branch: 'career',
-    date: '2021-06-01', // TODO(tom): real start date (and starting title, if different)
+    // TODO(tom): real start date and starting title. Your CVs show Barclays as
+    // "Jun 2018 – Present" as late as the 2021 revision, so this guess may be early.
+    date: '2021-06-01',
     dateLabel: '2021',
     title: 'Joined Matillion',
     summary:
@@ -120,14 +122,25 @@ export const commits: Commit[] = [
     projectId: 'advent-of-code'
   },
   {
+    id: 'joined-barclays',
+    branch: 'career',
+    date: '2018-06-15',
+    dateLabel: 'Jun 2018',
+    title: 'Joined Barclays as a Software Developer',
+    summary:
+      'Graduate role building RESTful Spring Boot services in Java and Kotlin, with ' +
+      'React and TypeScript front-ends. Named best newcomer that December; promoted ' +
+      'in August 2019.'
+  },
+  {
     id: 'graduated',
     branch: 'career',
-    date: '2018-07-01', // TODO(tom): university name + real graduation date
+    date: '2018-06-01', // graduation year verified (2015–2018); month assumed
     dateLabel: '2018',
-    title: 'Graduated — BSc Computer Science',
+    title: 'Graduated — BSc Computing, First Class (Hons)',
     summary:
-      'Final-year project: analysing the randomness of social media streams and ' +
-      'using it to drive Robocode AI.',
+      'University of Bolton, with a Government Award. Final-year project: analysing ' +
+      'the randomness of social media streams and using it to drive Robocode AI.',
     tags: ['bsc']
   }
 ]

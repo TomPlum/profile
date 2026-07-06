@@ -40,13 +40,16 @@ so they're stable across builds.
 
 Search the repo for `TODO(tom)`:
 
-1. **`public/cv.pdf`** is a placeholder — replace it with the real CV.
-2. **Matillion start date** and starting title (`joined-matillion` commit).
+1. **`public/cv.pdf`** is a placeholder — export a redacted PDF (no home address /
+   DOB / phone) from the `curriculum-vitae` repo's Pages doc and drop it in.
+2. **Matillion start date** and starting title (`joined-matillion` commit) —
+   the CVs only show Barclays as "Jun 2018 – Present" up to their 2021 revision.
 3. **Staff promotion date** (`staff-engineer` commit).
-4. **University name + graduation date** (`graduated` commit).
-5. **natomski** date and links (repo isn't public, so nothing could be verified).
-6. Confirm the **public contact email** in `profile.ts`.
-7. Consider adding commits for any roles between 2018 and Matillion.
+
+Education (University of Bolton, BSc Computing, First Class (Hons), 2015–2018),
+Barclays (Jun 2018, best-newcomer award, Aug 2019 promotion) and natomski
+(May 2026, natomski.uk) are verified from the private `curriculum-vitae` repo
+and GitHub.
 
 ## Architecture notes
 

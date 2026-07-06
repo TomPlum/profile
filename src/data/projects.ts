@@ -50,12 +50,15 @@ export const projects: Project[] = [
   {
     id: 'natomski',
     name: 'natomski',
-    oneLiner: 'Games for drilling Polish vocabulary and grammar.',
+    oneLiner:
+      'A collection of Polish language-learning games, built while actually ' +
+      'learning Polish.',
     whatItShows:
       'The same trick twice proves the method: after building my own Japanese ' +
-      'tooling, I did it again for Polish.',
+      'tooling, I did it again for Polish — this time engineered end-to-end in ' +
+      'collaboration with Claude, the way I now work with AI tooling.',
     stack: ['React', 'TypeScript'],
-    links: [] // TODO(tom): add repo/live links if natomski is public anywhere
+    links: [{ label: 'Live at natomski.uk', href: 'https://natomski.uk' }]
   },
   {
     id: 'clocks',

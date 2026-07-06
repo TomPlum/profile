@@ -11,7 +11,7 @@ export const profile = {
   stack: ['Kotlin', 'Spring Boot', 'React', 'TypeScript'],
   /** The small human line under the masthead. */
   currently: 'Currently: learning Japanese & Polish, lifting, reading fantasy, building PCs.',
-  email: 'Thomas.Plumpton@hotmail.co.uk', // TODO(tom): confirm this is the address you want public
+  email: 'Thomas.Plumpton@hotmail.co.uk', // matches the contact address on the CV
   cvHref: '/cv.pdf', // drop your CV at public/cv.pdf
   links: {
     github: 'https://github.com/TomPlum',
