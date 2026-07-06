@@ -378,15 +378,43 @@ export const dashboardValue = style({
   fontSize: '1.1rem'
 })
 
-export const dashboardTrace = style({
+export const dashboardChart = style({
   gridColumn: '1 / -1',
-  minHeight: '2.5rem',
+  height: '3.2rem',
   border: `1px solid ${vars.colour.line}`,
   borderRadius: '6px',
-  background:
-    `linear-gradient(135deg, transparent 8%, ${vars.colour.lane.oss} 8% 10%, transparent 10% 32%, ` +
-    `${vars.colour.lane.oss} 32% 34%, transparent 34% 58%, ${vars.colour.lane.oss} 58% 60%, transparent 60%)`,
-  backgroundColor: vars.colour.surface
+  backgroundColor: vars.colour.surface,
+  padding: '0.4rem 0.55rem',
+  overflow: 'hidden'
+})
+
+export const dashboardSvg = style({
+  display: 'block',
+  width: '100%',
+  height: '100%'
+})
+
+export const dashboardArea = style({
+  fill: vars.colour.lane.career,
+  fillOpacity: 0.2,
+  stroke: 'none'
+})
+
+export const dashboardLine = style({
+  fill: 'none',
+  stroke: vars.colour.lane.career,
+  strokeWidth: 1.75,
+  strokeLinejoin: 'round',
+  strokeLinecap: 'round',
+  // preserveAspectRatio="none" scales x/y unevenly; keep the stroke crisp.
+  vectorEffect: 'non-scaling-stroke'
+})
+
+export const dashboardPoint = style({
+  fill: vars.colour.lane.career,
+  stroke: vars.colour.surface,
+  strokeWidth: 1,
+  vectorEffect: 'non-scaling-stroke'
 })
 
 export const terminalPreview = style([

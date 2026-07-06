@@ -167,18 +167,19 @@ export const projects: Project[] = [
     id: 'activity-trends',
     name: 'activity-trends',
     oneLiner:
-      'A dashboard-style report of a year of my Apple Watch & Health data, backed ' +
-      'by a Kotlin & Spring Boot API.',
+      'A dashboard that visualises years of my Apple Watch & Health data — workouts, ' +
+      'activity rings, heart, sleep and more — built on Next.js and Supabase.',
     whatItShows:
-      'Full-stack in one project: data pipeline and API in my day-job stack, ' +
-      'visualisation layer in my front-end stack.',
-    stack: ['Kotlin', 'Spring Boot', 'React', 'TypeScript'],
+      'Full-stack ownership end to end: a streaming parser that ingests the raw ' +
+      'Apple Health export into Postgres, and a Next.js dashboard that charts it — ' +
+      'data modelling, backend and visualisation all in one project.',
+    stack: ['Next.js', 'React', 'TypeScript', 'Supabase'],
     preview: {
       kind: 'activity-dashboard',
-      caption: 'A Kotlin API feeding dashboard-style health and activity charts.'
+      caption: 'A Supabase-backed Next.js dashboard charting health and activity data.'
     },
     links: [
-      { label: 'Live at tomplumpton.me', href: 'https://tomplumpton.me' },
+      { label: 'Live at activity.tomplumpton.me', href: 'https://activity.tomplumpton.me' },
       { label: 'Source', href: 'https://github.com/TomPlum/activity-trends' }
     ]
   },

@@ -151,7 +151,7 @@ export const commits: Commit[] = [
     branch: 'open-source',
     date: '2020-08-23',
     title: 'Built a dashboard for my Apple Health data',
-    summary: 'Kotlin & Spring Boot API underneath, React charts on top.',
+    summary: 'A Next.js dashboard on Supabase, charting my Apple Health data.',
     projectId: 'activity-trends'
   },
   {

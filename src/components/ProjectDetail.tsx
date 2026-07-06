@@ -19,6 +19,42 @@ const clockAngles = [
   ['150deg', '330deg']
 ] as const
 
+/**
+ * A small area chart in the shape the live activity-trends dashboard draws with
+ * Recharts — a smoothed trend line with a soft fill beneath it. Purely a visual
+ * stand-in (fixed sample data), so it's aria-hidden; the caption carries meaning.
+ */
+const ActivityChart = () => {
+  const values = [0.28, 0.52, 0.4, 0.68, 0.5, 0.86, 0.6, 0.44, 0.72, 0.55, 0.95, 0.78]
+  const W = 100
+  const H = 34
+  const top = 3
+  const bottom = 2
+  const points = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * W
+    const y = top + (1 - v) * (H - top - bottom)
+    return [x, y] as const
+  })
+  const line = points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`).join(' ')
+  const area = `${line} L ${W} ${H} L 0 ${H} Z`
+
+  return (
+    <svg
+      className={css.dashboardSvg}
+      viewBox={`0 0 ${W} ${H}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path className={css.dashboardArea} d={area} />
+      <path className={css.dashboardLine} d={line} />
+      {points.map(([x, y], i) => (
+        <circle key={i} className={css.dashboardPoint} cx={x} cy={y} r={1.4} />
+      ))}
+    </svg>
+  )
+}
+
 const ProjectPreview = ({ project }: { project: Project }) => {
   if (!project.preview) return null
 
@@ -115,7 +151,9 @@ const ProjectPreview = ({ project }: { project: Project }) => {
             <strong className={css.dashboardValue}>12.4k</strong>
             <span className={css.dashboardLabel}>active</span>
             <strong className={css.dashboardValue}>84m</strong>
-            <i className={css.dashboardTrace} aria-hidden="true" />
+            <div className={css.dashboardChart}>
+              <ActivityChart />
+            </div>
           </div>
         )
       case 'aoc-tests':
