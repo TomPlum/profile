@@ -25,6 +25,12 @@ export const projectName = style({
   marginRight: '0.4rem'
 })
 
+export const stackChip = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.4em'
+})
+
 export const oneLiner = style({
   fontSize: '1rem',
   lineHeight: 1.6,

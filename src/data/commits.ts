@@ -10,9 +10,41 @@ export const branches: Branch[] = [
 /**
  * The log. One entry per real career event, newest first (sorting is enforced
  * at render time and by tests, so order here doesn't strictly matter).
- * Career dates are verified against Tom's LinkedIn export (July 2026).
+ * Career dates are verified against Tom's own records.
  */
 export const commits: Commit[] = [
+  {
+    id: 'claude-code-adoption',
+    branch: 'career',
+    date: '2025-12-01',
+    dateLabel: 'Dec 2025',
+    title: 'Adopted Claude Code as a daily engineering tool',
+    summary:
+      'Matillion rolled out agentic coding to everyone, and I moved it into my professional ' +
+      'workflow: implementation, iteration and review, not blind generation.',
+    body:
+      'I started with careful experiments around Claude Code, then built a working rhythm around ' +
+      'repo context, bespoke CLAUDE.md files, skills, plugins and an agentic SDLC. Since then, ' +
+      'the balance has steadily shifted from fully handwritten code toward AI-authored changes ' +
+      'guided by precise context, rigorous PR review and repeated implementation feedback.',
+    tags: ['ai', 'head']
+  },
+  {
+    id: 'codex-adoption',
+    branch: 'open-source',
+    date: '2026-04-01',
+    dateLabel: 'Apr 2026',
+    title: 'Added Codex to the personal-project workflow',
+    summary:
+      'Started using Codex alongside Claude Code on personal projects, pairing agents to build, ' +
+      'review and refine changes.',
+    body:
+      'For personal work I use Codex and Claude Code in tandem: one agent can implement while ' +
+      'another reviews, explores alternatives or checks the shape of the finished experience. ' +
+      'The useful part is not the novelty; it is the loop of context, critique, iteration and ' +
+      'ownership that keeps AI-assisted code aligned with the project.',
+    tags: ['ai']
+  },
   {
     id: 'staff-engineer',
     branch: 'career',

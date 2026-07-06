@@ -8,6 +8,10 @@ export const profile = {
     'Full-stack engineer with a strong front-end focus — React and TypeScript, ' +
     'backed by Kotlin and Spring Boot services. I like building things properly: ' +
     'well-tested, readable, and easy for the next person to pick up.',
+  photo: {
+    src: 'me.jpeg',
+    alt: 'Thomas Plumpton in the mountains'
+  },
   stack: ['React', 'TypeScript', 'Kotlin', 'Spring Boot'],
   /** The small human line under the masthead. */
   currently: 'Currently: learning Japanese & Polish, lifting, reading fantasy, building PCs.',

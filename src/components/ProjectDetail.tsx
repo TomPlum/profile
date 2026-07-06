@@ -1,13 +1,15 @@
 import type { Project } from '../data/types'
 import { chip, monoLink } from '../styles/controls.css'
 import * as css from './ProjectDetail.css'
+import { TechIcon } from './TechIcon'
 
 export const ProjectDetail = ({ project }: { project: Project }) => (
   <div className={css.card}>
     <div className={css.cardHeader}>
       <span className={css.projectName}>{project.name}</span>
       {project.stack.map((tech) => (
-        <span key={tech} className={chip}>
+        <span key={tech} className={`${chip} ${css.stackChip}`}>
+          <TechIcon name={tech} />
           {tech}
         </span>
       ))}

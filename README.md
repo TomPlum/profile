@@ -36,14 +36,14 @@ All content is typed data — no prose lives in JSX:
 The displayed commit hashes are deterministic (derived from each entry's `id`),
 so they're stable across builds.
 
-## TODO — facts only Tom knows
+## Before publishing
 
 1. **`public/cv.pdf`** is a placeholder — export a redacted PDF (no home address /
-   DOB / phone) from `~/git/curriculum-vitae` and drop it in.
+   DOB / phone) and drop it in.
 
 All career dates (Matillion May 2021 → Senior Aug 2022 → Staff Apr 2024;
 Barclays Jun 2018 → BA4 Aug 2019; Retail Sensing; Ocean82; Bolton; Rochdale
-Sixth Form) are verified against Tom's LinkedIn export, July 2026.
+Sixth Form) have been verified against Tom's own records.
 
 ## Architecture notes
 

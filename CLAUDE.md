@@ -76,26 +76,15 @@ expanded commit, a filtered branch, and `reducedMotion: 'reduce'`.
 `fullPage` screenshots can catch it undrawn — `scrollIntoView` the log and
 wait ~1s first; sticky headers also smear across `fullPage` captures.
 
-## Data sources & access
+## Data policy
 
-- `gh` CLI is authenticated as TomPlum with `repo` scope → **private repos are
-  queryable** (`gh api repos/TomPlum/<name>/...`). Use it before asking Tom
-  for facts.
-- The real CV lives in **`~/git/curriculum-vitae`** (local clone of the
-  private repo): `Thomas Plumpton - Technical CV.pages` (unzip it;
-  `preview.jpg` is page 1 only) plus older PDFs/docx under `old/`. It contains
-  DOB, home address and phone numbers — **never publish any of it directly**;
-  `public/cv.pdf` must be a redacted export Tom provides.
-- Career history is fully verified from Tom's LinkedIn PDF export (July 2026):
-  Matillion SE May 2021 → Senior Aug 2022 → Staff Apr 2024; Barclays BA3
-  Jun 2018 → BA4 Aug 2019 (Barclaycard IDV); Retail Sensing May 2017–Jun 2018;
-  Ocean82 summer 2016; Bolton BSc Computing First Class 2015–2018 (Governors
-  Prize years 2 & 3); Rochdale Sixth Form 2013–2015. Only the graduation
-  *month* is assumed.
-- LinkedIn cannot be fetched live (HTTP 999 bot wall) — ask Tom for a fresh
-  PDF export instead.
-- npm stats: `api.npmjs.org/downloads/point/last-month/@tomplum/react-git-log`
-  (the package is scoped — plain `react-git-log` 404s).
+- Public-facing content lives in `src/data/`; keep facts verifiable and avoid
+  publishing private source material.
+- `public/cv.pdf` must be a redacted export with no home address, DOB or phone
+  number.
+- npm stats can be checked at
+  `api.npmjs.org/downloads/point/last-month/@tomplum/react-git-log` (the package
+  is scoped — plain `react-git-log` 404s).
 - If a fact can't be verified, flag it with a `TODO(tom)` comment in
   `src/data/` — never silently invent dates or numbers.
 

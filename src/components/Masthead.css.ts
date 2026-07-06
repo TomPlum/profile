@@ -4,7 +4,24 @@ import { vars } from '../styles/theme.css'
 export const masthead = style({
   maxWidth: '1000px',
   margin: '0 auto',
-  padding: 'clamp(3rem, 8vh, 5.5rem) clamp(1rem, 4vw, 2rem) clamp(2.5rem, 6vh, 4rem)'
+  padding: 'clamp(2rem, 5vh, 3rem) clamp(1rem, 4vw, 2rem) clamp(1.5rem, 4vh, 2.25rem)',
+  display: 'grid',
+  gridTemplateColumns: 'minmax(0, 1fr) minmax(180px, 260px)',
+  alignItems: 'center',
+  columnGap: 'clamp(1.5rem, 6vw, 4.5rem)',
+  rowGap: '2rem',
+  '@media': {
+    '(max-width: 760px)': {
+      gridTemplateColumns: '1fr',
+      paddingTop: '1rem',
+      paddingBottom: '1rem',
+      rowGap: '0.75rem'
+    }
+  }
+})
+
+export const copy = style({
+  minWidth: 0
 })
 
 export const eyebrow = style({
@@ -16,7 +33,12 @@ export const eyebrow = style({
   flexWrap: 'wrap',
   alignItems: 'center',
   columnGap: '0.6rem',
-  rowGap: '0.35rem'
+  rowGap: '0.35rem',
+  '@media': {
+    '(max-width: 760px)': {
+      marginBottom: '0.9rem'
+    }
+  }
 })
 
 export const eyebrowDivider = style({
@@ -33,7 +55,12 @@ export const name = style({
   letterSpacing: '-0.02em',
   color: vars.colour.ink,
   textWrap: 'balance',
-  marginBottom: '1.1rem'
+  marginBottom: '1.1rem',
+  '@media': {
+    '(max-width: 760px)': {
+      marginBottom: '0.7rem'
+    }
+  }
 })
 
 export const roleLine = style({
@@ -43,7 +70,12 @@ export const roleLine = style({
   fontSize: 'clamp(1.25rem, 3.4vw, 1.7rem)',
   fontWeight: 480,
   color: vars.colour.ink,
-  marginBottom: '1.4rem'
+  marginBottom: '1.4rem',
+  '@media': {
+    '(max-width: 760px)': {
+      marginBottom: '1rem'
+    }
+  }
 })
 
 export const companyLink = style({
@@ -62,7 +94,12 @@ export const value = style({
   fontSize: '1.1rem',
   lineHeight: 1.65,
   color: vars.colour.inkMuted,
-  marginBottom: '1.8rem'
+  marginBottom: '1.8rem',
+  '@media': {
+    '(max-width: 760px)': {
+      marginBottom: '1.2rem'
+    }
+  }
 })
 
 export const stackRow = style({
@@ -72,7 +109,12 @@ export const stackRow = style({
   flexWrap: 'wrap',
   alignItems: 'center',
   gap: '0.5rem',
-  marginBottom: '1.6rem'
+  marginBottom: '1.6rem',
+  '@media': {
+    '(max-width: 760px)': {
+      marginBottom: '1.1rem'
+    }
+  }
 })
 
 /** Core-stack pill with its brand icon inline before the label. */
@@ -103,11 +145,57 @@ export const linksRow = style({
   alignItems: 'center',
   columnGap: '1.1rem',
   rowGap: '0.5rem',
-  marginBottom: '1.2rem'
+  marginBottom: '1.2rem',
+  '@media': {
+    '(max-width: 760px)': {
+      marginBottom: '0.85rem'
+    }
+  }
 })
 
 export const currently = style({
   fontFamily: vars.font.mono,
   fontSize: '0.78rem',
   color: vars.colour.inkFaint
+})
+
+export const portrait = style({
+  justifySelf: 'end',
+  width: 'min(100%, 260px)',
+  margin: 0,
+  position: 'relative',
+  selectors: {
+    '&::before': {
+      content: '',
+      position: 'absolute',
+      inset: '0.75rem -0.75rem -0.75rem 0.75rem',
+      border: `1px solid ${vars.colour.line}`,
+      backgroundColor: vars.colour.surface,
+      zIndex: -1
+    }
+  },
+  '@media': {
+    '(max-width: 760px)': {
+      justifySelf: 'start',
+      width: 'min(34vw, 128px)',
+      order: -1
+    }
+  }
+})
+
+export const portraitImage = style({
+  display: 'block',
+  width: '100%',
+  aspectRatio: '3 / 4',
+  height: 'auto',
+  objectFit: 'cover',
+  objectPosition: '50% 32%',
+  border: `1px solid ${vars.colour.ink}`,
+  backgroundColor: vars.colour.inset,
+  filter: 'saturate(0.86) contrast(1.04)',
+  '@media': {
+    '(max-width: 760px)': {
+      aspectRatio: '4 / 5'
+    }
+  }
 })
