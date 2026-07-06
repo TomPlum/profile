@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
 
 export const card = style({
@@ -288,12 +288,35 @@ export const sleepPreview = style([
   }
 ])
 
+// Dash tricks break under non-scaling-stroke (Chrome computes dashes in
+// screen units, ignoring pathLength), so the draw-in is a clip wipe instead.
+const drawIn = keyframes({
+  from: { clipPath: 'inset(0 100% 0 0)' },
+  to: { clipPath: 'inset(0 0 0 0)' }
+})
+
 export const sleepLine = style({
   fill: 'none',
   strokeWidth: 1.6,
   strokeLinejoin: 'round',
   strokeLinecap: 'round',
   // preserveAspectRatio="none" scales x/y unevenly; keep strokes crisp.
+  vectorEffect: 'non-scaling-stroke',
+  // Reveal left-to-right on expansion, one series after another.
+  clipPath: 'inset(0 100% 0 0)',
+  animation: `${drawIn} 0.9s ease-out forwards`,
+  animationDelay: 'calc(0.15s + var(--series, 0) * 0.22s)',
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animationDelay: '0s'
+    }
+  }
+})
+
+export const sleepAxis = style({
+  stroke: vars.colour.inkFaint,
+  strokeWidth: 1,
+  opacity: 0.6,
   vectorEffect: 'non-scaling-stroke'
 })
 
@@ -302,6 +325,7 @@ export const sleepShiftLine = style({
   stroke: vars.colour.inkFaint,
   strokeWidth: 1,
   strokeDasharray: '3 3',
+  opacity: 0.8,
   vectorEffect: 'non-scaling-stroke'
 })
 
