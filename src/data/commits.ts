@@ -43,6 +43,7 @@ export const commits: Commit[] = [
       'another reviews, explores alternatives or checks the shape of the finished experience. ' +
       'The useful part is not the novelty; it is the loop of context, critique, iteration and ' +
       'ownership that keeps AI-assisted code aligned with the project.',
+    stack: ['Codex', 'CLI'],
     tags: ['ai']
   },
   {

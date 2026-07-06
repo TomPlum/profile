@@ -10,8 +10,23 @@ interface CommitDetailProps {
   commit: Commit
   /** The branch lane colour, used as the card's accent. */
   laneColour?: string
-  /** A visual aside rendered beside the body text. */
-  visual?: ReactNode
+}
+
+/** The Codex mark on a rounded, theme-aware badge. */
+const CodexMark = () => (
+  <div className={css.logoBadge}>
+    <img src="codex-logo.svg" alt="Codex logo" width="68" height="68" />
+  </div>
+)
+
+/** Bespoke visual asides for body-only commits, keyed by commit id. */
+const visualFor = (id: string): ReactNode => {
+  switch (id) {
+    case 'codex-adoption':
+      return <CodexMark />
+    default:
+      return null
+  }
 }
 
 /**
@@ -19,25 +34,29 @@ interface CommitDetailProps {
  * same dress as ProjectDetail (stack chips, card chrome) so the log reads
  * as one system.
  */
-export const CommitDetail = ({ commit, laneColour, visual }: CommitDetailProps) => (
-  <div
-    className={projectCss.card}
-    style={laneColour ? ({ '--lane': laneColour } as CSSProperties) : undefined}
-  >
-    {commit.stack && commit.stack.length > 0 && (
-      <div className={projectCss.cardHeader}>
-        {commit.stack.map((tech) => (
-          <span key={tech} className={`${chip} ${projectCss.stackChip}`}>
-            <TechIcon name={tech} />
-            {tech}
-          </span>
-        ))}
-      </div>
-    )}
+export const CommitDetail = ({ commit, laneColour }: CommitDetailProps) => {
+  const visual = visualFor(commit.id)
 
-    <div className={visual ? css.bodyWithVisual : undefined}>
-      <p className={css.bodyText}>{commit.body && renderInline(commit.body)}</p>
-      {visual}
+  return (
+    <div
+      className={projectCss.card}
+      style={laneColour ? ({ '--lane': laneColour } as CSSProperties) : undefined}
+    >
+      {commit.stack && commit.stack.length > 0 && (
+        <div className={projectCss.cardHeader}>
+          {commit.stack.map((tech) => (
+            <span key={tech} className={`${chip} ${projectCss.stackChip}`}>
+              <TechIcon name={tech} />
+              {tech}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className={visual ? css.bodyWithVisual : undefined}>
+        <p className={css.bodyText}>{commit.body && renderInline(commit.body)}</p>
+        {visual}
+      </div>
     </div>
-  </div>
-)
+  )
+}

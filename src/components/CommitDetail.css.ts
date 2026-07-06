@@ -21,3 +21,13 @@ export const bodyWithVisual = style({
     }
   }
 })
+
+/** A rounded, theme-aware badge for a brand mark beside the body text. */
+export const logoBadge = style({
+  display: 'grid',
+  placeItems: 'center',
+  padding: '1.15rem',
+  borderRadius: '16px',
+  border: `1px solid ${vars.colour.line}`,
+  backgroundColor: vars.colour.inset
+})
