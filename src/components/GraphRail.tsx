@@ -117,6 +117,11 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
   // Lanes draw in with a slight stagger, applied as an inline transition delay.
   const laneDelay = (index: number) => (reduceMotion ? undefined : `${index * 130}ms`)
 
+  // Rendered in two passes so every node sits above every line: a lane's own
+  // through-line and other lanes' fork/merge curves would otherwise paint over
+  // neighbouring dots. The nodes are donuts whose centres are filled with the
+  // page background, so the line is hidden inside the ring rather than showing
+  // through the gap.
   return (
     <svg ref={svgRef} className={css.rail} width={geometry.width} height={height} aria-hidden="true" focusable="false">
       {lanes.map((lane, index) => {
@@ -125,7 +130,7 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
         const oldest = Math.max(...lane.ys)
         const delay = laneDelay(index)
         return (
-          <g key={lane.branch.name} stroke={lane.colour} fill="none" strokeWidth={2}>
+          <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2}>
             {/* Dashed tip above the newest commit: the branch is still alive. */}
             <line
               className={dotClass}
@@ -154,16 +159,22 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
                 d={forkPath(lane, careerX)}
               />
             )}
+          </g>
+        )
+      })}
+      {lanes.map((lane, index) => {
+        if (lane.ys.length === 0) return null
+        const delay = laneDelay(index)
+        return (
+          <g key={`dots-${lane.branch.name}`} stroke={lane.colour} strokeWidth={2.5}>
             {lane.ys.map((y) => (
               <circle
                 key={y}
                 className={dotClass}
-                style={{ transitionDelay: delay }}
+                style={{ transitionDelay: delay, fill: vars.colour.bg }}
                 cx={lane.x}
                 cy={y}
                 r={DOT_RADIUS}
-                fill={vars.colour.bg}
-                strokeWidth={2.5}
               />
             ))}
           </g>

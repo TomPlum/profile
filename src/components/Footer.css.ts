@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
 
 export const contact = style({
@@ -64,6 +64,51 @@ export const colophonLink = style({
   selectors: {
     '&:hover': {
       color: vars.colour.accent
+    }
+  }
+})
+
+/** The "built with Claude Fable" lockup: the animated mark + its label. */
+export const claudeLink = style({
+  color: 'inherit',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.35em',
+  textDecoration: 'none',
+  fontWeight: 500,
+  selectors: {
+    '&:hover': {
+      color: vars.colour.accent
+    }
+  }
+})
+
+const spin = keyframes({
+  '0%': { transform: 'rotate(0deg)' },
+  '100%': { transform: 'rotate(360deg)' }
+})
+
+const twinkle = keyframes({
+  '0%, 100%': { opacity: 0.7 },
+  '50%': { opacity: 1 }
+})
+
+/**
+ * The Claude "sparkle", echoing the spinner the CLI draws. Rotates slowly and
+ * pulses; the site accent keeps it Claude-coloured without adding a new colour.
+ * Motion is dropped under prefers-reduced-motion.
+ */
+export const claudeMark = style({
+  width: '1.15em',
+  height: '1.15em',
+  color: vars.colour.accent,
+  fill: 'currentColor',
+  transformBox: 'fill-box',
+  transformOrigin: 'center',
+  animation: `${spin} 16s linear infinite, ${twinkle} 3.4s ease-in-out infinite`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none'
     }
   }
 })

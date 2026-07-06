@@ -1,5 +1,6 @@
 import { profile } from '../data/profile'
-import { chip, monoLink } from '../styles/controls.css'
+import { monoLink } from '../styles/controls.css'
+import { TechIcon } from './TechIcon'
 import * as css from './Masthead.css'
 
 export const Masthead = () => (
@@ -25,7 +26,10 @@ export const Masthead = () => (
 
     <ul className={css.stackRow} aria-label="Core stack">
       {profile.stack.map((tech) => (
-        <li key={tech} className={chip}>
+        <li key={tech} className={css.techChip}>
+          <span className={css.techIcon}>
+            <TechIcon name={tech} />
+          </span>
           {tech}
         </li>
       ))}

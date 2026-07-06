@@ -75,6 +75,28 @@ export const stackRow = style({
   marginBottom: '1.6rem'
 })
 
+/** Core-stack pill with its brand icon inline before the label. */
+export const techChip = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.78rem',
+  fontWeight: 500,
+  letterSpacing: '0.02em',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.42em',
+  padding: '0.28rem 0.6rem 0.28rem 0.5rem',
+  borderRadius: '7px',
+  border: `1px solid ${vars.colour.line}`,
+  backgroundColor: vars.colour.surface,
+  color: vars.colour.ink,
+  whiteSpace: 'nowrap'
+})
+
+export const techIcon = style({
+  fontSize: '1.05em',
+  display: 'inline-flex'
+})
+
 export const linksRow = style({
   display: 'flex',
   flexWrap: 'wrap',

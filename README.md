@@ -57,6 +57,17 @@ Sixth Form) are verified against Tom's LinkedIn export, July 2026.
 
 ## Deployment
 
-Static output in `dist/`. Not wired to a host yet — for GitHub Pages with the
-custom domain `tomplumpton.me`, keep Vite's default `base: '/'` and add a
-`public/CNAME` file; note the domain currently points at activity-trends.
+Pushes to `main` build and publish to GitHub Pages via
+`.github/workflows/deploy.yml` (the same `npm test` quality gates run first, so
+a failing contrast or data test blocks the deploy). Vite's `base` is `'./'`, so
+the build is host-agnostic: it works as-is at the project-page URL
+(`tomplum.github.io/profile/`) and at the custom-domain root.
+
+**One-time setup:** in the repo, Settings → Pages → *Build and deployment* →
+Source = **GitHub Actions**.
+
+To move to the `tomplumpton.me` domain later, add a `public/CNAME` file
+containing `tomplumpton.me` and set the domain under Settings → Pages — no code
+change needed (the relative base already handles the root mount). Note the
+domain currently points at the activity-trends dashboard, so cutting over is
+Tom's call.

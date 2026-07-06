@@ -101,6 +101,11 @@ wait ~1s first; sticky headers also smear across `fullPage` captures.
 
 ## Deployment
 
-Not wired up yet. Static `dist/`; for GitHub Pages + the `tomplumpton.me`
-domain keep `base: '/'` and add `public/CNAME` — but note the domain currently
-points at his activity-trends dashboard, so cutting over is Tom's call.
+`.github/workflows/deploy.yml` builds and deploys to GitHub Pages on every push
+to `main` (runs `npm test` first — the contrast/data/smoke gates block a bad
+deploy). Requires the one-time repo setting Pages → Source = **GitHub Actions**.
+`vite.config.ts` sets `base: './'` (relative) so the same build works at the
+project-page URL and at a custom-domain root; internal asset links must stay
+relative (`cvHref` is `cv.pdf`, not `/cv.pdf`). For `tomplumpton.me`, add
+`public/CNAME` + set the domain in Pages settings — no code change. The domain
+currently serves his activity-trends dashboard, so cutting over is Tom's call.
