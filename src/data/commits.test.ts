@@ -49,9 +49,22 @@ describe('log data integrity', () => {
       expect(project.oneLiner.length, `${project.id} oneLiner`).toBeGreaterThan(20)
       expect(project.whatItShows.length, `${project.id} whatItShows`).toBeGreaterThan(20)
       expect(project.stack.length, `${project.id} stack`).toBeGreaterThan(0)
+      expect(project.preview, `${project.id} preview`).toBeDefined()
       project.links.forEach((link) => {
         expect(link.href, `${project.id} link '${link.label}'`).toMatch(/^https:\/\//)
       })
+      project.facts?.forEach((fact) => {
+        expect(fact.text.length, `${project.id} fact text`).toBeGreaterThan(10)
+        expect(fact.source.label.length, `${project.id} fact source label`).toBeGreaterThan(2)
+        expect(fact.source.href, `${project.id} fact source href`).toMatch(/^https:\/\//)
+        expect(fact.verifiedAt, `${project.id} fact verifiedAt`).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+        expect(Number.isNaN(Date.parse(fact.verifiedAt)), `${project.id} fact verifiedAt parses`).toBe(false)
+      })
     })
+  })
+
+  it('the Staff promotion has expandable recruiter detail', () => {
+    const staff = commits.find((commit) => commit.id === 'staff-engineer')
+    expect(staff?.body?.length).toBeGreaterThan(80)
   })
 })

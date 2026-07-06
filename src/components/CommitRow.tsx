@@ -72,7 +72,7 @@ export const CommitRow = ({ commit, branch, isHead, expanded, onToggle, register
           </button>
         </div>
       ) : (
-        <div ref={registerAnchor} className={css.headerStatic}>
+        <div ref={registerAnchor} className={css.headerStatic} data-log-row tabIndex={-1}>
           {header}
         </div>
       )}

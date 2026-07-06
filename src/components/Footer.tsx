@@ -45,7 +45,7 @@ export const Footer = () => (
           Built by Thomas Plumpton with{' '}
           <a className={css.claudeLink} href="https://claude.com/claude-code" target="_blank" rel="noopener">
             <ClaudeMark />
-            Claude Fable
+            Claude Code
           </a>
           . React, TypeScript and vanilla-extract; type set in Fraunces and JetBrains Mono. No
           tracking, no cookies, no analytics.

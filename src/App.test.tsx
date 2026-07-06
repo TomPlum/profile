@@ -1,6 +1,7 @@
-import { beforeAll, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { App } from './App'
+import { sortedCommits } from './data/commits'
 import { profile } from './data/profile'
 
 /**
@@ -39,6 +40,10 @@ beforeAll(() => {
   } as unknown as typeof IntersectionObserver
 })
 
+afterEach(() => {
+  cleanup()
+})
+
 describe('the five-second test', () => {
   it('shows name, role, stack and value statement', () => {
     render(<App />)
@@ -62,5 +67,20 @@ describe('the five-second test', () => {
     render(<App />)
     const buttons = screen.getAllByRole('button', { expanded: false })
     expect(buttons.length).toBeGreaterThan(3)
+  })
+
+  it('lets j/k walk every commit row, including static career milestones', () => {
+    const { container } = render(<App />)
+    const rows = Array.from(container.querySelectorAll<HTMLElement>('[data-log-row]'))
+    expect(rows).toHaveLength(sortedCommits.length)
+
+    fireEvent.keyDown(window, { key: 'j' })
+    expect(document.activeElement).toBe(rows[0])
+
+    fireEvent.keyDown(window, { key: 'j' })
+    expect(document.activeElement).toBe(rows[1])
+
+    fireEvent.keyDown(window, { key: 'k' })
+    expect(document.activeElement).toBe(rows[0])
   })
 })

@@ -12,7 +12,30 @@ export const projects: Project[] = [
       'depend on: 21 releases, semantic versioning, automated publishing from CI. ' +
       'It also inspired the page you are reading.',
     stack: ['React', 'TypeScript'],
-    facts: ['v3.5.1 · 21 releases', '~1,200 downloads/month on npm', 'Published as @tomplum/react-git-log'],
+    facts: [
+      {
+        text: 'v3.5.1 · 21 releases',
+        source: { label: 'GitHub releases', href: 'https://github.com/TomPlum/react-git-log/releases' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: '1,188 npm downloads in the last month',
+        source: {
+          label: 'npm downloads API',
+          href: 'https://api.npmjs.org/downloads/point/last-month/%40tomplum%2Freact-git-log'
+        },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Published as @tomplum/react-git-log',
+        source: { label: 'npm package', href: 'https://www.npmjs.com/package/@tomplum/react-git-log' },
+        verifiedAt: '2026-07-06'
+      }
+    ],
+    preview: {
+      kind: 'git-log',
+      caption: 'Branches, hashes and tags rendered as a reusable React component.'
+    },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/react-git-log/' },
       { label: 'npm', href: 'https://www.npmjs.com/package/@tomplum/react-git-log' },
@@ -23,13 +46,29 @@ export const projects: Project[] = [
     id: 'learn-japanese',
     name: 'learn-japanese',
     oneLiner:
-      'A Duolingo-inspired trainer for Japanese kana and vocabulary — built because ' +
-      'I am the user.',
+      'A Japanese study app that grew from kana drills into configurable learn/play ' +
+      'sessions for kana, numbers, Jōyō kanji, Genki vocabulary, grammar and more.',
     whatItShows:
-      'End-to-end product thinking: I designed the learning modes, built the app, ' +
-      'and study with it. Side projects with a real user are held to a higher bar.',
+      'This is the older, larger version of my language-learning pattern: a real app ' +
+      'with routing, account flows, custom presets, high scores, profile statistics, ' +
+      'kanji search, spaced-repetition flashcards and test coverage around the learning logic.',
     stack: ['React', 'TypeScript'],
-    facts: ['My most-starred learning project on GitHub'],
+    facts: [
+      {
+        text: 'Covers kana, numbers, calendar, basics, grammar and Jōyō kanji topics',
+        source: { label: 'GitHub repository', href: 'https://github.com/TomPlum/learn-japanese' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Includes Genki vocabulary/grammar pages, kanji bank, profile stats and high scores',
+        source: { label: 'GitHub repository', href: 'https://github.com/TomPlum/learn-japanese' },
+        verifiedAt: '2026-07-06'
+      }
+    ],
+    preview: {
+      kind: 'kana-drills',
+      caption: 'Configurable Japanese study sessions: kana, kanji, Genki and SRS.'
+    },
     links: [{ label: 'Source', href: 'https://github.com/TomPlum/learn-japanese' }]
   },
   {
@@ -42,6 +81,10 @@ export const projects: Project[] = [
       'Shipping a real hosted product: third-party content integration, a domain, ' +
       'a deployment pipeline, and users other than me.',
     stack: ['React', 'TypeScript'],
+    preview: {
+      kind: 'news-reader',
+      caption: 'Japanese headlines flow into reader-friendly study cards.'
+    },
     links: [
       { label: 'Live at nyusu.org', href: 'https://nyusu.org' },
       { label: 'Source', href: 'https://github.com/TomPlum/nyuusu' }
@@ -51,14 +94,38 @@ export const projects: Project[] = [
     id: 'natomski',
     name: 'natomski',
     oneLiner:
-      'A collection of Polish language-learning games, built while actually ' +
-      'learning Polish.',
+      'A Polish learning app with modular lessons, multiple exercise types, custom ' +
+      'lesson presets, text-to-speech and Orlek, its animated eagle guide.',
     whatItShows:
-      'The same trick twice proves the method: after building my own Japanese ' +
-      'tooling, I did it again for Polish — this time engineered end-to-end in ' +
-      'collaboration with Claude, the way I now work with AI tooling.',
+      'This is the second-generation version of the language-tooling idea: React 19, ' +
+      'Supabase auth/progress, reusable lesson modules, SRS review, browser TTS, ' +
+      'Cypress smoke tests and a small mascot system rather than just a set of drills.',
     stack: ['React', 'TypeScript'],
-    links: [{ label: 'Live at natomski.uk', href: 'https://natomski.uk' }]
+    facts: [
+      {
+        text: '27 lesson modules, from alphabet and numbers to verbs, pronouns and everyday vocabulary',
+        source: { label: 'Source modules', href: 'https://github.com/TomPlum/natomski/tree/main/src/features' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Supports flashcards, typed answers, multiple choice, memory match, line match and listen-and-type',
+        source: { label: 'Learning types', href: 'https://github.com/TomPlum/natomski/blob/main/src/types/learning.ts' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Orlek is a White Eagle mascot with idle, speaking, correct, incorrect and thinking animation states',
+        source: { label: 'Mascot config', href: 'https://github.com/TomPlum/natomski/blob/main/src/config/mascot.ts' },
+        verifiedAt: '2026-07-06'
+      }
+    ],
+    preview: {
+      kind: 'natomski-mascot',
+      caption: 'Orlek, the app’s animated White Eagle tutor, inside a lesson-style prompt.'
+    },
+    links: [
+      { label: 'Live at natomski.uk', href: 'https://natomski.uk' },
+      { label: 'Source', href: 'https://github.com/TomPlum/natomski' }
+    ]
   },
   {
     id: 'clocks',
@@ -70,6 +137,10 @@ export const projects: Project[] = [
       'Animation engineering from first principles: a requestAnimationFrame ' +
       'choreography written by hand, not a library preset.',
     stack: ['React', 'TypeScript', 'requestAnimationFrame'],
+    preview: {
+      kind: 'clock-grid',
+      caption: 'A field of clock hands sweeps into choreographed shapes.'
+    },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/clocks' },
       { label: 'Source', href: 'https://github.com/TomPlum/clocks' }
@@ -83,6 +154,10 @@ export const projects: Project[] = [
       'I instrument things — including myself — and turn the data into something ' +
       'legible. Data visualisation with a real, messy dataset.',
     stack: ['React', 'TypeScript'],
+    preview: {
+      kind: 'sleep-chart',
+      caption: 'Years of nightly data reduced to readable rhythm and variance.'
+    },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/sleep' },
       { label: 'Source', href: 'https://github.com/TomPlum/sleep' }
@@ -98,6 +173,10 @@ export const projects: Project[] = [
       'Full-stack in one project: data pipeline and API in my day-job stack, ' +
       'visualisation layer in my front-end stack.',
     stack: ['Kotlin', 'Spring Boot', 'React', 'TypeScript'],
+    preview: {
+      kind: 'activity-dashboard',
+      caption: 'A Kotlin API feeding dashboard-style health and activity charts.'
+    },
     links: [
       { label: 'Live at tomplumpton.me', href: 'https://tomplumpton.me' },
       { label: 'Source', href: 'https://github.com/TomPlum/activity-trends' }
@@ -114,7 +193,22 @@ export const projects: Project[] = [
       'suites, clean architecture, shared libraries, CI — applied to code nobody ' +
       'was making me write well.',
     stack: ['Kotlin', 'JUnit', 'Gradle'],
-    facts: ['7 consecutive years completed', 'Shared utility library + template repo extracted along the way'],
+    facts: [
+      {
+        text: '7 consecutive years completed',
+        source: { label: 'GitHub repositories', href: 'https://github.com/TomPlum?tab=repositories&q=advent-of-code' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Shared utility library + template repo extracted along the way',
+        source: { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs' },
+        verifiedAt: '2026-07-06'
+      }
+    ],
+    preview: {
+      kind: 'aoc-tests',
+      caption: 'Puzzle code treated like production code: tests, Gradle and CI.'
+    },
     links: [
       { label: 'All AoC repos', href: 'https://github.com/TomPlum?tab=repositories&q=advent-of-code' },
       { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs' }

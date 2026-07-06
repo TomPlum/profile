@@ -12,7 +12,17 @@ export const command = style({
   fontSize: 'clamp(0.95rem, 2.4vw, 1.15rem)',
   fontWeight: 600,
   color: vars.colour.ink,
-  marginBottom: '0.6rem'
+  display: 'inline-flex',
+  alignItems: 'center',
+  maxWidth: '100%',
+  padding: '0.62rem 0.8rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '8px',
+  backgroundColor: vars.colour.inset,
+  boxShadow: `inset 0 1px 0 ${vars.colour.surface}`,
+  marginBottom: '0.8rem',
+  overflowX: 'auto',
+  whiteSpace: 'nowrap'
 })
 
 export const prompt = style({

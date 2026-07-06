@@ -15,6 +15,29 @@ export interface ProjectLink {
   href: string
 }
 
+export interface ProjectFact {
+  text: string
+  source: ProjectLink
+  /** ISO date when the fact was last checked. */
+  verifiedAt: string
+}
+
+export type ProjectPreviewKind =
+  | 'git-log'
+  | 'kana-drills'
+  | 'polish-drills'
+  | 'natomski-mascot'
+  | 'news-reader'
+  | 'clock-grid'
+  | 'sleep-chart'
+  | 'activity-dashboard'
+  | 'aoc-tests'
+
+export interface ProjectPreview {
+  kind: ProjectPreviewKind
+  caption: string
+}
+
 export interface Project {
   id: string
   name: string
@@ -24,7 +47,9 @@ export interface Project {
   whatItShows: string
   stack: string[]
   /** Real, verifiable numbers only. */
-  facts?: string[]
+  facts?: ProjectFact[]
+  /** Compact visual proof point shown inside the expandable project card. */
+  preview?: ProjectPreview
   links: ProjectLink[]
 }
 

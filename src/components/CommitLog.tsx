@@ -46,7 +46,7 @@ export const CommitLog = ({ commits, branches }: CommitLogProps) => {
     })
   }, [])
 
-  // j/k moves focus through the expandable rows — a small courtesy for the
+  // j/k moves focus through the commit rows — a small courtesy for the
   // engineer doing due diligence. Advertised in the footer colophon.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -54,7 +54,7 @@ export const CommitLog = ({ commits, branches }: CommitLogProps) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return
       const target = event.target as HTMLElement
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
-      const rows = Array.from(containerRef.current?.querySelectorAll<HTMLButtonElement>('button[data-log-row]') ?? [])
+      const rows = Array.from(containerRef.current?.querySelectorAll<HTMLElement>('[data-log-row]') ?? [])
       if (rows.length === 0) return
       const current = rows.findIndex((row) => row === document.activeElement)
       const next =

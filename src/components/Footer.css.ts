@@ -68,12 +68,14 @@ export const colophonLink = style({
   }
 })
 
-/** The "built with Claude Fable" lockup: the animated mark + its label. */
+/** The "built with Claude Code" lockup: the animated mark + its label. */
 export const claudeLink = style({
   color: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '0.35em',
+  gap: '0.32em',
+  lineHeight: 'inherit',
+  verticalAlign: 'baseline',
   textDecoration: 'none',
   fontWeight: 500,
   selectors: {
@@ -99,10 +101,14 @@ const twinkle = keyframes({
  * Motion is dropped under prefers-reduced-motion.
  */
 export const claudeMark = style({
-  width: '1.15em',
-  height: '1.15em',
+  display: 'inline-block',
+  width: '0.95em',
+  height: '0.95em',
+  flexShrink: 0,
   color: vars.colour.accent,
   fill: 'currentColor',
+  position: 'relative',
+  top: '0.12em',
   transformBox: 'fill-box',
   transformOrigin: 'center',
   animation: `${spin} 16s linear infinite, ${twinkle} 3.4s ease-in-out infinite`,

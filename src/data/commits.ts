@@ -54,6 +54,11 @@ export const commits: Commit[] = [
     summary:
       'The senior-most individual-contributor track at Matillion — setting technical ' +
       'direction across teams on a data integration platform.',
+    body:
+      'This is where the job became less about owning one slice of implementation ' +
+      'and more about shaping the technical path around it: clarifying trade-offs, ' +
+      'reviewing designs, raising the quality bar and helping teams keep front-end ' +
+      'and service work understandable as the platform grows.',
     tags: ['staff']
   },
   {
@@ -99,9 +104,9 @@ export const commits: Commit[] = [
     id: 'natomski',
     branch: 'languages',
     date: '2026-05-09',
-    title: 'Built natomski — games for learning Polish',
+    title: 'Built natomski — a modular Polish learning app',
     summary:
-      'The Japanese-tooling playbook, run again for my second language. Live at natomski.uk.',
+      'Lessons, exercises, SRS, TTS and Orlek the eagle mascot — the Japanese-tooling playbook, run again for Polish.',
     projectId: 'natomski'
   },
   {
@@ -136,8 +141,9 @@ export const commits: Commit[] = [
     id: 'learn-japanese',
     branch: 'languages',
     date: '2021-02-17',
-    title: 'Built learn-japanese — a kana & vocabulary trainer',
-    summary: 'Duolingo-inspired drills for the app’s toughest user: me, daily.',
+    title: 'Built learn-japanese — a full Japanese study app',
+    summary:
+      'Configurable kana, kanji, Genki, grammar and number sessions for the app’s toughest user: me, daily.',
     projectId: 'learn-japanese'
   },
   {
