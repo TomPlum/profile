@@ -26,18 +26,30 @@ interface GraphRailProps {
 const DOT_RADIUS = 5
 const TIP_LENGTH = 34
 const FORK_CURVE = 36
+/** The main trunk's HEAD marker sits this far below the top of the graph. */
+const HEAD_PAD = 20
+const HEAD_SIZE = 6
+
+const diamondPath = (cx: number, cy: number, d: number): string =>
+  `M ${cx} ${cy - d} L ${cx + d} ${cy} L ${cx} ${cy + d} L ${cx - d} ${cy} Z`
 
 interface Lane {
   branch: Branch
   x: number
   colour: string
   ys: number[]
+  /** Career row this branch forks off at its oldest (lower) end. */
   forkTargetY?: number
+  /** Career row this branch merges back into at its newest (upper) end. */
+  mergeTargetY?: number
 }
 
 const buildLanes = (commits: Commit[], branches: Branch[], ys: Record<string, number>, geometry: RailGeometry): Lane[] => {
   const laneX = (index: number) => geometry.laneX0 + index * geometry.laneGap
   const careerVisible = branches.some((b) => b.name === 'career')
+  const careerYs = commits
+    .filter((c) => c.branch === 'career')
+    .flatMap((c) => (ys[c.id] === undefined ? [] : [ys[c.id]!]))
 
   return branches.map((branch, index) => {
     const own = commits.filter((c) => c.branch === branch.name).flatMap((c) => (ys[c.id] === undefined ? [] : [ys[c.id]!]))
@@ -48,33 +60,33 @@ const buildLanes = (commits: Commit[], branches: Branch[], ys: Record<string, nu
       ys: own
     }
 
-    // A side branch forks off career just below its oldest commit, joining the
-    // first career commit that appears further down the log (i.e. is older).
     if (branch.name !== 'career' && careerVisible && own.length > 0) {
       const oldest = Math.max(...own)
-      const target = commits
-        .filter((c) => c.branch === 'career')
-        .map((c) => ys[c.id])
-        .filter((y): y is number => y !== undefined && y > oldest)
-        .sort((a, b) => a - b)[0]
-      lane.forkTargetY = target
+      const newest = Math.min(...own)
+      // Fork off career just below the oldest commit (the next career row down).
+      lane.forkTargetY = careerYs.filter((y) => y > oldest).sort((a, b) => a - b)[0]
+      // Merge back into career just above the newest commit (the next career row
+      // up). If there's no career row above, the branch is still open — leave it
+      // to draw a dashed "still alive" tip instead.
+      lane.mergeTargetY = careerYs.filter((y) => y < newest).sort((a, b) => b - a)[0]
     }
 
     return lane
   })
 }
 
-const forkPath = (lane: Lane, careerX: number): string => {
-  const from = Math.max(...lane.ys)
-  const to = lane.forkTargetY!
-  if (to - from <= FORK_CURVE) {
-    return `M ${lane.x} ${from} C ${lane.x} ${to}, ${careerX} ${from}, ${careerX} ${to}`
+// A fork (downward) or merge (upward) curve between a lane and the career lane.
+// `from` is the lane's own commit; `to` is the career row it joins.
+const joinPath = (x: number, careerX: number, from: number, to: number): string => {
+  if (Math.abs(to - from) <= FORK_CURVE) {
+    return `M ${x} ${from} C ${x} ${to}, ${careerX} ${from}, ${careerX} ${to}`
   }
-  const bend = to - FORK_CURVE
+  const dir = Math.sign(to - from) // +1 forking down, -1 merging up
+  const bend = to - dir * FORK_CURVE
   return [
-    `M ${lane.x} ${from}`,
-    `L ${lane.x} ${bend}`,
-    `C ${lane.x} ${bend + FORK_CURVE * 0.6}, ${careerX} ${to - FORK_CURVE * 0.4}, ${careerX} ${to}`
+    `M ${x} ${from}`,
+    `L ${x} ${bend}`,
+    `C ${x} ${bend + dir * FORK_CURVE * 0.6}, ${careerX} ${to - dir * FORK_CURVE * 0.4}, ${careerX} ${to}`
   ].join(' ')
 }
 
@@ -129,20 +141,57 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
         const newest = Math.min(...lane.ys)
         const oldest = Math.max(...lane.ys)
         const delay = laneDelay(index)
+        const isMain = lane.branch.name === 'career'
+        // The main branch is the trunk. Its commits carry a solid line down to
+        // the root; above the newest commit a faint dashed line reaches up to a
+        // distinct HEAD marker near the top (see the dots pass).
+        if (isMain) {
+          return (
+            <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2.5}>
+              <line
+                className={dotClass}
+                style={{ transitionDelay: delay }}
+                x1={lane.x}
+                y1={HEAD_PAD + HEAD_SIZE + 4}
+                x2={lane.x}
+                y2={newest - DOT_RADIUS - 3}
+                strokeDasharray="2 6"
+                strokeLinecap="round"
+                strokeOpacity={0.4}
+              />
+              <path
+                className={pathClass}
+                style={{ transitionDelay: delay }}
+                pathLength={1}
+                d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`}
+              />
+            </g>
+          )
+        }
         return (
           <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2}>
-            {/* Dashed tip above the newest commit: the branch is still alive. */}
-            <line
-              className={dotClass}
-              style={{ transitionDelay: delay }}
-              x1={lane.x}
-              y1={Math.max(newest - TIP_LENGTH, 4)}
-              x2={lane.x}
-              y2={newest - DOT_RADIUS - 3}
-              strokeDasharray="2 6"
-              strokeLinecap="round"
-              strokeOpacity={0.55}
-            />
+            {lane.mergeTargetY !== undefined ? (
+              /* Merge back into career above the newest commit. */
+              <path
+                className={pathClass}
+                style={{ transitionDelay: delay }}
+                pathLength={1}
+                d={joinPath(lane.x, careerX, newest, lane.mergeTargetY)}
+              />
+            ) : (
+              /* No career row above: the branch is still alive — dashed tip. */
+              <line
+                className={dotClass}
+                style={{ transitionDelay: delay }}
+                x1={lane.x}
+                y1={Math.max(newest - TIP_LENGTH, 4)}
+                x2={lane.x}
+                y2={newest - DOT_RADIUS - 3}
+                strokeDasharray="2 6"
+                strokeLinecap="round"
+                strokeOpacity={0.55}
+              />
+            )}
             {oldest > newest && (
               <path
                 className={pathClass}
@@ -156,7 +205,7 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
                 className={pathClass}
                 style={{ transitionDelay: delay }}
                 pathLength={1}
-                d={forkPath(lane, careerX)}
+                d={joinPath(lane.x, careerX, oldest, lane.forkTargetY)}
               />
             )}
           </g>
@@ -165,16 +214,27 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
       {lanes.map((lane, index) => {
         if (lane.ys.length === 0) return null
         const delay = laneDelay(index)
+        const isMain = lane.branch.name === 'career'
+        // Trunk commits are solid, slightly larger discs; branch commits are
+        // hollow donuts (a bg-filled centre) so the two are easy to tell apart.
         return (
           <g key={`dots-${lane.branch.name}`} stroke={lane.colour} strokeWidth={2.5}>
+            {isMain && (
+              /* The trunk's HEAD marker: a distinct hollow diamond at the top. */
+              <path
+                className={dotClass}
+                style={{ transitionDelay: delay, fill: vars.colour.bg }}
+                d={diamondPath(lane.x, HEAD_PAD, HEAD_SIZE)}
+              />
+            )}
             {lane.ys.map((y) => (
               <circle
                 key={y}
                 className={dotClass}
-                style={{ transitionDelay: delay, fill: vars.colour.bg }}
+                style={{ transitionDelay: delay, fill: isMain ? lane.colour : vars.colour.bg }}
                 cx={lane.x}
                 cy={y}
-                r={DOT_RADIUS}
+                r={isMain ? DOT_RADIUS + 1 : DOT_RADIUS}
               />
             ))}
           </g>
