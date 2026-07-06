@@ -112,7 +112,7 @@ export const projects: Project[] = [
       'testbed for AI-assisted delivery: React 19 on Vite, Supabase auth and progress, ' +
       'reusable lesson modules, SRS review, browser TTS and Cypress smoke tests — built ' +
       'with Claude Code and Codex working in tandem under my review.',
-    stack: ['React', 'TypeScript', 'Vite', 'Supabase', 'Claude', 'Codex'],
+    stack: ['React', 'TypeScript', 'Vite', 'Supabase', 'Vercel', 'Claude', 'Codex'],
     facts: [
       {
         text: '27 lesson modules, from alphabet and numbers to verbs, pronouns and everyday vocabulary',
@@ -200,7 +200,7 @@ export const projects: Project[] = [
       'Full-stack ownership end to end: a streaming parser that ingests the raw ' +
       'Apple Health export into Postgres, and a Next.js dashboard that charts it — ' +
       'data modelling, backend and visualisation all in one project.',
-    stack: ['Next.js', 'React', 'TypeScript', 'Supabase'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Supabase', 'Vercel'],
     preview: {
       kind: 'activity-dashboard',
       caption: 'A Supabase-backed Next.js dashboard charting health and activity data.'
