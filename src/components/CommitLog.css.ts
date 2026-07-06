@@ -78,10 +78,12 @@ export const branchChip = style({
 
 export const tagChip = style({
   fontSize: '0.7rem',
+  fontWeight: 600,
   padding: '0.1rem 0.5rem',
   borderRadius: '6px',
   backgroundColor: vars.colour.inset,
-  color: vars.colour.ink
+  // git decorates tags yellow; the puzzles gold is this palette's yellow.
+  color: vars.colour.lane.puzzles
 })
 
 export const chevron = style({

@@ -63,6 +63,18 @@ npm run dev / test / build / preview   # build = tsc && vite build
   reducedMotion="user"` + a global CSS kill-switch handle
   `prefers-reduced-motion`; the rail renders fully drawn.
 - `j`/`k` walk the commit rows (advertised in the colophon).
+- **Card system**: expanded rows render `ProjectDetail` (projects) or
+  `CommitDetail` (body-only commits — these take optional `stack` chips and
+  bespoke visuals keyed by commit id, e.g. the Codex badge and the animated
+  Claude Code terminal). Both cards receive the branch lane colour as a
+  `--lane` CSS var — section labels and fact markers use it. External links
+  render as `LinkPill`s; `ProjectLink.icon` is a TechIcon name ('GitHub',
+  'npm') or an image path ('natomski-logo.svg'). Backticks in any data string
+  render as `InlineCode` via `renderInline`.
+- Bespoke in-card visuals live beside their card: `ClockGrid` (rAF hands that
+  settle into TOM), `TypeInvadersCard`, `SleepChart`/`ActivityChart` (inline
+  SVGs, `preserveAspectRatio="none"` + `vectorEffect: 'non-scaling-stroke'`).
+  Every stack entry needs a TechIcon — `App.test.tsx` enforces it.
 
 ## Verifying changes visually
 
@@ -85,6 +97,15 @@ wait ~1s first; sticky headers also smear across `fullPage` captures.
 - npm stats can be checked at
   `api.npmjs.org/downloads/point/last-month/@tomplum/react-git-log` (the package
   is scoped — plain `react-git-log` 404s).
+- Fact-check against Tom's local clones in `~/git/` (natomski, sleep,
+  activity-trends, learn-japanese, nyuusu) or `gh api .../readme` before
+  writing project claims. Known trap: AoC is **not** "every puzzle, every
+  year" — only 2020/2022/2023 are full 50-star years (per README badges).
+  The sleep chart's stage colours come from that repo's
+  `src/styles/_colours.scss`; brand colours in previews (sleep metrics,
+  Type Invaders sky, Codex gradient) are quotations of other projects'
+  palettes and are allowed — the four-lane rule governs this site's own
+  accents, and new text-on-inset pairs must be added to `palette.test.ts`.
 - If a fact can't be verified, flag it with a `TODO(tom)` comment in
   `src/data/` — never silently invent dates or numbers.
 

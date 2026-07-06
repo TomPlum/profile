@@ -31,7 +31,10 @@ describe.each(themes)('%s theme contrast (WCAG AA, normal text)', (_name, p) => 
     ['languages lane on bg', p.lane.languages, p.bg],
     ['languages lane on surface', p.lane.languages, p.surface],
     ['puzzles lane on bg', p.lane.puzzles, p.bg],
-    ['puzzles lane on surface', p.lane.puzzles, p.surface]
+    ['puzzles lane on surface', p.lane.puzzles, p.surface],
+    ['puzzles lane on inset (tag chips)', p.lane.puzzles, p.inset],
+    ['languages lane on inset', p.lane.languages, p.inset],
+    ['oss lane on inset', p.lane.oss, p.inset]
   ]
 
   it.each(pairs)('%s ≥ 4.5:1', (_label, fg, bg) => {

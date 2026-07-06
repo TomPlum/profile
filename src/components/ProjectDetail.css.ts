@@ -178,7 +178,7 @@ const newsLine = {
 
 export const newsMeta = style({
   ...newsLine,
-  color: vars.colour.inkMuted,
+  color: vars.colour.lane.languages,
   fontSize: '0.72rem'
 })
 
@@ -417,7 +417,7 @@ export const terminalLine = style({
 
 export const terminalSuccess = style({
   display: 'block',
-  color: vars.colour.ink,
+  color: vars.colour.lane.oss,
   fontWeight: 700
 })
 
@@ -427,7 +427,8 @@ export const label = style({
   fontWeight: 600,
   textTransform: 'uppercase',
   letterSpacing: '0.12em',
-  color: vars.colour.inkFaint,
+  // Section labels take the branch's lane colour (contrast-gated on surface).
+  color: 'var(--lane)',
   marginBottom: '0.25rem'
 })
 
