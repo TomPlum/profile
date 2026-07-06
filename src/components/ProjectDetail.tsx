@@ -1,8 +1,10 @@
 import type { CSSProperties } from 'react'
 import type { Project } from '../data/types'
-import { chip, monoLink } from '../styles/controls.css'
+import { chip } from '../styles/controls.css'
 import * as css from './ProjectDetail.css'
 import { TechIcon } from './TechIcon'
+import { ExternalIcon, LinkPill } from './LinkPill'
+import { renderInline } from './InlineCode'
 
 const clockAngles = [
   ['0deg', '90deg'],
@@ -175,8 +177,14 @@ const ProjectPreview = ({ project }: { project: Project }) => {
   )
 }
 
-export const ProjectDetail = ({ project }: { project: Project }) => (
-  <div className={css.card}>
+interface ProjectDetailProps {
+  project: Project
+  /** The branch lane colour, used as the card's accent. */
+  laneColour?: string
+}
+
+export const ProjectDetail = ({ project, laneColour }: ProjectDetailProps) => (
+  <div className={css.card} style={laneColour ? ({ '--lane': laneColour } as CSSProperties) : undefined}>
     <div className={css.cardHeader}>
       <span className={css.projectName}>{project.name}</span>
       {project.stack.map((tech) => (
@@ -187,26 +195,34 @@ export const ProjectDetail = ({ project }: { project: Project }) => (
       ))}
     </div>
 
-    <p className={css.oneLiner}>{project.oneLiner}</p>
+    <p className={css.oneLiner}>{renderInline(project.oneLiner)}</p>
 
     <ProjectPreview project={project} />
 
     <div>
       <p className={css.label}>What it shows</p>
-      <p className={css.shows}>{project.whatItShows}</p>
+      <p className={css.shows}>{renderInline(project.whatItShows)}</p>
     </div>
+
+    {project.sections?.map((section) => (
+      <div key={section.label}>
+        <p className={css.label}>{section.label}</p>
+        <p className={css.shows}>{renderInline(section.text)}</p>
+      </div>
+    ))}
 
     {project.facts && project.facts.length > 0 && (
       <ul className={css.facts}>
         {project.facts.map((fact) => (
           <li key={fact.text} className={css.factItem}>
-            <span className={css.factText}>{fact.text}</span>
-            <a className={css.factSource} href={fact.source.href} target="_blank" rel="noopener">
-              {fact.source.label}
-            </a>
-            <time className={css.factDate} dateTime={fact.verifiedAt}>
-              checked {fact.verifiedAt}
-            </time>
+            <span className={css.factMarker} aria-hidden="true" />
+            <span className={css.factText}>
+              {renderInline(fact.text)}{' '}
+              <a className={css.factSource} href={fact.source.href} target="_blank" rel="noopener">
+                {fact.source.label}
+                <ExternalIcon />
+              </a>
+            </span>
           </li>
         ))}
       </ul>
@@ -215,9 +231,7 @@ export const ProjectDetail = ({ project }: { project: Project }) => (
     {project.links.length > 0 ? (
       <p className={css.links}>
         {project.links.map((link) => (
-          <a key={link.href} className={monoLink} href={link.href} target="_blank" rel="noopener">
-            {link.label} ↗
-          </a>
+          <LinkPill key={link.href} label={link.label} href={link.href} icon={link.icon} />
         ))}
       </p>
     ) : (

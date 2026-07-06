@@ -7,7 +7,9 @@ export const card = style({
   borderRadius: '8px',
   padding: 'clamp(1rem, 3vw, 1.4rem)',
   display: 'grid',
-  gap: '0.85rem'
+  gap: '0.85rem',
+  // The branch's lane colour, set inline by ProjectDetail; accent fallback.
+  vars: { '--lane': vars.colour.accent }
 })
 
 export const cardHeader = style({
@@ -465,54 +467,60 @@ export const facts = style({
   listStyle: 'none',
   padding: 0,
   display: 'grid',
-  gap: '0.45rem',
-  fontFamily: vars.font.mono,
-  fontSize: '0.78rem',
-  color: vars.colour.inkMuted
+  gap: '0.55rem'
 })
 
 export const factItem = style({
-  display: 'grid',
-  gridTemplateColumns: 'auto minmax(0, 1fr)',
-  columnGap: '0.7rem',
-  rowGap: '0.1rem',
-  selectors: {
-    '&::before': {
-      content: '"·  "',
-      color: vars.colour.inkFaint,
-      gridColumn: 1,
-      gridRow: '1 / span 3'
-    }
-  }
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '0.65rem',
+  fontSize: '0.88rem',
+  lineHeight: 1.55,
+  color: vars.colour.inkMuted
+})
+
+export const factMarker = style({
+  flexShrink: 0,
+  width: '0.42rem',
+  height: '0.42rem',
+  borderRadius: '1.5px',
+  transform: 'rotate(45deg)',
+  backgroundColor: 'var(--lane)',
+  // Optically align the diamond with the first line of text.
+  position: 'relative',
+  top: '-0.12em'
 })
 
 export const factText = style({
-  gridColumn: 2
+  minWidth: 0
 })
 
 export const factSource = style({
-  gridColumn: 2,
-  justifySelf: 'start',
-  color: vars.colour.ink,
-  textUnderlineOffset: '3px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.3em',
+  whiteSpace: 'nowrap',
+  fontFamily: vars.font.mono,
+  fontSize: '0.7rem',
+  color: vars.colour.inkFaint,
+  textDecoration: 'none',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '999px',
+  padding: '0.06rem 0.5rem',
+  verticalAlign: '0.1em',
+  transition: 'border-color 150ms ease, color 150ms ease',
   selectors: {
     '&:hover': {
-      color: vars.colour.accent
+      color: vars.colour.accent,
+      borderColor: vars.colour.accent
     }
   }
-})
-
-export const factDate = style({
-  gridColumn: 2,
-  color: vars.colour.inkFaint,
-  fontSize: '0.72rem'
 })
 
 export const links = style({
   display: 'flex',
   flexWrap: 'wrap',
-  columnGap: '1.1rem',
-  rowGap: '0.4rem'
+  gap: '0.55rem'
 })
 
 export const privateNote = style({

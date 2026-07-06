@@ -74,3 +74,14 @@ export const monoLink = style({
     }
   }
 })
+
+/** Inline code references (`CLAUDE.md`) — sized to sit flush in running prose. */
+export const inlineCode = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.84em',
+  backgroundColor: vars.colour.inset,
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '4px',
+  padding: '0.06em 0.36em',
+  whiteSpace: 'nowrap'
+})

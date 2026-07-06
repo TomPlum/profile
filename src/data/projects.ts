@@ -38,8 +38,8 @@ export const projects: Project[] = [
     },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/react-git-log/' },
-      { label: 'npm', href: 'https://www.npmjs.com/package/@tomplum/react-git-log' },
-      { label: 'Source', href: 'https://github.com/TomPlum/react-git-log' }
+      { label: 'npm', href: 'https://www.npmjs.com/package/@tomplum/react-git-log', icon: 'npm' },
+      { label: 'Source', href: 'https://github.com/TomPlum/react-git-log', icon: 'GitHub' }
     ]
   },
   {
@@ -69,7 +69,7 @@ export const projects: Project[] = [
       kind: 'kana-drills',
       caption: 'Configurable Japanese study sessions: kana, kanji, Genki and SRS.'
     },
-    links: [{ label: 'Source', href: 'https://github.com/TomPlum/learn-japanese' }]
+    links: [{ label: 'Source', href: 'https://github.com/TomPlum/learn-japanese', icon: 'GitHub' }]
   },
   {
     id: 'nyuusu',
@@ -87,7 +87,7 @@ export const projects: Project[] = [
     },
     links: [
       { label: 'Live at nyusu.org', href: 'https://nyusu.org' },
-      { label: 'Source', href: 'https://github.com/TomPlum/nyuusu' }
+      { label: 'Source', href: 'https://github.com/TomPlum/nyuusu', icon: 'GitHub' }
     ]
   },
   {
@@ -123,8 +123,8 @@ export const projects: Project[] = [
       caption: 'Orlek, the app’s animated White Eagle tutor, inside a lesson-style prompt.'
     },
     links: [
-      { label: 'Live at natomski.uk', href: 'https://natomski.uk' },
-      { label: 'Source', href: 'https://github.com/TomPlum/natomski' }
+      { label: 'Live at natomski.uk', href: 'https://natomski.uk', icon: 'natomski-logo.svg' },
+      { label: 'Source', href: 'https://github.com/TomPlum/natomski', icon: 'GitHub' }
     ]
   },
   {
@@ -143,7 +143,7 @@ export const projects: Project[] = [
     },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/clocks' },
-      { label: 'Source', href: 'https://github.com/TomPlum/clocks' }
+      { label: 'Source', href: 'https://github.com/TomPlum/clocks', icon: 'GitHub' }
     ]
   },
   {
@@ -160,7 +160,7 @@ export const projects: Project[] = [
     },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/sleep' },
-      { label: 'Source', href: 'https://github.com/TomPlum/sleep' }
+      { label: 'Source', href: 'https://github.com/TomPlum/sleep', icon: 'GitHub' }
     ]
   },
   {
@@ -180,7 +180,7 @@ export const projects: Project[] = [
     },
     links: [
       { label: 'Live at activity.tomplumpton.me', href: 'https://activity.tomplumpton.me' },
-      { label: 'Source', href: 'https://github.com/TomPlum/activity-trends' }
+      { label: 'Source', href: 'https://github.com/TomPlum/activity-trends', icon: 'GitHub' }
     ]
   },
   {
@@ -202,7 +202,7 @@ export const projects: Project[] = [
       },
       {
         text: 'Shared utility library + template repo extracted along the way',
-        source: { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs' },
+        source: { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs', icon: 'GitHub' },
         verifiedAt: '2026-07-06'
       }
     ],
@@ -211,8 +211,8 @@ export const projects: Project[] = [
       caption: 'Puzzle code treated like production code: tests, Gradle and CI.'
     },
     links: [
-      { label: 'All AoC repos', href: 'https://github.com/TomPlum?tab=repositories&q=advent-of-code' },
-      { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs' }
+      { label: 'All AoC repos', href: 'https://github.com/TomPlum?tab=repositories&q=advent-of-code', icon: 'GitHub' },
+      { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs', icon: 'GitHub' }
     ]
   }
 ]

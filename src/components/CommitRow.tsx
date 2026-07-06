@@ -5,6 +5,7 @@ import { formatMonthYear } from '../lib/dates'
 import { shortHash } from '../lib/hash'
 import { vars } from '../styles/theme.css'
 import { ProjectDetail } from './ProjectDetail'
+import { CommitDetail } from './CommitDetail'
 import * as css from './CommitLog.css'
 
 interface CommitRowProps {
@@ -103,7 +104,11 @@ export const CommitRow = ({ commit, branch, isHead, expanded, onToggle, onHoverC
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
               <div id={detailId} className={css.detailInner}>
-                {project ? <ProjectDetail project={project} /> : <p className={css.summary}>{commit.body}</p>}
+                {project ? (
+                  <ProjectDetail project={project} laneColour={laneColour} />
+                ) : (
+                  <CommitDetail commit={commit} laneColour={laneColour} />
+                )}
               </div>
             </m.div>
           )}
