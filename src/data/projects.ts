@@ -136,12 +136,13 @@ export const projects: Project[] = [
       "A browser recreation of 'A Million Times' — the kinetic sculpture of analog " +
       'clock hands that sweep into patterns and type.',
     whatItShows:
-      'Animation engineering from first principles: a requestAnimationFrame ' +
-      'choreography written by hand, not a library preset.',
+      'Animation engineering from first principles: a `requestAnimationFrame` ' +
+      'choreography written by hand, not a library preset — and built entirely ' +
+      'myself, without any AI tooling.',
     stack: ['React', 'TypeScript', 'requestAnimationFrame'],
     preview: {
       kind: 'clock-grid',
-      caption: 'A field of clock hands sweeps into choreographed shapes.'
+      caption: 'The hands sweep, slow and settle — here, into my name.'
     },
     links: [
       { label: 'Live demo', href: 'https://tomplum.github.io/clocks' },

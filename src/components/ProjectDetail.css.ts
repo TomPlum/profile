@@ -279,50 +279,6 @@ export const mascotStatic = style({
   }
 })
 
-export const clockPreview = style([
-  previewPanel,
-  {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-    gap: '0.55rem',
-    alignContent: 'center',
-    '@media': {
-      '(max-width: 520px)': {
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))'
-      }
-    }
-  }
-])
-
-export const clockFace = style({
-  aspectRatio: '1',
-  borderRadius: '50%',
-  border: `1.5px solid ${vars.colour.line}`,
-  backgroundColor: vars.colour.surface,
-  position: 'relative'
-})
-
-const handBase = {
-  position: 'absolute' as const,
-  left: '50%',
-  top: '50%',
-  width: '38%',
-  height: '2px',
-  transformOrigin: 'left center',
-  transform: 'rotate(var(--angle))',
-  borderRadius: '999px'
-}
-
-export const clockHand = style({
-  ...handBase,
-  backgroundColor: vars.colour.lane.oss
-})
-
-export const clockHandAlt = style({
-  ...handBase,
-  backgroundColor: vars.colour.lane.career
-})
-
 export const chartPreview = style([
   previewPanel,
   {

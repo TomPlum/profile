@@ -6,21 +6,7 @@ import { TechIcon } from './TechIcon'
 import { ExternalIcon, LinkPill } from './LinkPill'
 import { renderInline } from './InlineCode'
 import { TypeInvadersCard } from './TypeInvadersCard'
-
-const clockAngles = [
-  ['0deg', '90deg'],
-  ['45deg', '135deg'],
-  ['90deg', '0deg'],
-  ['135deg', '45deg'],
-  ['180deg', '270deg'],
-  ['225deg', '315deg'],
-  ['270deg', '180deg'],
-  ['315deg', '225deg'],
-  ['30deg', '210deg'],
-  ['60deg', '240deg'],
-  ['120deg', '300deg'],
-  ['150deg', '330deg']
-] as const
+import { ClockGrid } from './ClockGrid'
 
 /**
  * A small area chart in the shape the live activity-trends dashboard draws with
@@ -125,16 +111,7 @@ const ProjectPreview = ({ project }: { project: Project }) => {
           </div>
         )
       case 'clock-grid':
-        return (
-          <div className={css.clockPreview}>
-            {clockAngles.map(([a, b], index) => (
-              <span key={`${a}-${b}-${index}`} className={css.clockFace}>
-                <span className={css.clockHand} style={{ '--angle': a } as CSSProperties} />
-                <span className={css.clockHandAlt} style={{ '--angle': b } as CSSProperties} />
-              </span>
-            ))}
-          </div>
-        )
+        return <ClockGrid />
       case 'sleep-chart':
         return (
           <div className={css.chartPreview}>
