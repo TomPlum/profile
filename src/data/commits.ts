@@ -89,10 +89,10 @@ export const commits: Commit[] = [
     id: 'aoc-2024',
     branch: 'puzzles',
     date: '2024-12-25',
-    title: 'Completed Advent of Code 2024 — the seventh year running',
+    title: 'Advent of Code 2024 — the seventh year running',
     summary:
-      'Every puzzle, every year since 2018, in Kotlin held to production standards.',
-    tags: ['7/7'],
+      'Back every December since 2018, in Kotlin held to production standards.',
+    tags: ['7-years'],
     projectId: 'advent-of-code'
   },
   {

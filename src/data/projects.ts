@@ -200,22 +200,44 @@ export const projects: Project[] = [
     id: 'advent-of-code',
     name: 'Advent of Code, 2018–2024',
     oneLiner:
-      'Every Advent of Code puzzle from seven consecutive years, solved in ' +
-      'deliberately “enterprise-style” Kotlin.',
+      'Advent of Code every December since 2018, solved in deliberately ' +
+      '“enterprise-style” Kotlin — test suites, documentation and CI for puzzle code.',
     whatItShows:
-      'Consistency and craft: seven Decembers of production discipline — test ' +
-      'suites, clean architecture, shared libraries, CI — applied to code nobody ' +
-      'was making me write well.',
+      'Consistency and craft: seven Decembers running of production discipline — ' +
+      'test suites, clean architecture, shared libraries, CI — applied to code ' +
+      'nobody was making me write well.',
     stack: ['Kotlin', 'JUnit', 'Gradle'],
+    sections: [
+      {
+        label: 'The shared library',
+        text:
+          'After the second year I extracted the recurring concepts into ' +
+          '`advent-of-code-libs`, a published Kotlin library: `Point2D`/`Point3D` ' +
+          'cartesian grids, graphing algorithms, input de-serialisation, and a ' +
+          '`SolutionRunner` that benchmarks every day and reports runtime deltas ' +
+          'against the previous run. A companion test-support package and a ' +
+          'template repository bootstrap each new December.'
+      }
+    ],
     facts: [
       {
-        text: '7 consecutive years completed',
+        text: 'Seven consecutive years, 2018–2024, each in its own repository',
         source: { label: 'GitHub repositories', href: 'https://github.com/TomPlum?tab=repositories&q=advent-of-code' },
         verifiedAt: '2026-07-06'
       },
       {
-        text: 'Shared utility library + template repo extracted along the way',
-        source: { label: 'Shared libs', href: 'https://github.com/TomPlum/advent-of-code-libs', icon: 'GitHub' },
+        text: '2020, 2022 and 2023 solved to the full 50 stars',
+        source: { label: '2023 README', href: 'https://github.com/TomPlum/advent-of-code-2023' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Every day documented with answers and benchmarked runtimes in the README',
+        source: { label: '2024 answer table', href: 'https://github.com/TomPlum/advent-of-code-2024#answer-table' },
+        verifiedAt: '2026-07-06'
+      },
+      {
+        text: 'Shared utility library and test-support package published to GitHub Packages',
+        source: { label: 'advent-of-code-libs', href: 'https://github.com/TomPlum/advent-of-code-libs' },
         verifiedAt: '2026-07-06'
       }
     ],
