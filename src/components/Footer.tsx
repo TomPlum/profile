@@ -34,9 +34,9 @@ export const Footer = () => (
             <TechIcon name="GitHub" />
             GitHub
           </a>
-          <a className={buttonGhost} href={profile.links.twitter} target="_blank" rel="noopener">
-            <TechIcon name="X" />
-            X / Twitter
+          <a className={buttonGhost} href={profile.links.linkedin} target="_blank" rel="noopener">
+            <TechIcon name="LinkedIn" />
+            LinkedIn
           </a>
         </p>
       </div>

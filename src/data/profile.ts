@@ -21,7 +21,7 @@ export const profile = {
   cvHref: 'cv.pdf', // drop your CV at public/cv.pdf; relative so it resolves under any base
   links: {
     github: 'https://github.com/TomPlum',
-    twitter: 'https://twitter.com/TomPlumpton',
+    linkedin: 'https://www.linkedin.com/in/thomas-plumpton',
     site: 'https://tomplumpton.me'
   }
 } as const

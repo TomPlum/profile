@@ -112,7 +112,7 @@ export const companyLink = style({
 // Height-driven with auto width so each mark keeps its own aspect ratio
 // (the light Maia is square; the dark variant is taller than it is wide).
 const companyLogoBase = {
-  height: '1.15em',
+  height: '0.83em',
   width: 'auto',
   flexShrink: 0
 } as const
