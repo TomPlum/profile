@@ -26,22 +26,28 @@ interface GraphRailProps {
 const DOT_RADIUS = 5
 const TIP_LENGTH = 34
 const FORK_CURVE = 36
-/** The main trunk's HEAD marker sits this far below the top of the graph. */
-const HEAD_PAD = 20
+/** Half-size of the main trunk's diamond HEAD marker, flush at the very top. */
 const HEAD_SIZE = 6
 
 const diamondPath = (cx: number, cy: number, d: number): string =>
   `M ${cx} ${cy - d} L ${cx + d} ${cy} L ${cx} ${cy + d} L ${cx - d} ${cy} Z`
 
+interface Segment {
+  /** This branch segment's own commit rows. */
+  ys: number[]
+  /** Career row it forks off at its oldest (lower) end. */
+  forkTargetY?: number
+  /** Career row it merges back into at its newest (upper) end. */
+  mergeTargetY?: number
+}
+
 interface Lane {
   branch: Branch
   x: number
   colour: string
-  ys: number[]
-  /** Career row this branch forks off at its oldest (lower) end. */
-  forkTargetY?: number
-  /** Career row this branch merges back into at its newest (upper) end. */
-  mergeTargetY?: number
+  isMain: boolean
+  /** One entry per short-lived branch on this lane (the trunk has just one). */
+  segments: Segment[]
 }
 
 const buildLanes = (commits: Commit[], branches: Branch[], ys: Record<string, number>, geometry: RailGeometry): Lane[] => {
@@ -50,27 +56,37 @@ const buildLanes = (commits: Commit[], branches: Branch[], ys: Record<string, nu
   const careerYs = commits
     .filter((c) => c.branch === 'career')
     .flatMap((c) => (ys[c.id] === undefined ? [] : [ys[c.id]!]))
+  const careerAbove = (y: number) => careerYs.filter((c) => c < y).sort((a, b) => b - a)[0]
+  const careerBelow = (y: number) => careerYs.filter((c) => c > y).sort((a, b) => a - b)[0]
 
   return branches.map((branch, index) => {
-    const own = commits.filter((c) => c.branch === branch.name).flatMap((c) => (ys[c.id] === undefined ? [] : [ys[c.id]!]))
-    const lane: Lane = {
-      branch,
-      x: laneX(index),
-      colour: vars.colour.lane[branch.lane],
-      ys: own
+    const own = commits
+      .filter((c) => c.branch === branch.name)
+      .flatMap((c) => (ys[c.id] === undefined ? [] : [ys[c.id]!]))
+      .sort((a, b) => a - b)
+    const isMain = branch.name === 'career'
+    const lane: Lane = { branch, x: laneX(index), colour: vars.colour.lane[branch.lane], isMain, segments: [] }
+    if (own.length === 0) return lane
+
+    // The trunk (and any filtered single-branch view) is one continuous strand.
+    if (isMain || !careerVisible) {
+      lane.segments = [{ ys: own }]
+      return lane
     }
 
-    if (branch.name !== 'career' && careerVisible && own.length > 0) {
-      const oldest = Math.max(...own)
-      const newest = Math.min(...own)
-      // Fork off career just below the oldest commit (the next career row down).
-      lane.forkTargetY = careerYs.filter((y) => y > oldest).sort((a, b) => a - b)[0]
-      // Merge back into career just above the newest commit (the next career row
-      // up). If there's no career row above, the branch is still open — leave it
-      // to draw a dashed "still alive" tip instead.
-      lane.mergeTargetY = careerYs.filter((y) => y < newest).sort((a, b) => b - a)[0]
+    // Otherwise every project is its own short-lived branch: it forks off the
+    // nearest career commit below it and merges into the nearest one above.
+    // Projects sitting between the same two career commits ride one branch.
+    const groups = new Map<string, Segment>()
+    for (const y of own) {
+      const mergeTargetY = careerAbove(y)
+      const forkTargetY = careerBelow(y)
+      const key = `${mergeTargetY ?? 'x'}:${forkTargetY ?? 'x'}`
+      const seg = groups.get(key) ?? { ys: [], mergeTargetY, forkTargetY }
+      seg.ys.push(y)
+      groups.set(key, seg)
     }
-
+    lane.segments = [...groups.values()]
     return lane
   })
 }
@@ -137,22 +153,23 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
   return (
     <svg ref={svgRef} className={css.rail} width={geometry.width} height={height} aria-hidden="true" focusable="false">
       {lanes.map((lane, index) => {
-        if (lane.ys.length === 0) return null
-        const newest = Math.min(...lane.ys)
-        const oldest = Math.max(...lane.ys)
+        if (lane.segments.length === 0) return null
         const delay = laneDelay(index)
-        const isMain = lane.branch.name === 'career'
-        // The main branch is the trunk. Its commits carry a solid line down to
-        // the root; above the newest commit a faint dashed line reaches up to a
-        // distinct HEAD marker near the top (see the dots pass).
-        if (isMain) {
+
+        // The main branch is the trunk: a faint dashed line reaches from the
+        // diamond HEAD marker at the very top down to the newest commit, then a
+        // solid line runs on to the root.
+        if (lane.isMain) {
+          const ownYs = lane.segments[0]!.ys
+          const newest = Math.min(...ownYs)
+          const oldest = Math.max(...ownYs)
           return (
             <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2.5}>
               <line
                 className={dotClass}
                 style={{ transitionDelay: delay }}
                 x1={lane.x}
-                y1={HEAD_PAD + HEAD_SIZE + 4}
+                y1={HEAD_SIZE * 2 + 3}
                 x2={lane.x}
                 y2={newest - DOT_RADIUS - 3}
                 strokeDasharray="2 6"
@@ -168,73 +185,82 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
             </g>
           )
         }
+
         return (
           <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2}>
-            {lane.mergeTargetY !== undefined ? (
-              /* Merge back into career above the newest commit. */
-              <path
-                className={pathClass}
-                style={{ transitionDelay: delay }}
-                pathLength={1}
-                d={joinPath(lane.x, careerX, newest, lane.mergeTargetY)}
-              />
-            ) : (
-              /* No career row above: the branch is still alive — dashed tip. */
-              <line
-                className={dotClass}
-                style={{ transitionDelay: delay }}
-                x1={lane.x}
-                y1={Math.max(newest - TIP_LENGTH, 4)}
-                x2={lane.x}
-                y2={newest - DOT_RADIUS - 3}
-                strokeDasharray="2 6"
-                strokeLinecap="round"
-                strokeOpacity={0.55}
-              />
-            )}
-            {oldest > newest && (
-              <path
-                className={pathClass}
-                style={{ transitionDelay: delay }}
-                pathLength={1}
-                d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`}
-              />
-            )}
-            {lane.forkTargetY !== undefined && (
-              <path
-                className={pathClass}
-                style={{ transitionDelay: delay }}
-                pathLength={1}
-                d={joinPath(lane.x, careerX, oldest, lane.forkTargetY)}
-              />
-            )}
+            {lane.segments.map((seg, si) => {
+              const newest = Math.min(...seg.ys)
+              const oldest = Math.max(...seg.ys)
+              return (
+                <g key={si}>
+                  {seg.mergeTargetY !== undefined ? (
+                    /* Merge back into career above the newest commit. */
+                    <path
+                      className={pathClass}
+                      style={{ transitionDelay: delay }}
+                      pathLength={1}
+                      d={joinPath(lane.x, careerX, newest, seg.mergeTargetY)}
+                    />
+                  ) : (
+                    /* No career row above: the branch is still alive — dashed tip. */
+                    <line
+                      className={dotClass}
+                      style={{ transitionDelay: delay }}
+                      x1={lane.x}
+                      y1={Math.max(newest - TIP_LENGTH, 4)}
+                      x2={lane.x}
+                      y2={newest - DOT_RADIUS - 3}
+                      strokeDasharray="2 6"
+                      strokeLinecap="round"
+                      strokeOpacity={0.55}
+                    />
+                  )}
+                  {oldest > newest && (
+                    <path
+                      className={pathClass}
+                      style={{ transitionDelay: delay }}
+                      pathLength={1}
+                      d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`}
+                    />
+                  )}
+                  {seg.forkTargetY !== undefined && (
+                    <path
+                      className={pathClass}
+                      style={{ transitionDelay: delay }}
+                      pathLength={1}
+                      d={joinPath(lane.x, careerX, oldest, seg.forkTargetY)}
+                    />
+                  )}
+                </g>
+              )
+            })}
           </g>
         )
       })}
       {lanes.map((lane, index) => {
-        if (lane.ys.length === 0) return null
+        if (lane.segments.length === 0) return null
         const delay = laneDelay(index)
-        const isMain = lane.branch.name === 'career'
+        const allYs = lane.segments.flatMap((s) => s.ys)
         // Trunk commits are solid, slightly larger discs; branch commits are
         // hollow donuts (a bg-filled centre) so the two are easy to tell apart.
         return (
           <g key={`dots-${lane.branch.name}`} stroke={lane.colour} strokeWidth={2.5}>
-            {isMain && (
+            {lane.isMain && (
               /* The trunk's HEAD marker: a distinct hollow diamond at the top. */
               <path
                 className={dotClass}
                 style={{ transitionDelay: delay, fill: vars.colour.bg }}
-                d={diamondPath(lane.x, HEAD_PAD, HEAD_SIZE)}
+                d={diamondPath(lane.x, HEAD_SIZE, HEAD_SIZE)}
               />
             )}
-            {lane.ys.map((y) => (
+            {allYs.map((y) => (
               <circle
                 key={y}
                 className={dotClass}
-                style={{ transitionDelay: delay, fill: isMain ? lane.colour : vars.colour.bg }}
+                style={{ transitionDelay: delay, fill: lane.isMain ? lane.colour : vars.colour.bg }}
                 cx={lane.x}
                 cy={y}
-                r={isMain ? DOT_RADIUS + 1 : DOT_RADIUS}
+                r={lane.isMain ? DOT_RADIUS + 1 : DOT_RADIUS}
               />
             ))}
           </g>
