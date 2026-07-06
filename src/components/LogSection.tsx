@@ -28,10 +28,11 @@ export const LogSection = () => {
           $
         </span>
         git log --graph {commandArg}
+        <span className={css.caret} aria-hidden="true" />
       </h2>
       <p className={css.caption}>
-        The last decade, as it actually happened — newest first. Read straight down, pick a
-        branch to filter, or open a commit for the detail.
+        My career and side projects, newest first. Read straight down, pick a branch to
+        filter, or open a commit for the detail.
       </p>
 
       <div className={css.filters} role="group" aria-label="Filter the log by branch">

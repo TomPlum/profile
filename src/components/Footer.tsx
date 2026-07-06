@@ -66,6 +66,7 @@ export const Footer = () => (
           , my own npm component. Keyboard users:{' '}
           <kbd className={css.kbd}>j</kbd> <kbd className={css.kbd}>k</kbd> walk the commits.
         </p>
+        <p className={css.copyright}>© {new Date().getFullYear()} Thomas Plumpton</p>
       </div>
     </footer>
   </>

@@ -58,6 +58,12 @@ export const colophonInner = style({
   color: vars.colour.inkFaint
 })
 
+export const copyright = style({
+  marginTop: '0.5rem',
+  color: vars.colour.inkFaint,
+  letterSpacing: '0.02em'
+})
+
 export const colophonLink = style({
   color: 'inherit',
   textUnderlineOffset: '3px',

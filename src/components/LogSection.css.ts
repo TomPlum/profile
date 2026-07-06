@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
 
 export const section = style({
@@ -12,9 +12,9 @@ export const command = style({
   fontSize: 'clamp(0.95rem, 2.4vw, 1.15rem)',
   fontWeight: 600,
   color: vars.colour.ink,
-  display: 'inline-flex',
+  display: 'flex',
   alignItems: 'center',
-  maxWidth: '100%',
+  width: '100%',
   padding: '0.62rem 0.8rem',
   border: `1px solid ${vars.colour.line}`,
   borderRadius: '8px',
@@ -22,19 +22,34 @@ export const command = style({
   boxShadow: `inset 0 1px 0 ${vars.colour.surface}`,
   marginBottom: '0.8rem',
   overflowX: 'auto',
-  whiteSpace: 'nowrap',
-  '@media': {
-    '(max-width: 760px)': {
-      display: 'flex',
-      width: '100%'
-    }
-  }
+  whiteSpace: 'nowrap'
 })
 
 export const prompt = style({
   color: vars.colour.accent,
   marginRight: '0.5em',
   userSelect: 'none'
+})
+
+const blink = keyframes({
+  '0%, 49%': { opacity: 1 },
+  '50%, 100%': { opacity: 0 }
+})
+
+/** A terminal-style block cursor at the end of the command line. */
+export const caret = style({
+  display: 'inline-block',
+  width: '0.28em',
+  height: '1.15em',
+  marginLeft: '0.5em',
+  flexShrink: 0,
+  backgroundColor: vars.colour.accent,
+  animation: `${blink} 1.05s steps(1, start) infinite`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none'
+    }
+  }
 })
 
 export const caption = style({
