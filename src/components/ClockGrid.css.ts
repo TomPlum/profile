@@ -3,14 +3,14 @@ import { vars } from '../styles/theme.css'
 
 export const grid = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(13, minmax(0, 1fr))',
-  gap: '0.28rem',
+  gridTemplateColumns: 'repeat(11, minmax(0, 1fr))',
+  gap: '0.32rem',
   alignContent: 'center',
   minHeight: '8.5rem',
   padding: '1rem',
   '@media': {
     '(max-width: 520px)': {
-      gap: '0.18rem',
+      gap: '0.2rem',
       padding: '0.75rem'
     }
   }
@@ -25,14 +25,25 @@ export const face = style({
   overflow: 'hidden'
 })
 
-export const hand = style({
-  position: 'absolute',
+// All hands share one colour: the card's lane colour (set by ProjectDetail).
+const handBase = {
+  position: 'absolute' as const,
   left: '50%',
   top: '50%',
-  width: '46%',
-  height: '1.5px',
-  marginTop: '-0.75px',
+  height: '2px',
+  marginTop: '-1px',
   transformOrigin: 'left center',
   borderRadius: '999px',
+  backgroundColor: 'var(--lane)',
   willChange: 'transform'
+}
+
+export const handHour = style({
+  ...handBase,
+  width: '30%'
+})
+
+export const handMinute = style({
+  ...handBase,
+  width: '46%'
 })
