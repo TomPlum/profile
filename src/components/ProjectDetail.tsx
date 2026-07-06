@@ -65,32 +65,86 @@ const SleepChart = () => {
   const top = 3
   const bottom = 4
   const left = 1.5
+  const span = H - top - bottom
   const toPath = (values: number[]) =>
     values
       .map((v, i) => {
         const x = left + (i / (values.length - 1)) * (W - left)
-        const y = top + (1 - v) * (H - top - bottom)
+        const y = top + (1 - v) * span
         return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`
       })
       .join(' ')
   // The night the fixes took hold, between samples 6 and 7.
   const shiftX = left + (6.5 / 11) * (W - left)
 
+  // Tick positions as percentages of the plot box, shared by the SVG tick
+  // marks and the HTML labels (text lives outside the stretched SVG so it
+  // doesn't distort). Times are fake — the data is illustrative.
+  const yTicks = [0.8, 0.6, 0.4, 0.2].map((v) => ({
+    label: `${v * 100}%`,
+    pct: ((top + (1 - v) * span) / H) * 100
+  }))
+  const xTicks = [
+    { label: 'Nov 22', index: 1 },
+    { label: 'Jun 23', index: 4 },
+    { label: 'Jan 24', index: 7 },
+    { label: 'Aug 24', index: 10 }
+  ].map(({ label, index }) => ({
+    label,
+    pct: ((left + (index / 11) * (W - left)) / W) * 100
+  }))
+
   return (
     <div className={css.sleepPreview} aria-hidden="true">
-      <svg className={css.dashboardSvg} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" focusable="false">
-        <line className={css.sleepAxis} x1={left} y1="0" x2={left} y2={H - bottom} />
-        <line className={css.sleepAxis} x1={left} y1={H - bottom} x2={W} y2={H - bottom} />
-        <line className={css.sleepShiftLine} x1={shiftX} y1="0" x2={shiftX} y2={H - bottom} />
-        {sleepSeries.map((series, index) => (
-          <path
-            key={series.label}
-            className={css.sleepLine}
-            style={{ stroke: series.colour, '--series': index } as CSSProperties}
-            d={toPath(series.values)}
-          />
-        ))}
-      </svg>
+      <div className={css.sleepChartArea}>
+        <div className={css.sleepYLabels}>
+          {yTicks.map((tick) => (
+            <span key={tick.label} className={css.sleepAxisLabel} style={{ top: `${tick.pct}%` }}>
+              {tick.label}
+            </span>
+          ))}
+        </div>
+        <svg className={css.dashboardSvg} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" focusable="false">
+          <line className={css.sleepAxis} x1={left} y1="0" x2={left} y2={H - bottom} />
+          <line className={css.sleepAxis} x1={left} y1={H - bottom} x2={W} y2={H - bottom} />
+          {yTicks.map((tick) => (
+            <line
+              key={tick.label}
+              className={css.sleepAxis}
+              x1={left - 0.9}
+              y1={(tick.pct / 100) * H}
+              x2={left}
+              y2={(tick.pct / 100) * H}
+            />
+          ))}
+          {xTicks.map((tick) => (
+            <line
+              key={tick.label}
+              className={css.sleepAxis}
+              x1={(tick.pct / 100) * W}
+              y1={H - bottom}
+              x2={(tick.pct / 100) * W}
+              y2={H - bottom + 1.4}
+            />
+          ))}
+          <line className={css.sleepShiftLine} x1={shiftX} y1="0" x2={shiftX} y2={H - bottom} />
+          {sleepSeries.map((series, index) => (
+            <path
+              key={series.label}
+              className={css.sleepLine}
+              style={{ stroke: series.colour, '--series': index } as CSSProperties}
+              d={toPath(series.values)}
+            />
+          ))}
+        </svg>
+        <div className={css.sleepXLabels}>
+          {xTicks.map((tick) => (
+            <span key={tick.label} className={css.sleepAxisLabel} style={{ left: `${tick.pct}%` }}>
+              {tick.label}
+            </span>
+          ))}
+        </div>
+      </div>
       <div className={css.sleepLegend}>
         {sleepSeries.map((series) => (
           <span key={series.label} className={css.sleepLegendItem}>

@@ -288,6 +288,49 @@ export const sleepPreview = style([
   }
 ])
 
+/** y-label gutter | plot on top row; x-label strip under the plot. */
+export const sleepChartArea = style({
+  display: 'grid',
+  gridTemplateColumns: 'auto minmax(0, 1fr)',
+  gridTemplateRows: 'minmax(0, 1fr) auto',
+  minHeight: 0
+})
+
+export const sleepYLabels = style({
+  position: 'relative',
+  width: '1.9rem',
+  gridRow: 1,
+  gridColumn: 1
+})
+
+export const sleepXLabels = style({
+  position: 'relative',
+  height: '1rem',
+  gridRow: 2,
+  gridColumn: 2
+})
+
+export const sleepAxisLabel = style({
+  position: 'absolute',
+  fontFamily: vars.font.mono,
+  fontSize: '0.55rem',
+  lineHeight: 1,
+  color: vars.colour.inkFaint,
+  whiteSpace: 'nowrap',
+  // In the y gutter, `top` is set inline (centre on the tick); in the x
+  // strip, `left` is set inline (centre under the tick).
+  selectors: {
+    [`${sleepYLabels} &`]: {
+      right: '0.4rem',
+      transform: 'translateY(-50%)'
+    },
+    [`${sleepXLabels} &`]: {
+      top: '0.25rem',
+      transform: 'translateX(-50%)'
+    }
+  }
+})
+
 // Dash tricks break under non-scaling-stroke (Chrome computes dashes in
 // screen units, ignoring pathLength), so the draw-in is a clip wipe instead.
 const drawIn = keyframes({
