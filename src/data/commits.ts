@@ -10,17 +10,14 @@ export const branches: Branch[] = [
 /**
  * The log. One entry per real career event, newest first (sorting is enforced
  * at render time and by tests, so order here doesn't strictly matter).
- *
- * TODO(tom): the three dates marked below are my best guesses from public
- * data — correct them, and consider adding commits for any roles between
- * graduation (2018) and Matillion.
+ * Career dates are verified against Tom's LinkedIn export (July 2026).
  */
 export const commits: Commit[] = [
   {
     id: 'staff-engineer',
     branch: 'career',
-    date: '2024-04-01', // TODO(tom): real promotion date
-    dateLabel: '2024',
+    date: '2024-04-01',
+    dateLabel: 'Apr 2024',
     title: 'Promoted to Staff Software Engineer',
     summary:
       'The senior-most individual-contributor track at Matillion — setting technical ' +
@@ -84,16 +81,24 @@ export const commits: Commit[] = [
     projectId: 'nyuusu'
   },
   {
+    id: 'senior-engineer',
+    branch: 'career',
+    date: '2022-08-01',
+    dateLabel: 'Aug 2022',
+    title: 'Promoted to Senior Software Engineer',
+    summary:
+      'RESTful Spring Boot microservices with React and TypeScript front-ends, ' +
+      'on Matillion’s cloud data platform.'
+  },
+  {
     id: 'joined-matillion',
     branch: 'career',
-    // TODO(tom): real start date and starting title. Your CVs show Barclays as
-    // "Jun 2018 – Present" as late as the 2021 revision, so this guess may be early.
-    date: '2021-06-01',
-    dateLabel: '2021',
+    date: '2021-05-01',
+    dateLabel: 'May 2021',
     title: 'Joined Matillion',
     summary:
-      'Building data integration products: Kotlin and Spring Boot on the back, ' +
-      'React and TypeScript on the front.'
+      'Started on Matillion ETL — Java and GWT — and brought Cypress testing to a ' +
+      'legacy codebase. Two promotions followed in the next three years.'
   },
   {
     id: 'learn-japanese',
@@ -122,26 +127,64 @@ export const commits: Commit[] = [
     projectId: 'advent-of-code'
   },
   {
+    id: 'barclays-ba4',
+    branch: 'career',
+    date: '2019-08-26',
+    dateLabel: 'Aug 2019',
+    title: 'Promoted at Barclays — identity & verification',
+    summary:
+      'Java developer on Barclaycard’s Identification & Verification team, promoted ' +
+      'fourteen months into the graduate role.'
+  },
+  {
     id: 'joined-barclays',
     branch: 'career',
-    date: '2018-06-15',
+    date: '2018-06-04',
     dateLabel: 'Jun 2018',
     title: 'Joined Barclays as a Software Developer',
     summary:
-      'Graduate role building RESTful Spring Boot services in Java and Kotlin, with ' +
-      'React and TypeScript front-ends. Named best newcomer that December; promoted ' +
-      'in August 2019.'
+      'Graduate role in Personal & Corporate Banking at the Radbroke technology ' +
+      'centre — Java, Spring, TDD and DDD. Named best newcomer that December.'
   },
   {
     id: 'graduated',
     branch: 'career',
-    date: '2018-06-01', // graduation year verified (2015–2018); month assumed
+    date: '2018-06-01', // year verified; graduation month assumed
     dateLabel: '2018',
     title: 'Graduated — BSc Computing, First Class (Hons)',
     summary:
-      'University of Bolton, with a Government Award. Final-year project: analysing ' +
-      'the randomness of social media streams and using it to drive Robocode AI.',
+      'University of Bolton, with the Governors Prize in years two and three. ' +
+      'Final-year project: analysing the randomness of social media streams and ' +
+      'using it to drive Robocode AI.',
     tags: ['bsc']
+  },
+  {
+    id: 'retail-sensing',
+    branch: 'career',
+    date: '2017-05-01',
+    dateLabel: 'May 2017',
+    title: 'Joined Retail Sensing as a MEAN-stack developer',
+    summary:
+      'Part-time through final year of university: D3.js visualisations of live data ' +
+      'from public vehicles worldwide, on MongoDB Atlas and AWS.'
+  },
+  {
+    id: 'ocean82',
+    branch: 'career',
+    date: '2016-06-01',
+    dateLabel: 'Jun 2016',
+    title: 'First industry code — summer placement at Ocean82',
+    summary:
+      'Built WordPress sites front to back — PHP, MySQL, IIS — the summer after ' +
+      'first year.'
+  },
+  {
+    id: 'a-levels',
+    branch: 'career',
+    date: '2015-06-01',
+    dateLabel: '2015',
+    title: 'A-Levels — Maths, Physics, Computer Science',
+    summary: 'Rochdale Sixth Form College. Where the computing started.'
   }
 ]
 

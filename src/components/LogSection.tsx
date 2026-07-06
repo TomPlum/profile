@@ -30,7 +30,7 @@ export const LogSection = () => {
         git log --graph {commandArg}
       </h2>
       <p className={css.caption}>
-        My last eight years, as they actually happened — newest first. Read straight down, pick a
+        The last decade, as it actually happened — newest first. Read straight down, pick a
         branch to filter, or open a commit for the detail.
       </p>
 

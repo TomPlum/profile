@@ -38,18 +38,12 @@ so they're stable across builds.
 
 ## TODO — facts only Tom knows
 
-Search the repo for `TODO(tom)`:
-
 1. **`public/cv.pdf`** is a placeholder — export a redacted PDF (no home address /
-   DOB / phone) from the `curriculum-vitae` repo's Pages doc and drop it in.
-2. **Matillion start date** and starting title (`joined-matillion` commit) —
-   the CVs only show Barclays as "Jun 2018 – Present" up to their 2021 revision.
-3. **Staff promotion date** (`staff-engineer` commit).
+   DOB / phone) from `~/git/curriculum-vitae` and drop it in.
 
-Education (University of Bolton, BSc Computing, First Class (Hons), 2015–2018),
-Barclays (Jun 2018, best-newcomer award, Aug 2019 promotion) and natomski
-(May 2026, natomski.uk) are verified from the private `curriculum-vitae` repo
-and GitHub.
+All career dates (Matillion May 2021 → Senior Aug 2022 → Staff Apr 2024;
+Barclays Jun 2018 → BA4 Aug 2019; Retail Sensing; Ocean82; Bolton; Rochdale
+Sixth Form) are verified against Tom's LinkedIn export, July 2026.
 
 ## Architecture notes
 
