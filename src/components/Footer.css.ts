@@ -68,6 +68,19 @@ export const colophonLink = style({
   }
 })
 
+/** Keyboard hints rendered as little keycaps — the j / k shortcuts. */
+export const kbd = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.9em',
+  lineHeight: 1,
+  padding: '0.15em 0.45em',
+  borderRadius: '5px',
+  border: `1px solid ${vars.colour.line}`,
+  backgroundColor: vars.colour.inset,
+  color: vars.colour.ink,
+  boxShadow: `inset 0 -1px 0 ${vars.colour.line}`
+})
+
 /** The "built with Claude Code" lockup: the animated mark + its label. */
 export const claudeLink = style({
   color: 'inherit',

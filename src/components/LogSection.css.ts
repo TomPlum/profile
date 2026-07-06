@@ -22,7 +22,13 @@ export const command = style({
   boxShadow: `inset 0 1px 0 ${vars.colour.surface}`,
   marginBottom: '0.8rem',
   overflowX: 'auto',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
+  '@media': {
+    '(max-width: 760px)': {
+      display: 'flex',
+      width: '100%'
+    }
+  }
 })
 
 export const prompt = style({

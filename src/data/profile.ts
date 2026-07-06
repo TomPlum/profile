@@ -3,6 +3,8 @@ export const profile = {
   role: 'Staff Software Engineer',
   company: 'Matillion',
   companyHref: 'https://www.matillion.com',
+  companyLogo: 'maia.png', // Matillion's "Maia" mark; relative so it resolves under any base
+  companyLogoDark: 'maia-dark-mode.png', // dark-theme variant (light eyes/sparkle)
   location: 'Cheshire, UK',
   valueStatement:
     'Full-stack engineer with a strong front-end focus — React and TypeScript, ' +
@@ -12,7 +14,7 @@ export const profile = {
     src: 'me.jpeg',
     alt: 'Thomas Plumpton in the mountains'
   },
-  stack: ['React', 'TypeScript', 'Kotlin', 'Spring Boot'],
+  stack: ['React', 'TypeScript', 'Cypress', 'Kotlin', 'Java', 'Spring Boot', 'Claude', 'Codex'],
   /** The small human line under the masthead. */
   currently: 'Currently: learning Japanese & Polish, lifting, reading fantasy, building PCs.',
   email: 'Thomas.Plumpton@hotmail.co.uk', // matches the contact address on the CV

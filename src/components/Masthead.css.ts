@@ -50,13 +50,18 @@ export const name = style({
   fontFamily: vars.font.display,
   fontVariationSettings: "'opsz' 144, 'SOFT' 0, 'WONK' 1",
   fontWeight: 540,
-  fontSize: 'clamp(2.9rem, 9.5vw, 5.9rem)',
+  fontSize: 'clamp(2.9rem, 8vw, 4.6rem)',
   lineHeight: 1.0,
   letterSpacing: '-0.02em',
   color: vars.colour.ink,
   textWrap: 'balance',
   marginBottom: '1.1rem',
   '@media': {
+    // Above the mobile stack the name shares its row with the portrait, so
+    // keep "Thomas Plumpton" on a single line.
+    '(min-width: 761px)': {
+      whiteSpace: 'nowrap'
+    },
     '(max-width: 760px)': {
       marginBottom: '0.7rem'
     }
@@ -78,13 +83,58 @@ export const roleLine = style({
   }
 })
 
+/** Company name + its Maia mark, kept together so they never wrap apart. */
+export const company = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.34em',
+  whiteSpace: 'nowrap'
+})
+
+/** Matillion brand teal (#00524E), lightened in dark mode to hold contrast. */
 export const companyLink = style({
-  color: vars.colour.accent,
+  color: '#00524E',
   textDecorationThickness: '1px',
   textUnderlineOffset: '4px',
   selectors: {
     '&:hover': {
       color: vars.colour.ink
+    },
+    ':root[data-theme="dark"] &': {
+      color: '#4FBFA9'
+    },
+    ':root[data-theme="dark"] &:hover': {
+      color: vars.colour.ink
+    }
+  }
+})
+
+// Height-driven with auto width so each mark keeps its own aspect ratio
+// (the light Maia is square; the dark variant is taller than it is wide).
+const companyLogoBase = {
+  height: '1.15em',
+  width: 'auto',
+  flexShrink: 0
+} as const
+
+/** Light-theme Maia (dark eyes/sparkle); hidden when the dark variant shows. */
+export const companyLogo = style({
+  ...companyLogoBase,
+  display: 'inline-block',
+  selectors: {
+    ':root[data-theme="dark"] &': {
+      display: 'none'
+    }
+  }
+})
+
+/** Dark-theme Maia (light eyes/sparkle); only shown under the dark theme. */
+export const companyLogoDark = style({
+  ...companyLogoBase,
+  display: 'none',
+  selectors: {
+    ':root[data-theme="dark"] &': {
+      display: 'inline-block'
     }
   }
 })
@@ -139,6 +189,13 @@ export const techIcon = style({
   display: 'inline-flex'
 })
 
+/** A mono link that leads with a brand glyph (e.g. the GitHub mark). */
+export const iconLink = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.4em'
+})
+
 export const linksRow = style({
   display: 'flex',
   flexWrap: 'wrap',
@@ -177,8 +234,7 @@ export const portrait = style({
   '@media': {
     '(max-width: 760px)': {
       justifySelf: 'start',
-      width: 'min(34vw, 128px)',
-      order: -1
+      width: 'min(56vw, 190px)'
     }
   }
 })

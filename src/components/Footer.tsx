@@ -1,5 +1,6 @@
 import { profile } from '../data/profile'
 import { buttonGhost, buttonPrimary } from '../styles/controls.css'
+import { TechIcon } from './TechIcon'
 import * as css from './Footer.css'
 
 const SPARKLE =
@@ -30,9 +31,11 @@ export const Footer = () => (
             CV (PDF)
           </a>
           <a className={buttonGhost} href={profile.links.github} target="_blank" rel="noopener">
+            <TechIcon name="GitHub" />
             GitHub
           </a>
           <a className={buttonGhost} href={profile.links.twitter} target="_blank" rel="noopener">
+            <TechIcon name="X" />
             X / Twitter
           </a>
         </p>
@@ -60,7 +63,8 @@ export const Footer = () => (
           >
             react-git-log
           </a>
-          , my own npm component. Keyboard users: j / k walk the commits.
+          , my own npm component. Keyboard users:{' '}
+          <kbd className={css.kbd}>j</kbd> <kbd className={css.kbd}>k</kbd> walk the commits.
         </p>
       </div>
     </footer>

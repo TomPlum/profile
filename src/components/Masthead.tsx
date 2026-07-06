@@ -18,9 +18,13 @@ export const Masthead = () => (
 
       <p className={css.roleLine}>
         {profile.role} at{' '}
-        <a className={css.companyLink} href={profile.companyHref} target="_blank" rel="noopener">
-          {profile.company}
-        </a>
+        <span className={css.company}>
+          <a className={css.companyLink} href={profile.companyHref} target="_blank" rel="noopener">
+            {profile.company}
+          </a>
+          <img className={css.companyLogo} src={profile.companyLogo} alt="" aria-hidden="true" />
+          <img className={css.companyLogoDark} src={profile.companyLogoDark} alt="" aria-hidden="true" />
+        </span>
       </p>
 
       <p className={css.value}>{profile.valueStatement}</p>
@@ -37,11 +41,9 @@ export const Masthead = () => (
       </ul>
 
       <p className={css.linksRow}>
-        <a className={monoLink} href={profile.links.github} target="_blank" rel="noopener">
-          GitHub ↗
-        </a>
-        <a className={monoLink} href={profile.links.twitter} target="_blank" rel="noopener">
-          X / Twitter ↗
+        <a className={`${monoLink} ${css.iconLink}`} href={profile.links.github} target="_blank" rel="noopener">
+          <TechIcon name="GitHub" />
+          GitHub
         </a>
         <a className={monoLink} href={`mailto:${profile.email}`}>
           {profile.email}
