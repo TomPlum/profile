@@ -19,11 +19,52 @@ const CodexMark = () => (
   </div>
 )
 
+/**
+ * A miniature CLI session running Claude Code. Lines type themselves in when
+ * the card expands (the global reduced-motion kill-switch reveals them
+ * instantly); the session it plays back mirrors the orchestration workflow
+ * the body text describes.
+ */
+const claudeSession: { text: string; kind: 'command' | 'claude' | 'tool' | 'ok' }[] = [
+  { text: '$ claude', kind: 'command' },
+  { text: '✻ Claude Code', kind: 'claude' },
+  { text: '> fix the flaky SRS test', kind: 'command' },
+  { text: '⏺ Read scheduler.test.ts', kind: 'tool' },
+  { text: '⏺ Edit srs/scheduler.ts', kind: 'tool' },
+  { text: '⏺ Bash npm test', kind: 'tool' },
+  { text: '✓ 58 passed · 2 agents reviewing', kind: 'ok' }
+]
+
+const ClaudeCodeTerminal = () => (
+  <div className={css.terminal} aria-hidden="true">
+    <div className={css.terminalBar}>
+      <span className={css.terminalDot} />
+      <span className={css.terminalDot} />
+      <span className={css.terminalDot} />
+    </div>
+    {claudeSession.map((line, index) => (
+      <span
+        key={line.text}
+        className={`${css.terminalRow} ${css.terminalKind[line.kind]}`}
+        style={{ animationDelay: `${0.35 + index * 0.55}s` }}
+      >
+        {line.text}
+      </span>
+    ))}
+    <span
+      className={css.terminalCursor}
+      style={{ animationDelay: `${0.35 + claudeSession.length * 0.55}s` }}
+    />
+  </div>
+)
+
 /** Bespoke visual asides for body-only commits, keyed by commit id. */
 const visualFor = (id: string): ReactNode => {
   switch (id) {
     case 'codex-adoption':
       return <CodexMark />
+    case 'claude-code-adoption':
+      return <ClaudeCodeTerminal />
     default:
       return null
   }

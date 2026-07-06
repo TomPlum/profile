@@ -24,9 +24,11 @@ export const commits: Commit[] = [
       'workflow: implementation, iteration and review, not blind generation.',
     body:
       'I started with careful experiments around Claude Code, then built a working rhythm around ' +
-      'repo context, bespoke CLAUDE.md files, skills, plugins and an agentic SDLC. Since then, ' +
-      'the balance has steadily shifted from fully handwritten code toward AI-authored changes ' +
-      'guided by precise context, rigorous PR review and repeated implementation feedback.',
+      'repo context, bespoke `CLAUDE.md` files, skills, plugins and an agentic SDLC. These days I ' +
+      'orchestrate several Claude Code instances at once — one implementing while others review, ' +
+      'explore or verify — which multiplies my delivery speed without loosening the bar: precise ' +
+      'context, rigorous PR review and repeated implementation feedback.',
+    stack: ['Claude', 'CLI'],
     tags: ['ai', 'head']
   },
   {
