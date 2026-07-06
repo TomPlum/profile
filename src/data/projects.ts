@@ -8,10 +8,20 @@ export const projects: Project[] = [
       'A React component that draws an interactive, themeable Git commit graph — ' +
       'branches, tags, pagination and all.',
     whatItShows:
-      'I can design, document, version and ship a public API that other developers ' +
-      'depend on: 21 releases, semantic versioning, automated publishing from CI. ' +
-      'It also inspired the page you are reading.',
+      'This is my flagship open-source library. I can design, document, version and ' +
+      'ship a public API that other developers depend on: 21 releases, semantic ' +
+      'versioning, automated publishing from CI. It also inspired the page you are reading.',
     stack: ['React', 'TypeScript'],
+    sections: [
+      {
+        label: 'Why it exists',
+        text:
+          'It grew out of my day job: working on the Git integration in Maia Foundation ' +
+          '(formerly the Matillion Data Productivity Cloud), I wanted a Git log/graph ' +
+          'component for the UI and could not find anything open source and off the ' +
+          'shelf — so I wrote one myself.'
+      }
+    ],
     facts: [
       {
         text: 'v3.5.1 · 21 releases',
