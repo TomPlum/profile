@@ -27,7 +27,11 @@ const geometryFor = (laneCount: number, compact: boolean): RailGeometry => {
 
 export const CommitLog = ({ commits, branches }: CommitLogProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(new Set())
+  const [hoveredCommitId, setHoveredCommitId] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(() => {
+    const id = new URLSearchParams(window.location.search).get('commit')
+    return id || null
+  })
   const compact = useMediaQuery('(max-width: 640px)')
   const geometry = geometryFor(branches.length, compact)
 
@@ -35,15 +39,24 @@ export const CommitLog = ({ commits, branches }: CommitLogProps) => {
   const { anchors, registerAnchor } = useAnchors(containerRef, visibleIds)
 
   const toggle = useCallback((id: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
+    const next = expandedId === id ? null : id
+    const url = new URL(window.location.href)
+    if (next) {
+      url.searchParams.set('commit', next)
+    } else {
+      url.searchParams.delete('commit')
+    }
+    window.history.pushState({}, '', url)
+    setExpandedId(next)
+  }, [expandedId])
+
+  useEffect(() => {
+    const restoreFromUrl = () => {
+      const id = new URLSearchParams(window.location.search).get('commit')
+      setExpandedId(id || null)
+    }
+    window.addEventListener('popstate', restoreFromUrl)
+    return () => window.removeEventListener('popstate', restoreFromUrl)
   }, [])
 
   // j/k moves focus through the commit rows — a small courtesy for the
@@ -73,7 +86,14 @@ export const CommitLog = ({ commits, branches }: CommitLogProps) => {
 
   return (
     <div ref={containerRef} className={css.wrap}>
-      <GraphRail commits={commits} branches={branches} ys={anchors.ys} height={anchors.height} geometry={geometry} />
+      <GraphRail
+        commits={commits}
+        branches={branches}
+        ys={anchors.ys}
+        height={anchors.height}
+        geometry={geometry}
+        hoveredCommitId={hoveredCommitId}
+      />
       <ol className={css.list} style={{ paddingLeft: geometry.width }}>
         {commits.map((commit) => {
           const branch = branchByName(commit.branch)
@@ -84,8 +104,9 @@ export const CommitLog = ({ commits, branches }: CommitLogProps) => {
               commit={commit}
               branch={branch}
               isHead={headIds.has(commit.id)}
-              expanded={expandedIds.has(commit.id)}
+              expanded={expandedId === commit.id}
               onToggle={toggle}
+              onHoverChange={setHoveredCommitId}
               registerAnchor={registerAnchor(commit.id)}
             />
           )

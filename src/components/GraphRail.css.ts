@@ -7,6 +7,23 @@ export const rail = style({
   pointerEvents: 'none'
 })
 
+export const lane = style({
+  opacity: 1,
+  transition: 'opacity 180ms ease'
+})
+
+export const laneDimmed = style({
+  opacity: 0.16
+})
+
+/** A forgiving invisible stroke over each visible lane path. */
+export const laneHitArea = style({
+  pointerEvents: 'stroke',
+  stroke: 'transparent',
+  strokeWidth: 12,
+  cursor: 'default'
+})
+
 /** Paths are normalised with pathLength=1 and drawn in by shrinking the dash offset. */
 export const path = style({
   strokeDasharray: 1,
@@ -20,11 +37,18 @@ export const pathDrawn = style({
 
 export const dot = style({
   opacity: 0,
-  transition: 'opacity 500ms ease'
+  transformBox: 'fill-box',
+  transformOrigin: 'center',
+  transition: 'opacity 500ms ease, transform 150ms ease, stroke-width 150ms ease'
 })
 
 export const dotDrawn = style({
   opacity: 1
+})
+
+export const dotHovered = style({
+  transform: 'scale(1.4)',
+  strokeWidth: 3.5
 })
 
 export const instant = style({

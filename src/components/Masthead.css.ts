@@ -98,13 +98,13 @@ export const companyLink = style({
   textUnderlineOffset: '4px',
   selectors: {
     '&:hover': {
-      color: vars.colour.ink
+      color: vars.colour.accent
     },
     ':root[data-theme="dark"] &': {
       color: '#4FBFA9'
     },
     ':root[data-theme="dark"] &:hover': {
-      color: vars.colour.ink
+      color: vars.colour.accent
     }
   }
 })

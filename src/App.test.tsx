@@ -1,7 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { App } from './App'
+import { TechIcon } from './components/TechIcon'
 import { sortedCommits } from './data/commits'
+import { projects } from './data/projects'
 import { profile } from './data/profile'
 
 /**
@@ -42,6 +44,7 @@ beforeAll(() => {
 
 afterEach(() => {
   cleanup()
+  window.history.replaceState({}, '', '/')
 })
 
 describe('the five-second test', () => {
@@ -82,5 +85,52 @@ describe('the five-second test', () => {
 
     fireEvent.keyDown(window, { key: 'k' })
     expect(document.activeElement).toBe(rows[0])
+  })
+
+  it('serialises the expanded commit in the URL and restores it on navigation', () => {
+    window.history.replaceState({}, '', '/?from=recruiter&commit=staff-engineer')
+    render(<App />)
+
+    const staff = screen.getByRole('button', { name: /Promoted to Staff Software Engineer/i })
+    const clocks = screen.getByRole('button', { name: /Recreated a kinetic clock sculpture/i })
+    expect(staff.getAttribute('aria-expanded')).toBe('true')
+
+    fireEvent.click(clocks)
+    expect(staff.getAttribute('aria-expanded')).toBe('false')
+    expect(clocks.getAttribute('aria-expanded')).toBe('true')
+    expect(new URLSearchParams(window.location.search).get('commit')).toBe('clocks')
+    expect(new URLSearchParams(window.location.search).get('from')).toBe('recruiter')
+
+    window.history.replaceState({}, '', '/?from=recruiter&commit=staff-engineer')
+    fireEvent.popState(window)
+    expect(staff.getAttribute('aria-expanded')).toBe('true')
+    expect(clocks.getAttribute('aria-expanded')).toBe('false')
+
+    fireEvent.click(staff)
+    expect(new URLSearchParams(window.location.search).has('commit')).toBe(false)
+    expect(new URLSearchParams(window.location.search).get('from')).toBe('recruiter')
+  })
+
+  it('renders an icon for every technology pill', () => {
+    const technologies = new Set([
+      ...profile.stack,
+      ...projects.flatMap((project) => project.stack)
+    ])
+    render(
+      <>
+        {[...technologies].map((technology) => (
+          <span key={technology} data-testid={`icon-${technology}`}>
+            <TechIcon name={technology} />
+          </span>
+        ))}
+      </>
+    )
+
+    technologies.forEach((technology) => {
+      expect(
+        screen.getByTestId(`icon-${technology}`).querySelector('svg'),
+        `missing icon for ${technology}`
+      ).not.toBeNull()
+    })
   })
 })

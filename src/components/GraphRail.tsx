@@ -21,6 +21,7 @@ interface GraphRailProps {
   ys: Record<string, number>
   height: number
   geometry: RailGeometry
+  hoveredCommitId?: string | null
 }
 
 const DOT_RADIUS = 5
@@ -34,7 +35,7 @@ const diamondPath = (cx: number, cy: number, d: number): string =>
 
 interface Segment {
   /** This branch segment's own commit rows. */
-  ys: number[]
+  nodes: Array<{ id: string; y: number }>
   /** Career row it forks off at its oldest (lower) end. */
   forkTargetY?: number
   /** Career row it merges back into at its newest (upper) end. */
@@ -62,15 +63,15 @@ const buildLanes = (commits: Commit[], branches: Branch[], ys: Record<string, nu
   return branches.map((branch, index) => {
     const own = commits
       .filter((c) => c.branch === branch.name)
-      .flatMap((c) => (ys[c.id] === undefined ? [] : [ys[c.id]!]))
-      .sort((a, b) => a - b)
+      .flatMap((c) => (ys[c.id] === undefined ? [] : [{ id: c.id, y: ys[c.id]! }]))
+      .sort((a, b) => a.y - b.y)
     const isMain = branch.name === 'career'
     const lane: Lane = { branch, x: laneX(index), colour: vars.colour.lane[branch.lane], isMain, segments: [] }
     if (own.length === 0) return lane
 
     // The trunk (and any filtered single-branch view) is one continuous strand.
     if (isMain || !careerVisible) {
-      lane.segments = [{ ys: own }]
+      lane.segments = [{ nodes: own }]
       return lane
     }
 
@@ -78,12 +79,13 @@ const buildLanes = (commits: Commit[], branches: Branch[], ys: Record<string, nu
     // nearest career commit below it and merges into the nearest one above.
     // Projects sitting between the same two career commits ride one branch.
     const groups = new Map<string, Segment>()
-    for (const y of own) {
+    for (const node of own) {
+      const y = node.y
       const mergeTargetY = careerAbove(y)
       const forkTargetY = careerBelow(y)
       const key = `${mergeTargetY ?? 'x'}:${forkTargetY ?? 'x'}`
-      const seg = groups.get(key) ?? { ys: [], mergeTargetY, forkTargetY }
-      seg.ys.push(y)
+      const seg = groups.get(key) ?? { nodes: [], mergeTargetY, forkTargetY }
+      seg.nodes.push(node)
       groups.set(key, seg)
     }
     lane.segments = [...groups.values()]
@@ -111,10 +113,11 @@ const joinPath = (x: number, careerX: number, from: number, to: number): string 
  * log itself is a semantic list — so the whole SVG is hidden from assistive
  * tech. Lane positions come from measured row positions (see useAnchors).
  */
-export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRailProps) => {
+export const GraphRail = ({ commits, branches, ys, height, geometry, hoveredCommitId = null }: GraphRailProps) => {
   const reduceMotion = useReducedMotion() ?? false
   const svgRef = useRef<SVGSVGElement>(null)
   const [inView, setInView] = useState(false)
+  const [hoveredBranch, setHoveredBranch] = useState<string | null>(null)
   const drawn = reduceMotion || inView
   const hasSize = height > 0
 
@@ -144,8 +147,15 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
   const dotClass = [css.dot, drawn && css.dotDrawn, reduceMotion && css.instant].filter(Boolean).join(' ')
   // Lanes draw in with a slight stagger, applied as an inline transition delay.
   const laneDelay = (index: number) => (reduceMotion ? undefined : `${index * 130}ms`)
+  const isLaneDimmed = (branchName: string) => hoveredBranch !== null && hoveredBranch !== branchName
+  const laneClass = (branchName: string) =>
+    [css.lane, isLaneDimmed(branchName) && css.laneDimmed]
+      .filter(Boolean)
+      .join(' ')
 
-  // Rendered in two passes so every node sits above every line: a lane's own
+  // Visible lines and nodes render in separate passes so every node sits above
+  // every line. A transparent middle pass provides forgiving hover targets.
+  // A lane's own
   // through-line and other lanes' fork/merge curves would otherwise paint over
   // neighbouring dots. The nodes are donuts whose centres are filled with the
   // page background, so the line is hidden inside the ring rather than showing
@@ -160,11 +170,20 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
         // diamond HEAD marker at the very top down to the newest commit, then a
         // solid line runs on to the root.
         if (lane.isMain) {
-          const ownYs = lane.segments[0]!.ys
+          const ownYs = lane.segments[0]!.nodes.map((node) => node.y)
           const newest = Math.min(...ownYs)
           const oldest = Math.max(...ownYs)
           return (
-            <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2.5}>
+            <g
+              key={`lines-${lane.branch.name}`}
+              className={laneClass(lane.branch.name)}
+              data-branch={lane.branch.name}
+              data-dimmed={isLaneDimmed(lane.branch.name) ? 'true' : undefined}
+              data-rail-layer="lines"
+              stroke={lane.colour}
+              fill="none"
+              strokeWidth={2.5}
+            >
               <line
                 className={dotClass}
                 style={{ transitionDelay: delay }}
@@ -187,10 +206,20 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
         }
 
         return (
-          <g key={`lines-${lane.branch.name}`} stroke={lane.colour} fill="none" strokeWidth={2}>
+          <g
+            key={`lines-${lane.branch.name}`}
+            className={laneClass(lane.branch.name)}
+            data-branch={lane.branch.name}
+            data-dimmed={isLaneDimmed(lane.branch.name) ? 'true' : undefined}
+            data-rail-layer="lines"
+            stroke={lane.colour}
+            fill="none"
+            strokeWidth={2}
+          >
             {lane.segments.map((seg, si) => {
-              const newest = Math.min(...seg.ys)
-              const oldest = Math.max(...seg.ys)
+              const ownYs = seg.nodes.map((node) => node.y)
+              const newest = Math.min(...ownYs)
+              const oldest = Math.max(...ownYs)
               return (
                 <g key={si}>
                   {seg.mergeTargetY !== undefined ? (
@@ -237,14 +266,74 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
           </g>
         )
       })}
+      {lanes.map((lane) => {
+        if (lane.segments.length === 0) return null
+
+        const hitGeometry = lane.isMain ? (() => {
+          const ownYs = lane.segments[0]!.nodes.map((node) => node.y)
+          const newest = Math.min(...ownYs)
+          const oldest = Math.max(...ownYs)
+          return (
+            <>
+              <line x1={lane.x} y1={HEAD_SIZE * 2 + 3} x2={lane.x} y2={newest - DOT_RADIUS - 3} />
+              <path d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`} />
+            </>
+          )
+        })() : lane.segments.map((seg, si) => {
+          const ownYs = seg.nodes.map((node) => node.y)
+          const newest = Math.min(...ownYs)
+          const oldest = Math.max(...ownYs)
+          return (
+            <g key={si}>
+              {seg.mergeTargetY !== undefined ? (
+                <path d={joinPath(lane.x, careerX, newest, seg.mergeTargetY)} />
+              ) : (
+                <line
+                  x1={lane.x}
+                  y1={Math.max(newest - TIP_LENGTH, 4)}
+                  x2={lane.x}
+                  y2={newest - DOT_RADIUS - 3}
+                />
+              )}
+              {oldest > newest && <path d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`} />}
+              {seg.forkTargetY !== undefined && (
+                <path d={joinPath(lane.x, careerX, oldest, seg.forkTargetY)} />
+              )}
+            </g>
+          )
+        })
+
+        return (
+          <g
+            key={`hit-${lane.branch.name}`}
+            className={css.laneHitArea}
+            data-branch={lane.branch.name}
+            data-rail-layer="hit"
+            fill="none"
+            onPointerEnter={() => setHoveredBranch(lane.branch.name)}
+            onPointerLeave={() => setHoveredBranch(null)}
+          >
+            {hitGeometry}
+          </g>
+        )
+      })}
       {lanes.map((lane, index) => {
         if (lane.segments.length === 0) return null
         const delay = laneDelay(index)
-        const allYs = lane.segments.flatMap((s) => s.ys)
+        const allNodes = lane.segments.flatMap((segment) => segment.nodes)
         // Trunk commits are solid, slightly larger discs; branch commits are
         // hollow donuts (a bg-filled centre) so the two are easy to tell apart.
         return (
-          <g key={`dots-${lane.branch.name}`} stroke={lane.colour} strokeWidth={2.5}>
+          <g
+            key={`dots-${lane.branch.name}`}
+            className={laneClass(lane.branch.name)}
+            data-branch={lane.branch.name}
+            data-dimmed={isLaneDimmed(lane.branch.name) ? 'true' : undefined}
+            data-rail-layer="nodes"
+            stroke={lane.colour}
+            strokeWidth={2.5}
+            pointerEvents="none"
+          >
             {lane.isMain && (
               /* The trunk's HEAD marker: a distinct hollow diamond at the top. */
               <path
@@ -253,16 +342,24 @@ export const GraphRail = ({ commits, branches, ys, height, geometry }: GraphRail
                 d={diamondPath(lane.x, HEAD_SIZE, HEAD_SIZE)}
               />
             )}
-            {allYs.map((y) => (
-              <circle
-                key={y}
-                className={dotClass}
-                style={{ transitionDelay: delay, fill: lane.isMain ? lane.colour : vars.colour.bg }}
-                cx={lane.x}
-                cy={y}
-                r={lane.isMain ? DOT_RADIUS + 1 : DOT_RADIUS}
-              />
-            ))}
+            {allNodes.map(({ id, y }) => {
+              const hovered = hoveredCommitId === id
+              return (
+                <circle
+                  key={id}
+                  className={`${dotClass} ${hovered ? css.dotHovered : ''}`}
+                  data-commit-id={id}
+                  data-hovered={hovered ? 'true' : undefined}
+                  style={{
+                    transitionDelay: reduceMotion ? undefined : `${delay}, 0ms, 0ms`,
+                    fill: lane.isMain ? lane.colour : vars.colour.bg
+                  }}
+                  cx={lane.x}
+                  cy={y}
+                  r={lane.isMain ? DOT_RADIUS + 1 : DOT_RADIUS}
+                />
+              )
+            })}
           </g>
         )
       })}

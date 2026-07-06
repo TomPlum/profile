@@ -14,6 +14,7 @@ interface CommitRowProps {
   isHead: boolean
   expanded: boolean
   onToggle: (id: string) => void
+  onHoverChange: (id: string | null) => void
   registerAnchor: (el: HTMLElement | null) => void
 }
 
@@ -25,7 +26,7 @@ const Chevron = ({ open }: { open: boolean }) => (
   </span>
 )
 
-export const CommitRow = ({ commit, branch, isHead, expanded, onToggle, registerAnchor }: CommitRowProps) => {
+export const CommitRow = ({ commit, branch, isHead, expanded, onToggle, onHoverChange, registerAnchor }: CommitRowProps) => {
   const reduceMotion = useReducedMotion() ?? false
   const project = commit.projectId ? projectById(commit.projectId) : undefined
   const expandable = Boolean(project || commit.body)
@@ -67,12 +68,25 @@ export const CommitRow = ({ commit, branch, isHead, expanded, onToggle, register
             aria-expanded={expanded}
             aria-controls={detailId}
             onClick={() => onToggle(commit.id)}
+            onPointerEnter={() => onHoverChange(commit.id)}
+            onPointerLeave={() => onHoverChange(null)}
+            onFocus={() => onHoverChange(commit.id)}
+            onBlur={() => onHoverChange(null)}
           >
             {header}
           </button>
         </div>
       ) : (
-        <div ref={registerAnchor} className={css.headerStatic} data-log-row tabIndex={-1}>
+        <div
+          ref={registerAnchor}
+          className={css.headerStatic}
+          data-log-row
+          tabIndex={-1}
+          onPointerEnter={() => onHoverChange(commit.id)}
+          onPointerLeave={() => onHoverChange(null)}
+          onFocus={() => onHoverChange(commit.id)}
+          onBlur={() => onHoverChange(null)}
+        >
           {header}
         </div>
       )}
