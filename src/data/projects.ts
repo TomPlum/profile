@@ -95,12 +95,14 @@ export const projects: Project[] = [
     name: 'natomski',
     oneLiner:
       'A Polish learning app with modular lessons, multiple exercise types, custom ' +
-      'lesson presets, text-to-speech and Orlek, its animated eagle guide.',
+      'lesson presets, text-to-speech and Orlek, its animated eagle guide. It exists ' +
+      'because I am learning Polish myself — every lesson is content I actually study.',
     whatItShows:
-      'This is the second-generation version of the language-tooling idea: React 19, ' +
-      'Supabase auth/progress, reusable lesson modules, SRS review, browser TTS, ' +
-      'Cypress smoke tests and a small mascot system rather than just a set of drills.',
-    stack: ['React', 'TypeScript'],
+      'This is the second-generation version of the language-tooling idea, and my main ' +
+      'testbed for AI-assisted delivery: React 19 on Vite, Supabase auth and progress, ' +
+      'reusable lesson modules, SRS review, browser TTS and Cypress smoke tests — built ' +
+      'with Claude Code and Codex working in tandem under my review.',
+    stack: ['React', 'TypeScript', 'Vite', 'Supabase', 'Claude', 'Codex'],
     facts: [
       {
         text: '27 lesson modules, from alphabet and numbers to verbs, pronouns and everyday vocabulary',

@@ -5,6 +5,7 @@ import * as css from './ProjectDetail.css'
 import { TechIcon } from './TechIcon'
 import { ExternalIcon, LinkPill } from './LinkPill'
 import { renderInline } from './InlineCode'
+import { TypeInvadersCard } from './TypeInvadersCard'
 
 const clockAngles = [
   ['0deg', '90deg'],
@@ -203,6 +204,9 @@ export const ProjectDetail = ({ project, laneColour }: ProjectDetailProps) => (
       <p className={css.label}>What it shows</p>
       <p className={css.shows}>{renderInline(project.whatItShows)}</p>
     </div>
+
+    {/* Bespoke second visual: natomski's arcade mode is a core feature. */}
+    {project.id === 'natomski' && <TypeInvadersCard />}
 
     {project.sections?.map((section) => (
       <div key={section.label}>
