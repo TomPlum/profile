@@ -82,6 +82,68 @@ export const projects: Project[] = [
     links: [{ label: 'Source', href: 'https://github.com/TomPlum/learn-japanese', icon: 'GitHub' }]
   },
   {
+    id: 'biodata',
+    name: 'Biodata / Urban Sensing',
+    oneLiner:
+      'A client-data visualisation app for Urban Sensing: passenger counts, bus journeys, ' +
+      'camera comparisons and live filters over generated demo data.',
+    whatItShows:
+      'Early end-to-end product work: backend configuration, authentication, tenant-specific ' +
+      'data access, D3 visualisations, MongoDB-backed querying and AWS deployment work while ' +
+      'still finishing university.',
+    stack: ['Node.js', 'Express', 'MongoDB', 'D3.js', 'AWS'],
+    sections: [
+      {
+        label: 'The original shape',
+        text:
+          'The app handled sensitive sensor data, so the public old-profile examples used ' +
+          'script-generated fake data with the same model as the real system. The real work ' +
+          'included admin source selection, bus/driver filters, date and time ranges, overflow ' +
+          'breakdowns, journey charts, stop charts and map/weather context.'
+      },
+      {
+        label: 'Camera comparison',
+        text:
+          'A second workflow compared people-counting cameras inside a building. A backend ' +
+          'importer read `.wl` files and wrote the parsed counts into the database so the UI ' +
+          'could compare devices over the same window.'
+      }
+    ],
+    preview: {
+      kind: 'biodata-dashboard',
+      caption: 'Fake passenger-count data, recreated as a tiny version of the old D3 journey views.'
+    },
+    links: []
+  },
+  {
+    id: 'will-writing-service',
+    name: 'The Will Writing Service',
+    oneLiner:
+      'A final-year client-style web application for will-writing workflows, built from ' +
+      'requirements and process diagrams through to a working Node/Express/MySQL app.',
+    whatItShows:
+      'I could turn a messy product brief into a buildable system: software requirements, ' +
+      'BPMN process modelling, UI mockups, supporting documentation and implementation in one module.',
+    stack: ['Node.js', 'Express', 'MySQL'],
+    sections: [
+      {
+        label: 'University client brief',
+        text:
+          'The brief came from a local company idea rather than a toy exercise. I chose Node ' +
+          'and Express because the module needed a lot of behaviour in a short delivery window, ' +
+          'then backed it with MySQL and a full requirements package.'
+      }
+    ],
+    preview: {
+      kind: 'will-writing-service',
+      caption: 'Requirements, process flow and implementation shipped as one final-year project.'
+    },
+    links: [
+      { label: 'Source', href: 'https://github.com/TomPlum/thewillwritingservice', icon: 'GitHub' },
+      { label: 'Demo video', href: 'https://www.youtube.com/watch?v=1QkBTLtjepw' }
+    ]
+  },
+  {
     id: 'nyuusu',
     name: 'nyuusu',
     oneLiner:

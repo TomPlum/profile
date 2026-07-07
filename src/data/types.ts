@@ -31,6 +31,8 @@ export type ProjectPreviewKind =
   | 'natomski-mascot'
   | 'news-reader'
   | 'clock-grid'
+  | 'biodata-dashboard'
+  | 'will-writing-service'
   | 'sleep-chart'
   | 'activity-dashboard'
   | 'aoc-tests'

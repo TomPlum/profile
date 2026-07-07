@@ -8,6 +8,107 @@ import { renderInline } from './InlineCode'
 import { TypeInvadersCard } from './TypeInvadersCard'
 import { ClockGrid } from './ClockGrid'
 
+const biodataStops = [
+  { stop: 'Piccadilly', passengersIn: 34, passengersOut: 8 },
+  { stop: 'Oxford Rd', passengersIn: 27, passengersOut: 15 },
+  { stop: 'University', passengersIn: 19, passengersOut: 22 },
+  { stop: 'Rusholme', passengersIn: 12, passengersOut: 29 },
+  { stop: 'Didsbury', passengersIn: 8, passengersOut: 26 }
+]
+
+const BiodataPreview = () => {
+  const max = Math.max(...biodataStops.flatMap((stop) => [stop.passengersIn, stop.passengersOut]))
+
+  return (
+    <div className={css.biodataPreview} aria-hidden="true">
+      <div className={css.biodataMeta}>
+        <span className={css.biodataMetaItem}>TfGM demo</span>
+        <span className={css.biodataMetaItem}>bus 42</span>
+        <span className={css.biodataMetaItem}>08:00-10:00</span>
+      </div>
+      <div className={css.biodataGrid}>
+        <div className={css.biodataBars}>
+          {biodataStops.map((stop, index) => (
+            <div key={stop.stop} className={css.biodataStop}>
+              <span className={css.biodataStopLabel}>{stop.stop}</span>
+              <span className={css.biodataBarTrack}>
+                <span
+                  className={css.biodataBarIn}
+                  style={
+                    {
+                      '--level': stop.passengersIn / max,
+                      animationDelay: `${0.1 + index * 0.08}s`
+                    } as CSSProperties
+                  }
+                />
+              </span>
+              <span className={css.biodataBarTrack}>
+                <span
+                  className={css.biodataBarOut}
+                  style={
+                    {
+                      '--level': stop.passengersOut / max,
+                      animationDelay: `${0.18 + index * 0.08}s`
+                    } as CSSProperties
+                  }
+                />
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className={css.biodataRoute}>
+          <span className={css.biodataRouteLine} />
+          {biodataStops.map((stop, index) => (
+            <span
+              key={stop.stop}
+              className={css.biodataRouteDot}
+              style={
+                {
+                  '--x': `${13 + index * 18}%`,
+                  '--y': `${62 - Math.sin(index * 1.1) * 24}%`,
+                  animationDelay: `${0.2 + index * 0.12}s`
+                } as CSSProperties
+              }
+            />
+          ))}
+          <span className={css.biodataWeather}>rain 12°C</span>
+        </div>
+      </div>
+      <div className={css.biodataLegend}>
+        <span className={css.biodataLegendItem}><i className={css.biodataLegendIn} /> in</span>
+        <span className={css.biodataLegendItem}><i className={css.biodataLegendOut} /> out</span>
+        <span className={css.biodataLegendItem}>fake generated data</span>
+      </div>
+    </div>
+  )
+}
+
+const WillWritingPreview = () => (
+  <div className={css.willPreview} aria-hidden="true">
+    <div className={css.willDocument}>
+      <span className={css.willDocTitle}>SRS</span>
+      <span className={css.willDocLine} />
+      <span className={css.willDocLineShort} />
+      <span className={css.willDocLineShortest} />
+    </div>
+    <div className={css.willFlow}>
+      {['brief', 'BPMN', 'UI', 'app'].map((step, index) => (
+        <span
+          key={step}
+          className={css.willStep}
+          style={{ animationDelay: `${0.12 + index * 0.12}s` } as CSSProperties}
+        >
+          {step}
+        </span>
+      ))}
+    </div>
+    <div className={css.willTerminal}>
+      <span>$ node server.js</span>
+      <strong className={css.willTerminalSuccess}>MySQL connected</strong>
+    </div>
+  </div>
+)
+
 /**
  * A small area chart in the shape the live activity-trends dashboard draws with
  * Recharts — a smoothed trend line with a soft fill beneath it. Purely a visual
@@ -225,6 +326,10 @@ const ProjectPreview = ({ project }: { project: Project }) => {
         )
       case 'clock-grid':
         return <ClockGrid />
+      case 'biodata-dashboard':
+        return <BiodataPreview />
+      case 'will-writing-service':
+        return <WillWritingPreview />
       case 'sleep-chart':
         return <SleepChart />
       case 'activity-dashboard':

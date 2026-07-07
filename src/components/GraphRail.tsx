@@ -27,7 +27,7 @@ interface GraphRailProps {
 const DOT_RADIUS = 5
 const TIP_LENGTH = 34
 const FORK_CURVE = 36
-/** Half-size of the main trunk's diamond HEAD marker, flush at the very top. */
+/** Half-size of the main trunk's diamond HEAD marker. */
 const HEAD_SIZE = 6
 
 const diamondPath = (cx: number, cy: number, d: number): string =>
@@ -166,9 +166,8 @@ export const GraphRail = ({ commits, branches, ys, height, geometry, hoveredComm
         if (lane.segments.length === 0) return null
         const delay = laneDelay(index)
 
-        // The main branch is the trunk: a faint dashed line reaches from the
-        // diamond HEAD marker at the very top down to the newest commit, then a
-        // solid line runs on to the root.
+        // The main branch is the trunk: the HEAD marker sits on the newest
+        // career commit itself, so the rail begins where the row begins.
         if (lane.isMain) {
           const ownYs = lane.segments[0]!.nodes.map((node) => node.y)
           const newest = Math.min(...ownYs)
@@ -184,17 +183,6 @@ export const GraphRail = ({ commits, branches, ys, height, geometry, hoveredComm
               fill="none"
               strokeWidth={2.5}
             >
-              <line
-                className={dotClass}
-                style={{ transitionDelay: delay }}
-                x1={lane.x}
-                y1={HEAD_SIZE * 2 + 3}
-                x2={lane.x}
-                y2={newest - DOT_RADIUS - 3}
-                strokeDasharray="2 6"
-                strokeLinecap="round"
-                strokeOpacity={0.4}
-              />
               <path
                 className={pathClass}
                 style={{ transitionDelay: delay }}
@@ -273,12 +261,7 @@ export const GraphRail = ({ commits, branches, ys, height, geometry, hoveredComm
           const ownYs = lane.segments[0]!.nodes.map((node) => node.y)
           const newest = Math.min(...ownYs)
           const oldest = Math.max(...ownYs)
-          return (
-            <>
-              <line x1={lane.x} y1={HEAD_SIZE * 2 + 3} x2={lane.x} y2={newest - DOT_RADIUS - 3} />
-              <path d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`} />
-            </>
-          )
+          return <path d={`M ${lane.x} ${newest} L ${lane.x} ${oldest}`} />
         })() : lane.segments.map((seg, si) => {
           const ownYs = seg.nodes.map((node) => node.y)
           const newest = Math.min(...ownYs)
@@ -321,8 +304,10 @@ export const GraphRail = ({ commits, branches, ys, height, geometry, hoveredComm
         if (lane.segments.length === 0) return null
         const delay = laneDelay(index)
         const allNodes = lane.segments.flatMap((segment) => segment.nodes)
+        const mainHeadY = lane.isMain ? Math.min(...allNodes.map((node) => node.y)) : undefined
         // Trunk commits are solid, slightly larger discs; branch commits are
         // hollow donuts (a bg-filled centre) so the two are easy to tell apart.
+        // The trunk's newest commit is a hollow diamond, like git's HEAD ref.
         return (
           <g
             key={`dots-${lane.branch.name}`}
@@ -334,16 +319,24 @@ export const GraphRail = ({ commits, branches, ys, height, geometry, hoveredComm
             strokeWidth={2.5}
             pointerEvents="none"
           >
-            {lane.isMain && (
-              /* The trunk's HEAD marker: a distinct hollow diamond at the top. */
-              <path
-                className={dotClass}
-                style={{ transitionDelay: delay, fill: vars.colour.bg }}
-                d={diamondPath(lane.x, HEAD_SIZE, HEAD_SIZE)}
-              />
-            )}
             {allNodes.map(({ id, y }) => {
               const hovered = hoveredCommitId === id
+              const isMainHead = lane.isMain && y === mainHeadY
+              if (isMainHead) {
+                return (
+                  <path
+                    key={id}
+                    className={`${dotClass} ${hovered ? css.dotHovered : ''}`}
+                    data-commit-id={id}
+                    data-hovered={hovered ? 'true' : undefined}
+                    style={{
+                      transitionDelay: reduceMotion ? undefined : `${delay}, 0ms, 0ms`,
+                      fill: vars.colour.bg
+                    }}
+                    d={diamondPath(lane.x, y, HEAD_SIZE)}
+                  />
+                )
+              }
               return (
                 <circle
                   key={id}

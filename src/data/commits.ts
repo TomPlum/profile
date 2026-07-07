@@ -176,7 +176,12 @@ export const commits: Commit[] = [
     title: 'Promoted at Barclays — identity & verification',
     summary:
       'Java developer on Barclaycard’s Identification & Verification team, promoted ' +
-      'fourteen months into the graduate role.'
+      'fourteen months into the graduate role.',
+    body:
+      'The work sat around RESTful Spring Boot services and React/TypeScript UI work, ' +
+      'with test-driven delivery, Gradle, JUnit, Tomcat and the realities of changing ' +
+      'large legacy systems without making them harder to reason about.',
+    stack: ['Java', 'Spring Boot', 'React', 'TypeScript', 'Gradle', 'JUnit']
   },
   {
     id: 'joined-barclays',
@@ -186,7 +191,12 @@ export const commits: Commit[] = [
     title: 'Joined Barclays as a Software Developer',
     summary:
       'Graduate role in Personal & Corporate Banking at the Radbroke technology ' +
-      'centre — Java, Spring, TDD and DDD. Named best newcomer that December.'
+      'centre — Java, Spring, TDD and DDD. Named best newcomer that December.',
+    body:
+      'This was the leap from university and small-company web apps into enterprise ' +
+      'software: code reviews, domain language, production constraints, long-lived ' +
+      'systems and teams where the human process mattered as much as the code.',
+    stack: ['Java', 'Spring Boot', 'JUnit']
   },
   {
     id: 'graduated',
@@ -198,7 +208,22 @@ export const commits: Commit[] = [
       'University of Bolton, with the Governors Prize in years two and three. ' +
       'Final-year project: analysing the randomness of social media streams and ' +
       'using it to drive Robocode AI.',
+    body:
+      'The strongest thread through the degree was applied software, not just marks: ' +
+      'Course Representative, Governors Prize recognition in years two and three, a ' +
+      'double-credit dissertation called "Determining the Randomness of Social Media", ' +
+      'and a final-year client-style web app built in Node, Express and MySQL.',
     tags: ['bsc']
+  },
+  {
+    id: 'will-writing-service',
+    branch: 'career',
+    date: '2018-05-01', // year verified; month used only for log ordering
+    dateLabel: '2018',
+    title: 'Built The Will Writing Service for a final-year client brief',
+    summary:
+      'A Node, Express and MySQL application backed by an SRS, BPMN process diagrams, UI mockups and supporting documentation.',
+    projectId: 'will-writing-service'
   },
   {
     id: 'retail-sensing',
@@ -208,7 +233,8 @@ export const commits: Commit[] = [
     title: 'Joined Retail Sensing as a MEAN-stack developer',
     summary:
       'Part-time through final year of university: D3.js visualisations of live data ' +
-      'from public vehicles worldwide, on MongoDB Atlas and AWS.'
+      'from public vehicles worldwide, on MongoDB Atlas and AWS.',
+    projectId: 'biodata'
   },
   {
     id: 'ocean82',
@@ -218,7 +244,12 @@ export const commits: Commit[] = [
     title: 'First industry code — summer placement at Ocean82',
     summary:
       'Built WordPress sites front to back — PHP, MySQL, IIS — the summer after ' +
-      'first year.'
+      'first year.',
+    body:
+      'The placement covered practical web work at small-business pace: WordPress ' +
+      'sites, PHP, MySQL and MSSQL, HTML/CSS/JavaScript, IIS on Microsoft Server, ' +
+      'plus plugins and tools such as LimeSurvey, GravityForms and UPME.',
+    stack: ['WordPress', 'PHP', 'MySQL', 'JavaScript', 'IIS']
   },
   {
     id: 'a-levels',

@@ -461,6 +461,333 @@ export const dashboardPoint = style({
   vectorEffect: 'non-scaling-stroke'
 })
 
+const growToLevel = keyframes({
+  from: { transform: 'scaleX(0)' },
+  to: { transform: 'scaleX(var(--level, 1))' }
+})
+
+const popIn = keyframes({
+  from: { opacity: 0, transform: 'translate(-50%, -50%) scale(0.4)' },
+  to: { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' }
+})
+
+const fadeStepIn = keyframes({
+  from: { opacity: 0, transform: 'translateY(0.25rem)' },
+  to: { opacity: 1, transform: 'translateY(0)' }
+})
+
+export const biodataPreview = style([
+  previewPanel,
+  {
+    display: 'grid',
+    gridTemplateRows: 'auto minmax(0, 1fr) auto',
+    gap: '0.65rem',
+    fontFamily: vars.font.mono
+  }
+])
+
+export const biodataMeta = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.4rem',
+  fontSize: '0.62rem',
+  color: vars.colour.inkMuted
+})
+
+export const biodataMetaItem = style({
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '999px',
+  backgroundColor: vars.colour.surface,
+  padding: '0.18rem 0.5rem'
+})
+
+export const biodataGrid = style({
+  display: 'grid',
+  gridTemplateColumns: 'minmax(0, 1.2fr) minmax(7rem, 0.8fr)',
+  gap: '0.7rem',
+  minHeight: 0,
+  '@media': {
+    '(max-width: 560px)': {
+      gridTemplateColumns: '1fr'
+    }
+  }
+})
+
+export const biodataBars = style({
+  display: 'grid',
+  gap: '0.38rem',
+  alignContent: 'center',
+  minWidth: 0
+})
+
+export const biodataStop = style({
+  display: 'grid',
+  gridTemplateColumns: '5.8rem minmax(0, 1fr) minmax(0, 1fr)',
+  gap: '0.35rem',
+  alignItems: 'center',
+  '@media': {
+    '(max-width: 430px)': {
+      gridTemplateColumns: '4.7rem minmax(0, 1fr) minmax(0, 1fr)'
+    }
+  }
+})
+
+export const biodataStopLabel = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  fontSize: '0.58rem',
+  color: vars.colour.inkMuted
+})
+
+export const biodataBarTrack = style({
+  height: '0.52rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '999px',
+  backgroundColor: vars.colour.surface,
+  overflow: 'hidden'
+})
+
+const biodataBar = {
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  transformOrigin: 'left center',
+  transform: 'scaleX(0)',
+  animation: `${growToLevel} 0.8s ease-out forwards`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animationDuration: '0.01ms'
+    }
+  }
+}
+
+export const biodataBarIn = style({
+  ...biodataBar,
+  backgroundColor: vars.colour.lane.career
+})
+
+export const biodataBarOut = style({
+  ...biodataBar,
+  backgroundColor: vars.colour.lane.oss
+})
+
+export const biodataRoute = style({
+  position: 'relative',
+  minHeight: '6rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '6px',
+  backgroundColor: vars.colour.surface,
+  overflow: 'hidden',
+  selectors: {
+    '&::before': {
+      content: '',
+      position: 'absolute',
+      inset: '0',
+      backgroundImage:
+        `linear-gradient(${vars.colour.line} 1px, transparent 1px), ` +
+        `linear-gradient(90deg, ${vars.colour.line} 1px, transparent 1px)`,
+      backgroundSize: '1.4rem 1.4rem',
+      opacity: 0.35
+    }
+  }
+})
+
+export const biodataRouteLine = style({
+  position: 'absolute',
+  left: '9%',
+  right: '9%',
+  top: '52%',
+  height: '2px',
+  transform: 'rotate(-9deg)',
+  backgroundColor: vars.colour.inkFaint,
+  opacity: 0.65
+})
+
+export const biodataRouteDot = style({
+  position: 'absolute',
+  left: 'var(--x)',
+  top: 'var(--y)',
+  width: '0.7rem',
+  height: '0.7rem',
+  borderRadius: '50%',
+  border: `2px solid ${vars.colour.lane.career}`,
+  backgroundColor: vars.colour.surface,
+  opacity: 0,
+  transform: 'translate(-50%, -50%) scale(0.4)',
+  animation: `${popIn} 0.42s ease-out forwards`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animationDuration: '0.01ms'
+    }
+  }
+})
+
+export const biodataWeather = style({
+  position: 'absolute',
+  right: '0.55rem',
+  bottom: '0.5rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '999px',
+  backgroundColor: vars.colour.inset,
+  padding: '0.16rem 0.42rem',
+  fontSize: '0.55rem',
+  color: vars.colour.inkMuted
+})
+
+export const biodataLegend = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.35rem 0.75rem',
+  fontSize: '0.58rem',
+  color: vars.colour.inkMuted
+})
+
+export const biodataLegendItem = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.35em'
+})
+
+const biodataLegendDot = {
+  display: 'inline-block',
+  width: '0.55em',
+  height: '0.55em',
+  borderRadius: '50%'
+}
+
+export const biodataLegendIn = style({
+  ...biodataLegendDot,
+  backgroundColor: vars.colour.lane.career
+})
+
+export const biodataLegendOut = style({
+  ...biodataLegendDot,
+  backgroundColor: vars.colour.lane.oss
+})
+
+export const willPreview = style([
+  previewPanel,
+  {
+    display: 'grid',
+    gridTemplateColumns: 'minmax(5rem, 0.65fr) minmax(0, 1fr)',
+    gridTemplateRows: '1fr auto',
+    gap: '0.7rem',
+    fontFamily: vars.font.mono,
+    '@media': {
+      '(max-width: 460px)': {
+        gridTemplateColumns: '1fr'
+      }
+    }
+  }
+])
+
+export const willDocument = style({
+  gridRow: '1 / -1',
+  display: 'grid',
+  alignContent: 'start',
+  gap: '0.42rem',
+  minHeight: '6.8rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '6px',
+  backgroundColor: vars.colour.surface,
+  padding: '0.7rem',
+  '@media': {
+    '(max-width: 460px)': {
+      gridRow: 'auto'
+    }
+  }
+})
+
+export const willDocTitle = style({
+  color: vars.colour.lane.career,
+  fontWeight: 700,
+  fontSize: '0.9rem'
+})
+
+export const willDocLine = style({
+  height: '0.38rem',
+  borderRadius: '999px',
+  backgroundColor: vars.colour.line
+})
+
+export const willDocLineShort = style([
+  willDocLine,
+  {
+    width: '78%'
+  }
+])
+
+export const willDocLineShortest = style([
+  willDocLine,
+  {
+    width: '54%'
+  }
+])
+
+export const willFlow = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(4, minmax(2.9rem, 1fr))',
+  gap: '0.35rem',
+  alignSelf: 'center',
+  '@media': {
+    '(max-width: 520px)': {
+      gridTemplateColumns: 'repeat(2, minmax(4.2rem, 1fr))'
+    }
+  }
+})
+
+export const willStep = style({
+  position: 'relative',
+  display: 'grid',
+  placeItems: 'center',
+  boxSizing: 'border-box',
+  minHeight: '2.4rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '6px',
+  backgroundColor: vars.colour.surface,
+  color: vars.colour.ink,
+  fontSize: '0.62rem',
+  fontWeight: 700,
+  lineHeight: 1.25,
+  padding: '0.4rem 0.48rem',
+  textAlign: 'center',
+  whiteSpace: 'nowrap',
+  opacity: 0,
+  animation: `${fadeStepIn} 0.45s ease-out forwards`,
+  selectors: {
+    '&:not(:last-child)::after': {
+      content: '',
+      position: 'absolute',
+      right: '-0.35rem',
+      top: '50%',
+      width: '0.35rem',
+      height: '1px',
+      backgroundColor: vars.colour.lane.career
+    }
+  },
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animationDuration: '0.01ms'
+    }
+  }
+})
+
+export const willTerminal = style({
+  display: 'grid',
+  gap: '0.25rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '6px',
+  backgroundColor: vars.colour.surface,
+  padding: '0.55rem 0.65rem',
+  fontSize: '0.64rem',
+  color: vars.colour.inkMuted
+})
+
+export const willTerminalSuccess = style({
+  color: vars.colour.lane.oss
+})
+
 export const terminalPreview = style([
   previewPanel,
   {
