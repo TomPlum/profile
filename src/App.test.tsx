@@ -55,6 +55,9 @@ describe('the five-second test', () => {
     profile.stack.forEach((tech) => {
       expect(screen.getAllByText(tech).length).toBeGreaterThan(0)
     })
+    profile.proofPoints.forEach((point) => {
+      expect(screen.getByRole('link', { name: point.label }).getAttribute('href')).toBe(point.href)
+    })
     expect(screen.getByText(profile.valueStatement)).toBeDefined()
   })
 

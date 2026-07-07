@@ -16,6 +16,11 @@ export const profile = {
     { src: 'me2.jpeg', alt: 'Thomas Plumpton', width: 768, height: 1024 }
   ],
   stack: ['React', 'TypeScript', 'Cypress', 'Kotlin', 'Java', 'Spring Boot', 'Claude', 'Codex'],
+  proofPoints: [
+    { label: 'Staff Apr 2024', href: '?commit=staff-engineer#log' },
+    { label: '@tomplum/react-git-log', href: '?commit=react-git-log#log' },
+    { label: '7 yrs AoC', href: '?commit=advent-of-code#log' }
+  ],
   /** The small human line under the masthead. */
   currently: 'Currently: learning Japanese & Polish, lifting, reading fantasy, building PCs.',
   email: 'Thomas.Plumpton@hotmail.co.uk', // matches the contact address on the CV

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { type MouseEvent, useState } from 'react'
 import { profile } from '../data/profile'
 import { monoLink } from '../styles/controls.css'
 import { TechIcon } from './TechIcon'
@@ -7,6 +7,18 @@ import * as css from './Masthead.css'
 export const Masthead = () => {
   const [active, setActive] = useState(0)
   const cyclePhoto = () => setActive((i) => (i + 1) % profile.photos.length)
+  const openProofPoint = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    event.preventDefault()
+    const url = new URL(href, window.location.href)
+    window.history.pushState({}, '', url)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+    window.requestAnimationFrame(() => {
+      const log = document.getElementById('log')
+      if (!log) return
+      const stickyHeaderOffset = 72
+      window.scrollTo({ top: log.getBoundingClientRect().top + window.scrollY - stickyHeaderOffset })
+    })
+  }
 
   return (
   <section className={css.masthead} aria-label="Introduction">
@@ -41,6 +53,16 @@ export const Masthead = () => {
               <TechIcon name={tech} />
             </span>
             {tech}
+          </li>
+        ))}
+      </ul>
+
+      <ul className={css.proofRow} aria-label="Proof points">
+        {profile.proofPoints.map((point) => (
+          <li key={point.label}>
+            <a className={css.proofLink} href={point.href} onClick={(event) => openProofPoint(event, point.href)}>
+              {point.label}
+            </a>
           </li>
         ))}
       </ul>

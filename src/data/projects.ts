@@ -91,6 +91,26 @@ export const projects: Project[] = [
       'Shipping a real hosted product: third-party content integration, a domain, ' +
       'a deployment pipeline, and users other than me.',
     stack: ['React', 'TypeScript'],
+    facts: [
+      {
+        text: 'Uses the Newscatcher API as a live news source for article information',
+        source: { label: 'README data sources', href: 'https://github.com/TomPlum/nyuusu#data-sources' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Creates Anki cards through AnkiConnect, with graphical and direct add-note modes',
+        source: {
+          label: 'Anki card hook',
+          href: 'https://github.com/TomPlum/nyuusu/blob/main/src/api/hooks/useCreateAnkiCard/useCreateAnkiCard.ts'
+        },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Includes Vitest, backend Jest tests and Cypress e2e coverage for article flows',
+        source: { label: 'Cypress article test', href: 'https://github.com/TomPlum/nyuusu/blob/main/cypress/e2e/articles.cy.ts' },
+        verifiedAt: '2026-07-07'
+      }
+    ],
     preview: {
       kind: 'news-reader',
       caption: 'Japanese headlines flow into reader-friendly study cards.'
@@ -135,7 +155,7 @@ export const projects: Project[] = [
       caption: 'Orlek, the app’s animated White Eagle tutor, inside a lesson-style prompt.'
     },
     links: [
-      { label: 'Live at natomski.uk', href: 'https://natomski.uk', icon: 'natomski-logo.svg' },
+      { label: 'Live at natomski.uk', href: 'https://www.natomski.uk/', icon: 'natomski-logo.svg' },
       { label: 'Source', href: 'https://github.com/TomPlum/natomski', icon: 'GitHub' }
     ]
   },
@@ -150,12 +170,32 @@ export const projects: Project[] = [
       'choreography written by hand, not a library preset — and built entirely ' +
       'myself, without any AI tooling.',
     stack: ['React', 'TypeScript', 'requestAnimationFrame'],
+    facts: [
+      {
+        text: 'Built in React with requestAnimationFrame-driven clock-hand choreography',
+        source: { label: 'README', href: 'https://github.com/TomPlum/clocks#clocks' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Time is rendered as a 26-column grid with explicit hand-angle definitions for each digit',
+        source: { label: 'Grid source', href: 'https://github.com/TomPlum/clocks/blob/main/src/modules/TimeDisplay/grid.ts' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Configuration controls cover themes, language, clock patterns, manual time and animation settings',
+        source: {
+          label: 'Configuration drawer',
+          href: 'https://github.com/TomPlum/clocks/blob/main/src/modules/ConfigurationDrawer/ConfigurationDrawer.tsx'
+        },
+        verifiedAt: '2026-07-07'
+      }
+    ],
     preview: {
       kind: 'clock-grid',
       caption: 'The hands sweep, slow and settle — here, into my name.'
     },
     links: [
-      { label: 'Live demo', href: 'https://tomplum.github.io/clocks' },
+      { label: 'Live demo', href: 'https://tomplum.github.io/clocks/' },
       { label: 'Source', href: 'https://github.com/TomPlum/clocks', icon: 'GitHub' }
     ]
   },
@@ -172,6 +212,23 @@ export const projects: Project[] = [
       'clear line where my sleep started improving. It was also a welcome excuse ' +
       'to build something in my free time again.',
     stack: ['React', 'TypeScript'],
+    facts: [
+      {
+        text: 'Parses a ~40MB Pillow export in a web worker before posting progress and parsed data back to the UI',
+        source: { label: 'README data source', href: 'https://github.com/TomPlum/sleep#data-source' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Supports stacked, compare and single-metric 2D graph views plus an experimental 3D mode',
+        source: { label: 'README graph views', href: 'https://github.com/TomPlum/sleep#2d-graph-views' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Vitest covers data parsing and worker utilities including timestamps, stage conversion and table scanning',
+        source: { label: 'Worker utility tests', href: 'https://github.com/TomPlum/sleep/tree/release/src/modules/DataWorker/utility' },
+        verifiedAt: '2026-07-07'
+      }
+    ],
     sections: [
       {
         label: 'Under the hood',
@@ -186,7 +243,7 @@ export const projects: Project[] = [
       caption: 'Deep, light, REM and awake time across the years — with the visible step where the fixes took hold.'
     },
     links: [
-      { label: 'Live demo', href: 'https://tomplum.github.io/sleep' },
+      { label: 'Live demo', href: 'https://tomplum.github.io/sleep/' },
       { label: 'Source', href: 'https://github.com/TomPlum/sleep', icon: 'GitHub' }
     ]
   },
@@ -201,6 +258,23 @@ export const projects: Project[] = [
       'Apple Health export into Postgres, and a Next.js dashboard that charts it — ' +
       'data modelling, backend and visualisation all in one project.',
     stack: ['Next.js', 'React', 'TypeScript', 'Supabase', 'Vercel'],
+    facts: [
+      {
+        text: 'Next.js 15 and React 19 app on Vercel, backed by Supabase Postgres with public read-only RLS',
+        source: { label: 'README stack', href: 'https://github.com/TomPlum/activity-trends#stack' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Local ingest script streams Apple Health XML, workout GPX routes and ECG CSV data into Supabase',
+        source: { label: 'README ingest', href: 'https://github.com/TomPlum/activity-trends#ingesting-your-apple-health-data' },
+        verifiedAt: '2026-07-07'
+      },
+      {
+        text: 'Vitest covers dashboard domain logic plus ingest parsers for daily metrics, GPX routes and sleep sessions',
+        source: { label: 'Ingest tests', href: 'https://github.com/TomPlum/activity-trends/tree/release/scripts/ingest/__tests__' },
+        verifiedAt: '2026-07-07'
+      }
+    ],
     preview: {
       kind: 'activity-dashboard',
       caption: 'A Supabase-backed Next.js dashboard charting health and activity data.'

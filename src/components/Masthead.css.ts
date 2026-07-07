@@ -167,6 +167,54 @@ export const stackRow = style({
   }
 })
 
+export const proofRow = style({
+  listStyle: 'none',
+  padding: 0,
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  gap: '0.45rem',
+  marginBottom: '1.3rem',
+  '@media': {
+    '(max-width: 760px)': {
+      flexWrap: 'nowrap',
+      marginBottom: '0.85rem',
+      gap: '0.25rem'
+    }
+  }
+})
+
+export const proofLink = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.74rem',
+  lineHeight: 1,
+  display: 'inline-flex',
+  alignItems: 'center',
+  padding: '0.42rem 0.55rem',
+  borderLeft: `2px solid ${vars.colour.accent}`,
+  backgroundColor: vars.colour.inset,
+  color: vars.colour.ink,
+  textDecoration: 'none',
+  transition: 'color 0.18s ease, background-color 0.18s ease',
+  selectors: {
+    '&:hover': {
+      color: vars.colour.accent,
+      backgroundColor: vars.colour.surface
+    },
+    '&:focus-visible': {
+      outline: `2px solid ${vars.colour.accent}`,
+      outlineOffset: '2px'
+    }
+  },
+  '@media': {
+    '(max-width: 760px)': {
+      fontSize: '0.64rem',
+      padding: '0.34rem 0.36rem',
+      whiteSpace: 'nowrap'
+    }
+  }
+})
+
 /** Core-stack pill with its brand icon inline before the label. */
 export const techChip = style({
   fontFamily: vars.font.mono,
@@ -236,7 +284,7 @@ export const portrait = style({
   '@media': {
     '(max-width: 760px)': {
       justifySelf: 'stretch',
-      width: '100%',
+      width: 'min(100%, 320px)',
       selectors: {
         '&::before': {
           display: 'none'
@@ -333,7 +381,7 @@ export const portraitImage = style({
       position: 'static',
       inset: 'auto',
       height: 'auto',
-      aspectRatio: '4 / 5',
+      aspectRatio: '1',
       opacity: 1
     }
   }
