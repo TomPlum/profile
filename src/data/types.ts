@@ -59,6 +59,35 @@ export interface Project {
   links: ProjectLink[]
 }
 
+export type BookShelf = 'read' | 'currently-reading' | 'to-read'
+
+/**
+ * One row of the Goodreads export, after `scripts/import-goodreads.mjs` has
+ * stripped the private columns. Most fields are optional because the export
+ * genuinely is patchy — see the caveats rendered on the shelf page.
+ */
+export interface Book {
+  /** Stable slug of author + title. Also names the cover file in public/covers. */
+  id: string
+  title: string
+  author: string
+  /** Goodreads hides series in the title string; the importer splits them out. */
+  series?: string
+  seriesIndex?: number
+  shelf: BookShelf
+  /** 1–5, or 0 for unrated — a third of the read shelf never got a rating. */
+  rating: number
+  pages?: number
+  /** Original publication year where known, else the edition's year. */
+  published?: number
+  /** Goodreads only recorded a finish date for a minority of these. */
+  dateRead?: string
+  dateAdded?: string
+  /** Used by scripts/fetch-covers.mjs to look covers up; not shown in the UI. */
+  isbn13?: string
+  isbn10?: string
+}
+
 export interface Commit {
   /** Stable slug — also seeds the displayed (deterministic) short hash. */
   id: string
