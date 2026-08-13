@@ -115,6 +115,13 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   caveat. Don't drop `publisher`/`binding`/`editionYear` from the import — they
   are the only signal for the ~24 Kindle rows Goodreads gives no ISBN for.
   `--redo-approximate` re-tries just those without refetching everything.
+- **Some editions simply aren't in Open Library.** The Sun Eater's UK Gollancz /
+  Head of Zeus paperbacks — the ones Tom read — have no artwork there for four
+  volumes. `data/coverOverrides.ts` lists ids whose jacket is supplied by hand
+  in `public/covers/`; the fetcher never touches those, even under `--force`,
+  and counts them as the edition read. That is the escape hatch when a cover is
+  wrong and no lookup can fix it — don't reach for it before checking the
+  Goodreads row itself is right.
 - **Spine width is page count; hue is the series run; strength is the rating.**
   Runs cycle the four lane colours so adjacent runs on a shelf never share one
   (a run keeps its colour along its length — both are tested). The fill can
@@ -127,9 +134,8 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   years, author — is computed from `books.ts`, and a test fails if a name
   doesn't resolve to a run. `blurb` and `artwork` are Tom's to supply
   (`TODO(tom)`); until artwork lands, the run's first three jackets stand in,
-  because one portrait cover stretched to a landscape band crops badly —
-  `jackets` names which volumes by series number when the opening three
-  aren't the series at its best. Each
+  cropped flush to equal columns rather than letterboxed. `jackets` names which
+  volumes by series number when the opening three aren't the series at its best. Each
   card carries a `quote` from the books — **check any new one against the
   published text before adding it**, as the committed three were; an
   unattributed or misremembered line is exactly the unverifiable claim the

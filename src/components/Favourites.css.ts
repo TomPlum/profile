@@ -59,28 +59,24 @@ export const artworkImage = style({
 })
 
 /**
- * The stand-in until bespoke artwork arrives: the first few jackets of the run,
- * stood side by side. A single cover stretched to a landscape band crops badly
- * — portrait art either loses its title or letterboxes — whereas a row of them
- * reads as a deliberate display of the series.
+ * The stand-in until bespoke artwork arrives: the jackets of the run, filling
+ * the band edge to edge. Equal columns whatever the count, each jacket cropped
+ * to fill its share rather than letterboxed inside it — a row of floating
+ * thumbnails reads as a gallery, a flush band reads as one piece of artwork.
  */
 export const jackets = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '0.5rem',
+  display: 'grid',
+  gridAutoFlow: 'column',
+  gridAutoColumns: '1fr',
   width: '100%',
-  height: '100%',
-  padding: '0.9rem'
+  height: '100%'
 })
 
 export const jacket = style({
+  width: '100%',
   height: '100%',
-  width: 'auto',
-  maxWidth: '30%',
-  objectFit: 'contain',
-  borderRadius: '2px',
-  boxShadow: '0 4px 10px rgb(0 0 0 / 0.28)'
+  objectFit: 'cover',
+  objectPosition: 'center 38%'
 })
 
 export const name = style({

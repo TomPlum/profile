@@ -56,10 +56,8 @@ export const favouriteSeries: FavouriteSeries[] = [
     series: 'The Sun Eater',
     jackets: [3, 6, 7],
     quote: {
-      text:
-        'The man who hopes for the future delays its arrival, ' +
-        'and the man who dreads it summons it to his door.',
-      source: 'Empire of Silence'
+      text: 'Always forward, always down, and never left or right.',
+      source: 'Howling Dark'
     }
   }
 ]

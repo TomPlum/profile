@@ -17,6 +17,7 @@
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { books } from '../src/data/books.ts'
+import { pinnedCovers } from '../src/data/coverOverrides.ts'
 
 const COVERS = resolve(import.meta.dirname, '..', 'public', 'covers')
 const MANIFEST = resolve(import.meta.dirname, '..', 'src', 'data', 'covers.ts')
@@ -42,6 +43,10 @@ try {
 // A full re-run re-derives provenance from scratch; carrying the old values
 // over would let a stale "exact" survive a fetch that actually fell back.
 if (force) previousProvenance = {}
+
+// Hand-supplied jackets are never refetched, not even with --force: they exist
+// precisely because the lookup can't find the edition read.
+const pinned = new Set(pinnedCovers)
 
 const refetch = new Set(
   process.argv.includes('--redo-approximate')
@@ -227,6 +232,10 @@ const misses = []
 const provenance = new Map(Object.entries(previousProvenance))
 
 for (const book of books) {
+  if (pinned.has(book.id)) {
+    provenance.set(book.id, 'pinned')
+    continue
+  }
   if (onDisk.has(book.id) && !force && !refetch.has(book.id)) continue
 
   const found =
@@ -248,7 +257,7 @@ for (const book of books) {
 }
 
 const have = books.filter((book) => onDisk.has(book.id)).map((book) => book.id)
-const exact = have.filter((id) => provenance.get(id) === 'isbn' || provenance.get(id) === 'edition')
+const exact = have.filter((id) => ['isbn', 'edition', 'pinned'].includes(provenance.get(id)))
 
 writeFileSync(
   MANIFEST,
