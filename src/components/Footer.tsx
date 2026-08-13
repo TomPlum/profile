@@ -66,6 +66,13 @@ export const Footer = () => (
           , my own npm component. Keyboard users:{' '}
           <kbd className={css.kbd}>j</kbd> <kbd className={css.kbd}>k</kbd> walk the commits.
         </p>
+        <p>
+          Off the clock, there&rsquo;s{' '}
+          <a className={css.colophonLink} href="books.html">
+            the shelf
+          </a>
+          : everything I&rsquo;ve read, drawn as the bookcase it would fill.
+        </p>
         <p className={css.copyright}>© {new Date().getFullYear()} Thomas Plumpton</p>
       </div>
     </footer>

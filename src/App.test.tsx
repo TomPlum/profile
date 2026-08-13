@@ -47,6 +47,17 @@ afterEach(() => {
   window.history.replaceState({}, '', '/')
 })
 
+describe('the shelf is reachable, but quietly', () => {
+  it('links from the currently line and the colophon, and nowhere louder', () => {
+    render(<App />)
+    const routes = screen.getAllByRole('link').filter((link) => link.getAttribute('href') === 'books.html')
+    expect(routes.length).toBe(2)
+    // The header stays boring: contact and CV only.
+    const header = document.querySelector('header')!
+    expect(header.querySelector('a[href="books.html"]')).toBeNull()
+  })
+})
+
 describe('the five-second test', () => {
   it('shows name, role, stack and value statement', () => {
     render(<App />)

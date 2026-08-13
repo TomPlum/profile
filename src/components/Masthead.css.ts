@@ -264,6 +264,22 @@ export const currently = style({
   color: vars.colour.inkFaint
 })
 
+/**
+ * The quiet way through to the bookshelf. Dotted rather than solid: findable
+ * by anyone actually reading the line, invisible to a thirty-second scan.
+ */
+export const currentlyLink = style({
+  color: 'inherit',
+  textDecoration: 'underline dotted',
+  textUnderlineOffset: '3px',
+  selectors: {
+    '&:hover, &:focus-visible': {
+      color: vars.colour.accent,
+      textDecoration: 'underline solid'
+    }
+  }
+})
+
 export const portrait = style({
   justifySelf: 'end',
   width: 'min(100%, 260px)',

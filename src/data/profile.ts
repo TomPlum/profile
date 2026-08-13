@@ -21,8 +21,16 @@ export const profile = {
     { label: '@tomplum/react-git-log', href: '?commit=react-git-log#log' },
     { label: '7 yrs AoC', href: '?commit=advent-of-code#log' }
   ],
-  /** The small human line under the masthead. */
-  currently: 'Currently: learning Japanese & Polish, lifting, reading fantasy, building PCs.',
+  /**
+   * The small human line under the masthead. Segmented so one phrase can carry
+   * a link: the bookshelf is reached from here and from the colophon, and
+   * nowhere louder — it's a personal aside, not a thing a recruiter came for.
+   */
+  currently: [
+    'Currently: learning Japanese & Polish, lifting, ',
+    { text: 'reading fantasy', href: 'books.html' },
+    ', building PCs.'
+  ],
   email: 'Thomas.Plumpton@hotmail.co.uk', // matches the contact address on the CV
   cvHref: 'cv.pdf', // drop your CV at public/cv.pdf; relative so it resolves under any base
   links: {

@@ -77,7 +77,17 @@ export const Masthead = () => {
         </a>
       </p>
 
-      <p className={css.currently}>{profile.currently}</p>
+      <p className={css.currently}>
+        {profile.currently.map((part) =>
+          typeof part === 'string' ? (
+            part
+          ) : (
+            <a key={part.href} className={css.currentlyLink} href={part.href}>
+              {part.text}
+            </a>
+          )
+        )}
+      </p>
     </div>
 
     <figure className={css.portrait}>
