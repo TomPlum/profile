@@ -26,6 +26,12 @@ export interface FavouriteSeries {
   blurb?: string
   /** A line from the books themselves, with the volume it comes from. */
   quote?: { text: string; source: string }
+  /**
+   * Which volumes to show when there is no bespoke `artwork`, by series
+   * number — `[3, 6, 7]` picks those three jackets. Defaults to the first
+   * three of the run, which is rarely where a series looks its best.
+   */
+  jackets?: number[]
 }
 
 /**
@@ -48,6 +54,7 @@ export const favouriteSeries: FavouriteSeries[] = [
   },
   {
     series: 'The Sun Eater',
+    jackets: [3, 6, 7],
     quote: {
       text:
         'The man who hopes for the future delays its arrival, ' +

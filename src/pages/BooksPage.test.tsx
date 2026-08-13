@@ -182,6 +182,24 @@ describe('the shelf page', () => {
     })
   })
 
+  it('shows the volumes a series names, not just its opening three', () => {
+    render(<BooksPage />)
+    favouriteSeries.forEach((favourite) => {
+      if (!favourite.jackets || favourite.artwork) return
+      const run = seriesSummary(favourite.series)!
+      const card = screen.getByRole('heading', { level: 3, name: favourite.series }).parentElement!
+      const shown = [...card.querySelectorAll('img')].map((img) => img.getAttribute('src'))
+      // Every named volume must exist in the run and have artwork, or the card
+      // quietly renders fewer jackets than asked for.
+      expect(shown).toHaveLength(favourite.jackets.length)
+      favourite.jackets.forEach((index) => {
+        const book = run.books.find((entry) => entry.seriesIndex === index)
+        expect(book, `'${favourite.series}' has no volume #${index}`).toBeDefined()
+        expect(shown.some((src) => src?.includes(book!.id))).toBe(true)
+      })
+    })
+  })
+
   it('attributes every quote to a volume', () => {
     render(<BooksPage />)
     favouriteSeries.forEach((favourite) => {

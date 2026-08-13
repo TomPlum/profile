@@ -127,7 +127,9 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   years, author — is computed from `books.ts`, and a test fails if a name
   doesn't resolve to a run. `blurb` and `artwork` are Tom's to supply
   (`TODO(tom)`); until artwork lands, the run's first three jackets stand in,
-  because one portrait cover stretched to a landscape band crops badly. Each
+  because one portrait cover stretched to a landscape band crops badly —
+  `jackets` names which volumes by series number when the opening three
+  aren't the series at its best. Each
   card carries a `quote` from the books — **check any new one against the
   published text before adding it**, as the committed three were; an
   unattributed or misremembered line is exactly the unverifiable claim the

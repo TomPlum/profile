@@ -16,7 +16,15 @@ const summarise = (run: SeriesSummary) => {
   return parts
 }
 
-const Artwork = ({ run, artwork }: { run: SeriesSummary; artwork?: string }) => {
+const Artwork = ({
+  run,
+  artwork,
+  jackets: chosen
+}: {
+  run: SeriesSummary
+  artwork?: string
+  jackets?: number[]
+}) => {
   // Bespoke art wins when it has been supplied; until then, the run's opening
   // jackets stand in, so a card is never an empty box.
   if (artwork) {
@@ -33,7 +41,13 @@ const Artwork = ({ run, artwork }: { run: SeriesSummary; artwork?: string }) => 
     )
   }
 
-  const jackets = run.books.filter(hasCover).slice(0, 3)
+  // Named volumes if the series lists them, else the opening three.
+  const withArt = run.books.filter(hasCover)
+  const jackets = chosen
+    ? chosen
+        .map((index) => withArt.find((book) => book.seriesIndex === index))
+        .filter((book): book is NonNullable<typeof book> => Boolean(book))
+    : withArt.slice(0, 3)
 
   return (
     <div className={css.artwork}>
@@ -75,7 +89,7 @@ export const Favourites = () => {
       <div className={css.row}>
         {runs.map(({ favourite, run }) => (
           <article key={run.series} className={css.card}>
-            <Artwork run={run} artwork={favourite.artwork} />
+            <Artwork run={run} artwork={favourite.artwork} jackets={favourite.jackets} />
             <h3 className={css.name}>{run.series}</h3>
             <p className={css.author}>{run.author}</p>
             <p className={css.meta}>
