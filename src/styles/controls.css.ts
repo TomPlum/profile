@@ -62,6 +62,43 @@ export const chip = style({
   whiteSpace: 'nowrap'
 })
 
+/**
+ * The pill toggle used by both the log's branch filter and the shelf's — one
+ * definition so the two pages can't drift apart on the same control.
+ */
+export const filterChip = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.78rem',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.45em',
+  padding: '0.45rem 0.8rem',
+  borderRadius: '999px',
+  border: `1px solid ${vars.colour.line}`,
+  backgroundColor: 'transparent',
+  color: vars.colour.inkMuted,
+  cursor: 'pointer',
+  transition: 'border-color 150ms ease, color 150ms ease, background-color 150ms ease',
+  selectors: {
+    '&:hover': {
+      borderColor: vars.colour.ink,
+      color: vars.colour.ink
+    },
+    '&[aria-pressed="true"]': {
+      borderColor: 'currentcolor',
+      backgroundColor: vars.colour.surface,
+      color: vars.colour.ink,
+      fontWeight: 600
+    }
+  }
+})
+
+/** The tally on a filter chip. */
+export const filterCount = style({
+  color: vars.colour.inkFaint,
+  fontVariantNumeric: 'tabular-nums'
+})
+
 export const monoLink = style({
   fontFamily: vars.font.mono,
   fontSize: '0.8rem',

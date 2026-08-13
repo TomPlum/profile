@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { BooksPage } from './BooksPage'
-import { groupByAuthor, shelved, spineWidth } from '../data/shelf'
+import { groupByAuthor, shelfStats, shelved, spineWidth } from '../data/shelf'
 import { books } from '../data/books'
 
 beforeAll(() => {
@@ -19,12 +19,15 @@ beforeAll(() => {
 
 afterEach(cleanup)
 
+/** Spines only — the filter chips are buttons with aria-pressed too. */
+const spines = () =>
+  screen.getAllByRole('group').flatMap((board) => [...board.querySelectorAll('button')])
+
 describe('the shelf page', () => {
   it('puts every shelved book on a board', () => {
     render(<BooksPage />)
     // One button per book — the spines are the content, not decoration.
-    const spines = screen.getAllByRole('button').filter((node) => node.getAttribute('aria-pressed') !== null)
-    expect(spines.length).toBe(shelved.length)
+    expect(spines().length).toBe(shelved.length)
   })
 
   it('names every spine for assistive tech, including the ones too thin to letter', () => {
@@ -52,7 +55,7 @@ describe('the shelf page', () => {
 
   it('shows a book card when a spine is pulled out', () => {
     render(<BooksPage />)
-    const spine = screen.getAllByRole('button').find((node) => node.getAttribute('aria-pressed') !== null)!
+    const spine = spines()[0]!
     fireEvent.click(spine)
     expect(spine.getAttribute('aria-pressed')).toBe('true')
   })
@@ -60,8 +63,27 @@ describe('the shelf page', () => {
   it('does not put the to-read shelf on the wall', () => {
     render(<BooksPage />)
     const wanted = books.find((book) => book.shelf === 'to-read')!
-    const spines = screen.getAllByRole('button')
-    expect(spines.some((spine) => spine.getAttribute('aria-label')?.startsWith(wanted.title))).toBe(false)
+    expect(spines().some((spine) => spine.getAttribute('aria-label')?.startsWith(wanted.title))).toBe(false)
+  })
+
+  it('prints only computed figures, never a typed-in number', () => {
+    render(<BooksPage />)
+    expect(screen.getByText(shelfStats.books.toLocaleString('en-GB'))).toBeDefined()
+    expect(screen.getByText(shelfStats.pages.toLocaleString('en-GB'))).toBeDefined()
+    // The caveat has to state the real shortfall, not a rounded story.
+    expect(screen.getByText(new RegExp(`only recorded a finish date for ${shelfStats.withFinishDate}`))).toBeDefined()
+  })
+
+  it('filters the wall down to five-star books', () => {
+    render(<BooksPage />)
+    fireEvent.click(screen.getByRole('button', { name: /five stars/i }))
+    expect(spines().length).toBe(shelfStats.fiveStars)
+  })
+
+  it('switches the wall to the to-read shelf', () => {
+    render(<BooksPage />)
+    fireEvent.click(screen.getByRole('button', { name: /next up/i }))
+    expect(spines().length).toBe(shelfStats.wantToRead)
   })
 
   it('routes back to the log', () => {

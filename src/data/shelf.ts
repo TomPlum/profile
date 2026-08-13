@@ -82,24 +82,29 @@ const sum = (list: Book[], of: (book: Book) => number) =>
 /**
  * Every number the page prints is computed here from the export — nothing on
  * the shelf page is a hand-typed figure that could quietly go stale.
+ *
+ * Counted over `finished` rather than `shelved`: a book that is open right now
+ * is on the wall, but its pages have not been read yet.
  */
 export const shelfStats = {
-  books: shelved.length,
-  pages: sum(shelved, (book) => book.pages ?? 0),
-  authors: new Set(shelved.map((book) => book.author)).size,
-  series: new Set(shelved.map((book) => book.series).filter(Boolean)).size,
-  fiveStars: shelved.filter((book) => book.rating === 5).length,
-  unrated: shelved.filter((book) => book.rating === 0).length,
-  withFinishDate: shelved.filter((book) => book.dateRead).length,
+  books: finished.length,
+  pages: sum(finished, (book) => book.pages ?? 0),
+  authors: new Set(finished.map((book) => book.author)).size,
+  series: new Set(finished.map((book) => book.series).filter(Boolean)).size,
+  fiveStars: finished.filter((book) => book.rating === 5).length,
+  unrated: finished.filter((book) => book.rating === 0).length,
+  /** Goodreads recorded a finish date for a minority — see the page's caveat. */
+  withFinishDate: finished.filter((book) => book.dateRead).length,
+  reading: reading.length,
   wantToRead: wantToRead.length,
   /** The single longest book on the shelf — a nice, checkable fact. */
-  longest: shelved.reduce((longest, book) =>
+  longest: finished.reduce((longest, book) =>
     (book.pages ?? 0) > (longest.pages ?? 0) ? book : longest
   ),
-  topAuthor: [...new Set(shelved.map((book) => book.author))]
+  topAuthor: [...new Set(finished.map((book) => book.author))]
     .map((author) => ({
       author,
-      count: shelved.filter((book) => book.author === author).length
+      count: finished.filter((book) => book.author === author).length
     }))
     .sort((a, b) => b.count - a.count)[0]!
 }

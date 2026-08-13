@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { branches, sortedCommits } from '../data/commits'
 import type { BranchName } from '../data/types'
 import { vars } from '../styles/theme.css'
+import { filterChip, filterCount } from '../styles/controls.css'
 import { CommitLog } from './CommitLog'
 import * as css from './LogSection.css'
 
@@ -36,7 +37,7 @@ export const LogSection = () => {
       </p>
 
       <div className={css.filters} role="group" aria-label="Filter the log by branch">
-        <button type="button" className={css.filterChip} aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>
+        <button type="button" className={filterChip} aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>
           all branches
         </button>
         {branches.map((branch) => {
@@ -45,14 +46,14 @@ export const LogSection = () => {
             <button
               key={branch.name}
               type="button"
-              className={css.filterChip}
+              className={filterChip}
               aria-pressed={filter === branch.name}
               onClick={() => setFilter(filter === branch.name ? 'all' : branch.name)}
               title={branch.blurb}
             >
               <span className={css.laneDot} style={{ color: vars.colour.lane[branch.lane] }} aria-hidden="true" />
               {branch.name}
-              <span className={css.count}>{total}</span>
+              <span className={filterCount}>{total}</span>
             </button>
           )
         })}

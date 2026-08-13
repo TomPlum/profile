@@ -58,6 +58,70 @@ export const shelves = style({
   marginTop: '2.5rem'
 })
 
+export const stats = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '1.5rem 2.75rem',
+  marginTop: '2rem',
+  paddingTop: '1.5rem',
+  borderTop: `1px solid ${vars.colour.line}`
+})
+
+export const stat = style({
+  display: 'flex',
+  // Reversed so the markup can stay <dt> then <dd> while the number reads first.
+  flexDirection: 'column-reverse',
+  gap: '0.15rem'
+})
+
+export const statNumber = style({
+  fontFamily: vars.font.display,
+  fontVariationSettings: "'opsz' 60, 'WONK' 1",
+  fontSize: 'clamp(1.6rem, 5vw, 2.1rem)',
+  fontWeight: 600,
+  lineHeight: 1,
+  letterSpacing: '-0.02em',
+  color: vars.colour.ink,
+  fontVariantNumeric: 'tabular-nums'
+})
+
+export const statLabel = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.68rem',
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  color: vars.colour.inkFaint
+})
+
+export const filters = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.45rem',
+  marginTop: '2rem'
+})
+
+/**
+ * The honest footnote. Goodreads recorded a finish date for a minority of
+ * these, so there is no reading timeline to draw and the page says so rather
+ * than inventing one.
+ */
+export const caveat = style({
+  fontSize: '0.88rem',
+  lineHeight: 1.6,
+  color: vars.colour.inkFaint,
+  maxWidth: '62ch',
+  marginTop: '2.5rem',
+  paddingTop: '1.25rem',
+  borderTop: `1px solid ${vars.colour.line}`
+})
+
+export const empty = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.85rem',
+  color: vars.colour.inkFaint,
+  padding: '2rem 0'
+})
+
 /**
  * The key sits with the wall it explains — without it the rating tint is just
  * decoration, and a reader has no way to know the widths mean anything.
