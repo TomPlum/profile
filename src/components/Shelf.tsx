@@ -1,4 +1,4 @@
-import { type CSSProperties, type KeyboardEvent, useRef, useState } from 'react'
+import { type CSSProperties, type KeyboardEvent, useEffect, useRef, useState } from 'react'
 import type { Book } from '../data/types'
 import { fitsLettering, spineWidth } from '../data/shelf'
 import { shortHash } from '../lib/hash'
@@ -45,6 +45,17 @@ export const Shelf = ({ heading, books, meta }: ShelfProps) => {
   const [active, setActive] = useState<number | undefined>(undefined)
   const [focusIndex, setFocusIndex] = useState(0)
   const rowRef = useRef<HTMLDivElement>(null)
+
+  // On a touch screen there is no mouse to leave the shelf, so a tap anywhere
+  // else is what puts the book back.
+  useEffect(() => {
+    if (active === undefined) return
+    const dismiss = (event: PointerEvent) => {
+      if (!rowRef.current?.contains(event.target as Node)) setActive(undefined)
+    }
+    document.addEventListener('pointerdown', dismiss)
+    return () => document.removeEventListener('pointerdown', dismiss)
+  }, [active])
 
   const focusSpine = (index: number) => {
     const clamped = Math.max(0, Math.min(books.length - 1, index))

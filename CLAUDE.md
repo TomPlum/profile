@@ -76,6 +76,41 @@ npm run dev / test / build / preview   # build = tsc && vite build
   SVGs, `preserveAspectRatio="none"` + `vectorEffect: 'non-scaling-stroke'`).
   Every stack entry needs a TechIcon — `App.test.tsx` enforces it.
 
+## The shelf page (`books.html`)
+
+A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
+
+- **It is a real second document**, not a route — `books.html` + `src/books.tsx`
+  as a second Rollup input. No 404.html rewrite on Pages, and the home page
+  never downloads 232 books. `SiteShell` holds the chrome both pages share;
+  `Header`'s home/skip targets are props.
+- **Reached from exactly two places** — the masthead's "Currently: … *reading
+  fantasy* …" line (dotted underline) and the colophon. `App.test.tsx` asserts
+  both, and asserts the header never links to it. Keep it that way: the header
+  is still contact + CV only.
+- **Data is generated, not authored.** `scripts/import-goodreads.mjs` turns a
+  Goodreads CSV export into `src/data/books.ts` (series are parsed out of the
+  title, private columns dropped); `scripts/fetch-covers.mjs` pulls covers once
+  from Open Library into `public/covers/` and writes `src/data/covers.ts`.
+  Re-export from Goodreads and re-run both; never hand-edit either file.
+  Covers are committed rather than hotlinked so the colophon's "no tracking"
+  line stays literally true — 211 of 232 have artwork, the rest render the
+  typographic fallback in `BookCard`.
+- **Spine width is page count; rating drives the fill and head band.** The fill
+  can only go so dark because spine lettering is plain `ink` over it, so the
+  ramp (`spineRamp` in `palette.ts`, gated by `palette.test.ts`) stays pale and
+  the head band — which carries no text — runs the full range. The tints are
+  the `languages` lane washed into the surface: **no new accent colour.**
+- **Gotcha:** spines are in `writing-mode: vertical-rl`, where the inline axis
+  runs top-to-bottom. Logical properties (`inset-inline`, `padding-inline`)
+  flip there — use physical ones inside a spine. Percentage spine heights also
+  need the row's fixed `height`, or a long title stretches the shelf.
+- Boards use a roving tabindex (one tab stop each; arrows walk, Home/End jump)
+  rather than making 232 books into 232 tab stops.
+- **The page states what the data can't support**: Goodreads recorded a finish
+  date for only 65 of 210, so there is no reading timeline — don't add one, and
+  don't invent dates to enable it.
+
 ## Verifying changes visually
 
 Playwright's Chromium is cached at
