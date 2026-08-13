@@ -1,4 +1,5 @@
 import { profile } from '../data/profile'
+import { SHELF_PATH } from '../lib/paths'
 import { buttonGhost, buttonPrimary } from '../styles/controls.css'
 import { TechIcon } from './TechIcon'
 import * as css from './Footer.css'
@@ -14,7 +15,7 @@ const ClaudeMark = () => (
   </svg>
 )
 
-export const Footer = () => (
+export const Footer = ({ root = '' }: { root?: string }) => (
   <>
     <section id="contact" className={css.contact} aria-label="Contact">
       <div className={css.contactInner}>
@@ -27,7 +28,7 @@ export const Footer = () => (
           <a className={`${buttonPrimary} ${css.emailButton}`} href={`mailto:${profile.email}`}>
             {profile.email}
           </a>
-          <a className={buttonGhost} href={profile.cvHref} target="_blank" rel="noopener">
+          <a className={buttonGhost} href={`${root}${profile.cvHref}`} target="_blank" rel="noopener">
             CV (PDF)
           </a>
           <a className={buttonGhost} href={profile.links.github} target="_blank" rel="noopener">
@@ -68,7 +69,7 @@ export const Footer = () => (
         </p>
         <p>
           Off the clock, there&rsquo;s{' '}
-          <a className={css.colophonLink} href="books.html">
+          <a className={css.colophonLink} href={`${root}${SHELF_PATH}`}>
             the shelf
           </a>
           : everything I&rsquo;ve read, drawn as the bookcase it would fill.

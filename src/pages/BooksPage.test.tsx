@@ -114,6 +114,6 @@ describe('the shelf page', () => {
 
   it('routes back to the log', () => {
     render(<BooksPage />)
-    expect(screen.getByRole('link', { name: /back to the log/i }).getAttribute('href')).toBe('index.html')
+    expect(screen.getByRole('link', { name: /back to the log/i }).getAttribute('href')).toBe('../')
   })
 })

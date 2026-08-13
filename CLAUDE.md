@@ -76,14 +76,23 @@ npm run dev / test / build / preview   # build = tsc && vite build
   SVGs, `preserveAspectRatio="none"` + `vectorEffect: 'non-scaling-stroke'`).
   Every stack entry needs a TechIcon — `App.test.tsx` enforces it.
 
-## The shelf page (`books.html`)
+## The shelf page (`/books/`)
 
 A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
 
-- **It is a real second document**, not a route — `books.html` + `src/books.tsx`
-  as a second Rollup input. No 404.html rewrite on Pages, and the home page
-  never downloads 232 books. `SiteShell` holds the chrome both pages share;
-  `Header`'s home/skip targets are props.
+- **It is a real second document**, not a route — `books/index.html` +
+  `src/books.tsx` as a second Rollup input. The directory-style page is what
+  keeps `.html` out of the URL: on GitHub Pages a client-side route at `/books`
+  would need a 404.html redirect hack *and* an absolute `base`, losing the
+  relative-base portability. The home page also never downloads 232 books.
+  `SiteShell` holds the chrome both pages share; `Header`'s home/skip targets
+  are props.
+- **Being one directory down has a cost**: Vite rewrites its own asset URLs
+  (`../assets/…`) automatically, but every hand-written path — the CV, cover
+  images, links home — must climb out. `lib/paths.ts` holds the single
+  definition (`SHELF_ROOT`), passed to the chrome as `SiteShell`'s `root` prop.
+  A page nested deeper would need its own. `App.test.tsx` asserts no internal
+  link contains `.html`.
 - **Reached from exactly two places** — the masthead's "Currently: … *reading
   fantasy* …" line (dotted underline) and the colophon. `App.test.tsx` asserts
   both, and asserts the header never links to it. Keep it that way: the header
@@ -96,11 +105,17 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   Covers are committed rather than hotlinked so the colophon's "no tracking"
   line stays literally true — 211 of 232 have artwork, the rest render the
   typographic fallback in `BookCard`.
-- **Spine width is page count; rating drives the fill and head band.** The fill
-  can only go so dark because spine lettering is plain `ink` over it, so the
-  ramp (`spineRamp` in `palette.ts`, gated by `palette.test.ts`) stays pale and
-  the head band — which carries no text — runs the full range. The tints are
-  the `languages` lane washed into the surface: **no new accent colour.**
+- **Spine width is page count; hue is the series run; strength is the rating.**
+  Runs cycle the four lane colours so adjacent runs on a shelf never share one
+  (a run keeps its colour along its length — both are tested). The fill can
+  only go so dark because spine lettering is plain `ink` over it, so the ramp
+  (`spineRamp` in `palette.ts`) stays pale and the head band — which carries no
+  text — runs the full range. All sixteen tints are gated by `palette.test.ts`;
+  0.22 is the ceiling for the top rung. **No new accent colours.**
+- **The book card tracks the pointer** (fixed position, above the cursor,
+  flipping below near the top of the viewport) rather than anchoring to the
+  shelf, so it never covers the spine being pointed at. On touch it's a bottom
+  sheet, dismissed by a tap outside.
 - **Gotcha:** spines are in `writing-mode: vertical-rl`, where the inline axis
   runs top-to-bottom. Logical properties (`inset-inline`, `padding-inline`)
   flip there — use physical ones inside a spine. Percentage spine heights also

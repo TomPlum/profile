@@ -28,7 +28,7 @@ export const profile = {
    */
   currently: [
     'Currently: learning Japanese & Polish, lifting, ',
-    { text: 'reading fantasy', href: 'books.html' },
+    { text: 'reading fantasy', href: 'books/' },
     ', building PCs.'
   ],
   email: 'Thomas.Plumpton@hotmail.co.uk', // matches the contact address on the CV

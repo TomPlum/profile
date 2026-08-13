@@ -17,6 +17,8 @@ const MoonIcon = () => (
 )
 
 export interface HeaderRoutes {
+  /** How far the page sits below the site root — see `lib/paths.ts`. */
+  root?: string
   /** Where the name links back to. The shelf page points at the home page. */
   homeHref?: string
   /** The skip link's target — each page names its own main landmark. */
@@ -29,6 +31,7 @@ export interface HeaderRoutes {
  * here so nothing playful ever stands between a recruiter and either one.
  */
 export const Header = ({
+  root = '',
   homeHref = '#top',
   skipHref = '#log',
   skipLabel = 'Skip to the log'
@@ -59,7 +62,7 @@ export const Header = ({
           <a className={buttonGhost} href={`mailto:${profile.email}`}>
             Contact
           </a>
-          <a className={buttonPrimary} href={profile.cvHref} target="_blank" rel="noopener">
+          <a className={buttonPrimary} href={`${root}${profile.cvHref}`} target="_blank" rel="noopener">
             CV<span className={css.cvSuffix}>&nbsp;(PDF)</span>
           </a>
         </div>

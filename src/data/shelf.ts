@@ -1,12 +1,14 @@
 import { books } from './books'
 import { coverIds } from './covers'
 import type { Book, LaneKey } from './types'
+import { SHELF_ROOT } from '../lib/paths'
 
 const covers = new Set(coverIds)
 
 export const hasCover = (book: Book): boolean => covers.has(book.id)
 
-export const coverSrc = (book: Book): string => `covers/${book.id}.jpg`
+/** Covers live at the site root; the shelf page renders from one below. */
+export const coverSrc = (book: Book): string => `${SHELF_ROOT}covers/${book.id}.jpg`
 
 export const finished = books.filter((book) => book.shelf === 'read')
 export const reading = books.filter((book) => book.shelf === 'currently-reading')

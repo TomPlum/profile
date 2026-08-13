@@ -15,7 +15,7 @@ export default defineConfig({
       // with its own bundle, so the home page never downloads 232 books.
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
-        books: resolve(import.meta.dirname, 'books.html')
+        books: resolve(import.meta.dirname, 'books', 'index.html')
       }
     }
   },

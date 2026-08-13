@@ -50,11 +50,15 @@ afterEach(() => {
 describe('the shelf is reachable, but quietly', () => {
   it('links from the currently line and the colophon, and nowhere louder', () => {
     render(<App />)
-    const routes = screen.getAllByRole('link').filter((link) => link.getAttribute('href') === 'books.html')
+    const routes = screen.getAllByRole('link').filter((link) => link.getAttribute('href') === 'books/')
     expect(routes.length).toBe(2)
     // The header stays boring: contact and CV only.
     const header = document.querySelector('header')!
-    expect(header.querySelector('a[href="books.html"]')).toBeNull()
+    expect(header.querySelector('a[href="books/"]')).toBeNull()
+    // No .html anywhere in the site's own URLs.
+    screen.getAllByRole('link').forEach((link) => {
+      expect(link.getAttribute('href'), 'internal link').not.toMatch(/\.html/)
+    })
   })
 })
 

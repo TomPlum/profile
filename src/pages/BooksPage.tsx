@@ -3,6 +3,7 @@ import { SiteShell } from '../SiteShell'
 import { Shelf } from '../components/Shelf'
 import { filterChip, filterCount } from '../styles/controls.css'
 import { filterBooks, groupByAuthor, shelfStats, type ShelfFilter } from '../data/shelf'
+import { SHELF_ROOT } from '../lib/paths'
 import * as css from './BooksPage.css'
 
 const number = (value: number) => value.toLocaleString('en-GB')
@@ -38,7 +39,7 @@ export const BooksPage = () => {
   const { shelves, singles } = groupByAuthor(filterBooks(filter))
 
   return (
-    <SiteShell homeHref="index.html" skipHref="#shelf" skipLabel="Skip to the shelf">
+    <SiteShell root={SHELF_ROOT} homeHref={SHELF_ROOT} skipHref="#shelf" skipLabel="Skip to the shelf">
       <div className={css.page}>
         <p className={css.command}>
           <span className={css.prompt}>$</span>ls ~/shelf
@@ -114,7 +115,7 @@ export const BooksPage = () => {
           rather than guessed at.
         </p>
 
-        <a className={css.back} href="index.html">
+        <a className={css.back} href={SHELF_ROOT}>
           ← back to the log
         </a>
       </div>
