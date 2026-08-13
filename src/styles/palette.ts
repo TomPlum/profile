@@ -23,12 +23,14 @@ export interface Palette {
     puzzles: string
   }
   /** Book-spine tints on the shelf page — see `spineRamp` below. */
-  spine: {
-    five: string
-    four: string
-    three: string
-    low: string
-  }
+  spine: Record<'career' | 'oss' | 'languages' | 'puzzles', SpineRamp>
+}
+
+interface SpineRamp {
+  five: string
+  four: string
+  three: string
+  low: string
 }
 
 const channels = (hex: string): [number, number, number] => [
@@ -49,19 +51,42 @@ const mix = (a: string, b: string, weight: number): string => {
 }
 
 /**
- * A spine's fill encodes its rating. The tints are the `languages` lane washed
- * into the page surface rather than four new colours — the four-lane accent
- * system still holds — and they stop well short of full saturation so that
- * spine lettering stays plain `ink` and keeps its contrast in both themes.
- * The saturated lane colour appears only as the spine's head band, which
- * carries no text.
+ * A spine's hue says which series run it belongs to; its strength says how the
+ * book was rated. The hues are the four existing lane colours washed into the
+ * page surface — no new accents — and they stop well short of full saturation
+ * so spine lettering stays plain `ink` and keeps its contrast in both themes.
+ * The lane colour runs at full strength only in the head band, which carries
+ * no text. Every rung of every lane is gated in `palette.test.ts`.
  */
-const spineRamp = (lane: string, surface: string) => ({
-  five: mix(lane, surface, 0.25),
-  four: mix(lane, surface, 0.155),
-  three: mix(lane, surface, 0.085),
-  low: mix(lane, surface, 0.045)
+const spineRamp = (lane: string, surface: string): SpineRamp => ({
+  // 0.22 is the ceiling: above it, inkMuted on a five-star `puzzles` spine
+  // drops under 4.5:1 in the dark theme.
+  five: mix(lane, surface, 0.22),
+  four: mix(lane, surface, 0.14),
+  three: mix(lane, surface, 0.08),
+  low: mix(lane, surface, 0.042)
 })
+
+const spines = (lanes: Palette['lane'], surface: string): Palette['spine'] => ({
+  career: spineRamp(lanes.career, surface),
+  oss: spineRamp(lanes.oss, surface),
+  languages: spineRamp(lanes.languages, surface),
+  puzzles: spineRamp(lanes.puzzles, surface)
+})
+
+const lightLanes = {
+  career: '#A63D0F',
+  oss: '#0B6153',
+  languages: '#77398D',
+  puzzles: '#6E5A0E'
+}
+
+const darkLanes = {
+  career: '#E08948',
+  oss: '#4BBFA5',
+  languages: '#C68BDB',
+  puzzles: '#C9AC3E'
+}
 
 export const light: Palette = {
   bg: '#F4EFE6',
@@ -73,13 +98,8 @@ export const light: Palette = {
   line: '#DCD3C0',
   accent: '#A63D0F',
   accentInk: '#FFF6EA',
-  lane: {
-    career: '#A63D0F',
-    oss: '#0B6153',
-    languages: '#77398D',
-    puzzles: '#6E5A0E'
-  },
-  spine: spineRamp('#77398D', '#FBF8F1')
+  lane: lightLanes,
+  spine: spines(lightLanes, '#FBF8F1')
 }
 
 export const dark: Palette = {
@@ -92,11 +112,6 @@ export const dark: Palette = {
   line: '#3B3425',
   accent: '#E08948',
   accentInk: '#231205',
-  lane: {
-    career: '#E08948',
-    oss: '#4BBFA5',
-    languages: '#C68BDB',
-    puzzles: '#C9AC3E'
-  },
-  spine: spineRamp('#C68BDB', '#1E1A12')
+  lane: darkLanes,
+  spine: spines(darkLanes, '#1E1A12')
 }

@@ -1,18 +1,23 @@
 import { style } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
 
-/** Horizontal anchor, measured from the spine the reader pulled out. */
-export const CARD_LEFT = '--card-left'
+/** Where the pointer is, in viewport coordinates. */
+export const CARD_X = '--card-x'
+export const CARD_Y = '--card-y'
 
+/**
+ * Pinned just above the pointer rather than to the shelf, so it never covers
+ * the spine being pointed at. Fixed positioning keeps it out of the row's
+ * `overflow-x` clip. `data-flip` swaps it below the pointer near the top of
+ * the viewport, where there is no room above.
+ */
 export const card = style({
-  vars: { [CARD_LEFT]: '0px' },
-  position: 'absolute',
-  // Sits *on* the shelf rather than above the board: the pulled-out spine
-  // stays visible over the top of it, and the card can never collide with the
-  // page copy above the first board.
-  bottom: '0.8rem',
-  left: `var(${CARD_LEFT})`,
-  zIndex: 5,
+  vars: { [CARD_X]: '50vw', [CARD_Y]: '50vh' },
+  position: 'fixed',
+  left: `var(${CARD_X})`,
+  top: `var(${CARD_Y})`,
+  transform: 'translate(-50%, calc(-100% - 1rem))',
+  zIndex: 30,
   width: '17.5rem',
   display: 'flex',
   gap: '0.8rem',
@@ -22,16 +27,26 @@ export const card = style({
   borderRadius: '10px',
   boxShadow: '0 14px 30px rgb(0 0 0 / 0.22)',
   pointerEvents: 'none',
+  selectors: {
+    '&[data-flip="true"]': {
+      transform: 'translate(-50%, 1.25rem)'
+    }
+  },
   '@media': {
-    // On touch there is nothing to hover, so the card becomes a sheet pinned
-    // to the bottom of the viewport instead of floating over the shelf.
+    // On touch there is no pointer to track, so the card becomes a sheet
+    // pinned to the bottom of the viewport instead.
     'screen and (max-width: 640px)': {
-      position: 'fixed',
       left: '0.75rem',
       right: '0.75rem',
+      top: 'auto',
       bottom: '0.75rem',
       width: 'auto',
-      zIndex: 20
+      transform: 'none',
+      selectors: {
+        '&[data-flip="true"]': {
+          transform: 'none'
+        }
+      }
     }
   }
 })

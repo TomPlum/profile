@@ -35,13 +35,14 @@ describe.each(themes)('%s theme contrast (WCAG AA, normal text)', (_name, p) => 
     ['puzzles lane on inset (tag chips)', p.lane.puzzles, p.inset],
     ['languages lane on inset', p.lane.languages, p.inset],
     ['oss lane on inset', p.lane.oss, p.inset],
-    // Spine lettering is plain ink on the rating tint, at every rung.
-    ['ink on 5-star spine', p.ink, p.spine.five],
-    ['ink on 4-star spine', p.ink, p.spine.four],
-    ['ink on 3-star spine', p.ink, p.spine.three],
-    ['ink on low-rated spine', p.ink, p.spine.low],
-    ['inkMuted on 5-star spine', p.inkMuted, p.spine.five],
-    ['inkMuted on 4-star spine', p.inkMuted, p.spine.four]
+    // Spine lettering is plain ink over the tint, so every rung of every lane
+    // has to hold on its own — a series run can land on any of the four.
+    ...(Object.entries(p.spine).flatMap(([lane, ramp]) =>
+      Object.entries(ramp).flatMap(([rung, tint]) => [
+        [`ink on ${lane} ${rung}-star spine`, p.ink, tint],
+        [`inkMuted on ${lane} ${rung}-star spine`, p.inkMuted, tint]
+      ])
+    ) as Array<[string, string, string]>)
   ]
 
   it.each(pairs)('%s ≥ 4.5:1', (_label, fg, bg) => {

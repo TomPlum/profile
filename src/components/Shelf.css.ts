@@ -82,7 +82,9 @@ export const spine = style({
   textOrientation: 'mixed',
   fontFamily: vars.font.display,
   fontVariationSettings: "'opsz' 9",
-  fontSize: '0.6rem',
+  // Small enough that a 13px spine can still be lettered — only the shortest
+  // novella on the shelf goes blank.
+  fontSize: '0.56rem',
   lineHeight: 1,
   letterSpacing: '0.01em',
   whiteSpace: 'nowrap',
@@ -101,6 +103,7 @@ export const spine = style({
       boxShadow: `0 6px 14px rgb(0 0 0 / 0.22)`
     },
     // The head band: the only place the lane colour runs at full strength.
+    // Its colour comes from the run's lane, set by `spineTint` below.
     // Physical left/right, not `inset-inline` — the spine is in a vertical
     // writing mode, where the inline axis runs top-to-bottom and a logical
     // inset would collapse the band to nothing.
@@ -110,39 +113,52 @@ export const spine = style({
       left: 0,
       right: 0,
       top: 0,
-      height: '6px',
-      backgroundColor: vars.colour.lane.languages
+      height: '6px'
     }
   }
 })
 
 /**
- * Rating drives both the fill and the strength of the head band. The fill
- * alone can't carry it — it has to stay pale enough for ink lettering to keep
- * WCAG AA on top of it (see `spineRamp`), which leaves the rungs close
- * together. The band has no text on it, so it can run the full range.
- * Unrated books stay bare and dashed, which is honest.
+ * Hue says which series run a spine belongs to; strength says how it was rated.
+ *
+ * The fill alone can't carry the rating — it has to stay pale enough for ink
+ * lettering to keep WCAG AA on top of it (see `spineRamp`), which leaves the
+ * rungs close together. The head band carries no text, so its opacity can run
+ * the full range. Unrated books stay bare and dashed, which is honest.
  */
-export const spineRating = styleVariants({
-  five: { backgroundColor: vars.colour.spine.five },
-  four: {
-    backgroundColor: vars.colour.spine.four,
-    selectors: { '&::before': { opacity: 0.7 } }
-  },
-  three: {
-    backgroundColor: vars.colour.spine.three,
-    selectors: { '&::before': { opacity: 0.45 } }
-  },
-  low: {
-    backgroundColor: vars.colour.spine.low,
-    selectors: { '&::before': { opacity: 0.25 } }
-  },
-  none: {
-    backgroundColor: vars.colour.surface,
-    borderStyle: 'dashed',
-    selectors: { '&::before': { opacity: 0.12 } }
-  }
-})
+const LANES = ['career', 'oss', 'languages', 'puzzles'] as const
+
+const rungs = (lane: (typeof LANES)[number]) =>
+  styleVariants({
+    five: {
+      backgroundColor: vars.colour.spine[lane].five,
+      selectors: { '&::before': { backgroundColor: vars.colour.lane[lane] } }
+    },
+    four: {
+      backgroundColor: vars.colour.spine[lane].four,
+      selectors: { '&::before': { backgroundColor: vars.colour.lane[lane], opacity: 0.7 } }
+    },
+    three: {
+      backgroundColor: vars.colour.spine[lane].three,
+      selectors: { '&::before': { backgroundColor: vars.colour.lane[lane], opacity: 0.45 } }
+    },
+    low: {
+      backgroundColor: vars.colour.spine[lane].low,
+      selectors: { '&::before': { backgroundColor: vars.colour.lane[lane], opacity: 0.25 } }
+    },
+    none: {
+      backgroundColor: vars.colour.surface,
+      borderStyle: 'dashed',
+      selectors: { '&::before': { backgroundColor: vars.colour.lane[lane], opacity: 0.12 } }
+    }
+  })
+
+export const spineTint = {
+  career: rungs('career'),
+  oss: rungs('oss'),
+  languages: rungs('languages'),
+  puzzles: rungs('puzzles')
+}
 
 export const spineLabel = style({
   display: 'block',

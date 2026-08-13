@@ -18,10 +18,10 @@ const colourContract = {
     puzzles: null
   },
   spine: {
-    five: null,
-    four: null,
-    three: null,
-    low: null
+    career: { five: null, four: null, three: null, low: null },
+    oss: { five: null, four: null, three: null, low: null },
+    languages: { five: null, four: null, three: null, low: null },
+    puzzles: { five: null, four: null, three: null, low: null }
   }
 }
 

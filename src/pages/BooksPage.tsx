@@ -82,7 +82,8 @@ export const BooksPage = () => {
             <span className={css.keySwatch} />
             wider spine = longer book
           </span>
-          <span className={css.keyItem}>darker fill = higher rating</span>
+          <span className={css.keyItem}>colour separates series runs</span>
+          <span className={css.keyItem}>darker = higher rating</span>
           <span className={css.keyItem}>dashed = unrated</span>
         </div>
 
@@ -91,15 +92,15 @@ export const BooksPage = () => {
             <Shelf
               key={shelf.author}
               heading={shelf.author}
-              books={shelf.books}
-              meta={`${shelf.books.length} books · ${pages(shelf.pages)}`}
+              entries={shelf.entries}
+              meta={`${shelf.entries.length} books · ${pages(shelf.pages)}`}
             />
           ))}
 
           {singles.length > 0 && (
             <Shelf
               heading={SINGLES_HEADING[filter]}
-              books={singles}
+              entries={singles}
               meta={singles.length === 1 ? '1 book' : `${singles.length} authors · one book each`}
             />
           )}

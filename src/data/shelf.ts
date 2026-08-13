@@ -1,6 +1,6 @@
 import { books } from './books'
 import { coverIds } from './covers'
-import type { Book } from './types'
+import type { Book, LaneKey } from './types'
 
 const covers = new Set(coverIds)
 
@@ -30,10 +30,38 @@ export const filterBooks = (filter: ShelfFilter): Book[] => {
   }
 }
 
+/**
+ * The lane a spine is drawn in. Runs cycle through the four so that adjacent
+ * series on the same shelf never share a colour — the hue separates one run
+ * from the next, it doesn't name a particular series globally.
+ */
+const RUN_LANES: LaneKey[] = ['languages', 'oss', 'puzzles', 'career']
+
+export interface ShelfEntry {
+  book: Book
+  lane: LaneKey
+}
+
 export interface AuthorShelf {
   author: string
-  books: Book[]
+  entries: ShelfEntry[]
   pages: number
+}
+
+/** Standalones sit together at the end of an author's shelf, as one run. */
+const runKey = (book: Book) => book.series ?? '(standalone)'
+
+const withRunLanes = (list: Book[]): ShelfEntry[] => {
+  let run = -1
+  let previous: string | undefined
+  return list.map((book) => {
+    const key = runKey(book)
+    if (key !== previous) {
+      run++
+      previous = key
+    }
+    return { book, lane: RUN_LANES[run % RUN_LANES.length]! }
+  })
 }
 
 /**
@@ -42,7 +70,9 @@ export interface AuthorShelf {
  * than any number could. Authors with a single book collect onto one last
  * board rather than each getting a near-empty shelf of their own.
  */
-export const groupByAuthor = (list: Book[]): { shelves: AuthorShelf[]; singles: Book[] } => {
+export const groupByAuthor = (
+  list: Book[]
+): { shelves: AuthorShelf[]; singles: ShelfEntry[] } => {
   const byAuthor = new Map<string, Book[]>()
   list.forEach((book) => {
     const existing = byAuthor.get(book.author)
@@ -58,16 +88,24 @@ export const groupByAuthor = (list: Book[]): { shelves: AuthorShelf[]; singles: 
     else {
       shelves.push({
         author,
-        books: [...group].sort(seriesOrder),
+        entries: withRunLanes([...group].sort(seriesOrder)),
         pages: group.reduce((total, book) => total + (book.pages ?? 0), 0)
       })
     }
   })
 
-  shelves.sort((a, b) => b.books.length - a.books.length || a.author.localeCompare(b.author))
+  shelves.sort((a, b) => b.entries.length - a.entries.length || a.author.localeCompare(b.author))
   singles.sort((a, b) => a.author.localeCompare(b.author))
 
-  return { shelves, singles }
+  // Every one-off is its own run, so the last board reads as a mixed shelf
+  // rather than a block of one colour.
+  return {
+    shelves,
+    singles: singles.map((book, index) => ({
+      book,
+      lane: RUN_LANES[index % RUN_LANES.length]!
+    }))
+  }
 }
 
 /** Series run in order on a real shelf; standalones follow, alphabetically. */
@@ -115,7 +153,11 @@ export const shelfStats = {
  * doesn't eat the row.
  */
 export const spineWidth = (book: Book): number =>
-  Math.round(Math.min(34, Math.max(11, 7 + (book.pages ?? 320) / 36)))
+  Math.round(Math.min(34, Math.max(13, 11 + (book.pages ?? 320) / 34)))
 
-/** Wide enough to letter the spine without the text turning to ellipsis soup. */
-export const fitsLettering = (book: Book): boolean => spineWidth(book) >= 17
+/**
+ * Wide enough to letter. The floor is set so that all but the shortest
+ * novellas take their title: at 0.56rem the vertical lettering needs about
+ * 14px of spine once the borders are paid for.
+ */
+export const fitsLettering = (book: Book): boolean => spineWidth(book) >= 15

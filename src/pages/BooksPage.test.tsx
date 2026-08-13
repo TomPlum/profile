@@ -39,7 +39,33 @@ describe('the shelf page', () => {
   it('leads with the biggest run — the point of the page', () => {
     const { shelves } = groupByAuthor(shelved)
     expect(shelves[0]!.author).toBe('Brandon Sanderson')
-    expect(shelves[0]!.books.length).toBeGreaterThan(shelves[1]!.books.length - 1)
+    expect(shelves[0]!.entries.length).toBeGreaterThan(shelves[1]!.entries.length - 1)
+  })
+
+  it('gives neighbouring series runs different colours', () => {
+    const sanderson = groupByAuthor(shelved).shelves[0]!
+    const runs: Array<{ series: string | undefined; lane: string }> = []
+    sanderson.entries.forEach(({ book, lane }) => {
+      if (runs.at(-1)?.series !== book.series) runs.push({ series: book.series, lane })
+    })
+    // Sanderson's shelf is several runs — Mistborn, Stormlight, Skyward — and
+    // no two adjacent ones may share a lane, or the boundary disappears.
+    expect(runs.length).toBeGreaterThan(3)
+    runs.forEach((run, index) => {
+      if (index > 0) expect(run.lane, `run '${run.series}'`).not.toBe(runs[index - 1]!.lane)
+    })
+  })
+
+  it('colours a series run consistently along its length', () => {
+    const sanderson = groupByAuthor(shelved).shelves[0]!
+    const byRun = new Map<string, Set<string>>()
+    sanderson.entries.forEach(({ book, lane }) => {
+      const key = book.series ?? '(standalone)'
+      byRun.set(key, (byRun.get(key) ?? new Set()).add(lane))
+    })
+    byRun.forEach((lanes, series) => {
+      expect(lanes.size, `lanes used by '${series}'`).toBe(1)
+    })
   })
 
   it('keeps the shelf to a single tab stop per board', () => {

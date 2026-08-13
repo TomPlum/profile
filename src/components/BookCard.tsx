@@ -17,15 +17,31 @@ const Cover = ({ book }: { book: Book }) =>
     </div>
   )
 
+export interface CardAnchor {
+  /** Viewport coordinates of the pointer, or of the focused spine's top edge. */
+  x: number
+  y: number
+}
+
+/** Roughly the card's own height — enough to know when it won't fit above. */
+const CARD_HEIGHT = 190
+
 /**
  * What a pulled-out spine shows: the jacket and the handful of facts the export
  * actually contains. Purely presentational — the accessible name lives on the
  * spine button itself, so this is hidden from assistive tech.
  */
-export const BookCard = ({ book, left }: { book: Book; left: number }) => (
+export const BookCard = ({ book, anchor }: { book: Book; anchor: CardAnchor }) => (
   <div
     className={css.card}
-    style={{ [css.CARD_LEFT]: `${left}px` } as CSSProperties}
+    // Kept inside the viewport: half the card either side of the pointer.
+    style={
+      {
+        [css.CARD_X]: `${Math.round(Math.min(Math.max(anchor.x, 148), window.innerWidth - 148))}px`,
+        [css.CARD_Y]: `${Math.round(anchor.y)}px`
+      } as CSSProperties
+    }
+    data-flip={anchor.y < CARD_HEIGHT}
     aria-hidden="true"
   >
     <Cover book={book} />
