@@ -110,6 +110,32 @@ export const meta = style({
   gap: '0.1rem 0.5rem'
 })
 
+/**
+ * A line from the books themselves. Set in Fraunces italic with the display
+ * axes wound up — the one place on this page the type is allowed to perform.
+ */
+export const quote = style({
+  fontFamily: vars.font.display,
+  fontVariationSettings: "'opsz' 24, 'SOFT' 40, 'WONK' 1",
+  fontStyle: 'italic',
+  fontSize: '1rem',
+  lineHeight: 1.4,
+  color: vars.colour.ink,
+  marginTop: '0.7rem',
+  paddingLeft: '0.8rem',
+  borderLeft: `2px solid ${vars.colour.line}`
+})
+
+export const quoteSource = style({
+  display: 'block',
+  fontFamily: vars.font.mono,
+  fontSize: '0.66rem',
+  fontStyle: 'normal',
+  letterSpacing: '0.02em',
+  color: vars.colour.inkFaint,
+  marginTop: '0.4rem'
+})
+
 export const blurb = style({
   fontSize: '0.92rem',
   lineHeight: 1.55,

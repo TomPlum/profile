@@ -182,6 +182,18 @@ describe('the shelf page', () => {
     })
   })
 
+  it('attributes every quote to a volume', () => {
+    render(<BooksPage />)
+    favouriteSeries.forEach((favourite) => {
+      if (!favourite.quote) return
+      // An unattributed quote is the kind of unverifiable claim this site avoids.
+      expect(favourite.quote.source.length, `source for '${favourite.series}'`).toBeGreaterThan(3)
+      const card = screen.getByRole('heading', { level: 3, name: favourite.series }).parentElement!
+      expect(card.textContent).toContain(favourite.quote.text)
+      expect(card.textContent).toContain(favourite.quote.source)
+    })
+  })
+
   it('routes back to the log', () => {
     render(<BooksPage />)
     expect(screen.getByRole('link', { name: /back to the log/i }).getAttribute('href')).toBe('../')

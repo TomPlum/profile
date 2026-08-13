@@ -24,10 +24,35 @@ export interface FavouriteSeries {
   artwork?: string
   /** Tom's own words. Omitted until written. */
   blurb?: string
+  /** A line from the books themselves, with the volume it comes from. */
+  quote?: { text: string; source: string }
 }
 
+/**
+ * The quotes below were checked against the published text rather than quoted
+ * from memory — a misattributed line would be exactly the kind of unverified
+ * claim the rest of this site avoids. Swap them for your own favourites
+ * freely; keep them short, and keep `source` naming the volume.
+ */
 export const favouriteSeries: FavouriteSeries[] = [
-  { series: 'Mistborn' },
-  { series: 'The Stormlight Archive' },
-  { series: 'The Sun Eater' }
+  {
+    series: 'Mistborn',
+    quote: { text: 'There’s always another secret.', source: 'Kelsier, The Final Empire' }
+  },
+  {
+    series: 'The Stormlight Archive',
+    quote: {
+      text: 'Life before death. Strength before weakness. Journey before destination.',
+      source: 'The First Ideal, The Way of Kings'
+    }
+  },
+  {
+    series: 'The Sun Eater',
+    quote: {
+      text:
+        'The man who hopes for the future delays its arrival, ' +
+        'and the man who dreads it summons it to his door.',
+      source: 'Empire of Silence'
+    }
+  }
 ]

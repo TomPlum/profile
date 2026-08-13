@@ -127,7 +127,11 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   years, author — is computed from `books.ts`, and a test fails if a name
   doesn't resolve to a run. `blurb` and `artwork` are Tom's to supply
   (`TODO(tom)`); until artwork lands, the run's first three jackets stand in,
-  because one portrait cover stretched to a landscape band crops badly.
+  because one portrait cover stretched to a landscape band crops badly. Each
+  card carries a `quote` from the books — **check any new one against the
+  published text before adding it**, as the committed three were; an
+  unattributed or misremembered line is exactly the unverifiable claim the
+  data policy rules out. `source` names the volume.
 - **Two views of the same books**: spine-out (default) and face-out covers,
   toggled top-right by the `ViewSwitch` segmented control (shared `segmented`/
   `segment` styles in `controls.css`). Same boards, same grouping, same order, same accessible

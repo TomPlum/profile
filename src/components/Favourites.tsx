@@ -86,6 +86,13 @@ export const Favourites = () => {
                 </span>
               ))}
             </p>
+            {favourite.quote && (
+              <blockquote className={css.quote}>
+                “{favourite.quote.text}”
+                <cite className={css.quoteSource}>— {favourite.quote.source}</cite>
+              </blockquote>
+            )}
+
             {favourite.blurb && <p className={css.blurb}>{favourite.blurb}</p>}
           </article>
         ))}
