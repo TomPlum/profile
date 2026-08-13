@@ -83,9 +83,18 @@ export interface Book {
   /** Goodreads only recorded a finish date for a minority of these. */
   dateRead?: string
   dateAdded?: string
-  /** Used by scripts/fetch-covers.mjs to look covers up; not shown in the UI. */
+  /**
+   * The edition on the shelf. `scripts/fetch-covers.mjs` uses these to fetch
+   * the jacket of the printing actually read rather than any old edition: the
+   * ISBN pins it exactly, and publisher + year narrow it down when Goodreads
+   * recorded no ISBN.
+   */
   isbn13?: string
   isbn10?: string
+  publisher?: string
+  binding?: string
+  /** The edition's year, as opposed to `published` (the work's first). */
+  editionYear?: number
 }
 
 export interface Commit {

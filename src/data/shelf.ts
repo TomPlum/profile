@@ -1,5 +1,5 @@
 import { books } from './books'
-import { coverIds } from './covers'
+import { approximateCovers, coverIds } from './covers'
 import type { Book, LaneKey } from './types'
 import { SHELF_ROOT } from '../lib/paths'
 
@@ -135,6 +135,12 @@ export const shelfStats = {
   unrated: finished.filter((book) => book.rating === 0).length,
   /** Goodreads recorded a finish date for a minority — see the page's caveat. */
   withFinishDate: finished.filter((book) => book.dateRead).length,
+  /**
+   * Jackets that are a different printing from the edition on the shelf —
+   * either Goodreads recorded no ISBN, or Open Library has no artwork for that
+   * printing. Stated on the page rather than glossed over.
+   */
+  approximateCovers: approximateCovers.length,
   reading: reading.length,
   wantToRead: wantToRead.length,
   /** The single longest book on the shelf — a nice, checkable fact. */

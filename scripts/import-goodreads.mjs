@@ -148,8 +148,14 @@ const parsed = rows
       published: Number.isFinite(published) && published !== 0 ? published : undefined,
       dateRead: isoDate(cell(row, 'Date Read')),
       dateAdded: isoDate(cell(row, 'Date Added')),
+      // The edition Tom actually read. ISBN pins it exactly; publisher and the
+      // edition's own year narrow it down when Goodreads recorded no ISBN
+      // (which it doesn't, for most Kindle rows).
       isbn13: isbn(cell(row, 'ISBN13')) || undefined,
-      isbn10: isbn(cell(row, 'ISBN')) || undefined
+      isbn10: isbn(cell(row, 'ISBN')) || undefined,
+      publisher: cell(row, 'Publisher') || undefined,
+      binding: cell(row, 'Binding') || undefined,
+      editionYear: Number(cell(row, 'Year Published')) || undefined
     }
   })
 

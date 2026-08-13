@@ -3,7 +3,7 @@
  * Fetches book covers from Open Library ONCE and commits them to
  * `public/covers/{id}.jpg`, then writes the manifest `src/data/covers.ts`.
  *
- *   node scripts/fetch-covers.mjs [--force]
+ *   node scripts/fetch-covers.mjs [--force] [--redo-approximate]
  *
  * Fetching at build time rather than hotlinking is deliberate: the site claims
  * "no tracking, no cookies, no analytics" in its colophon, and hotlinking would
@@ -21,6 +21,33 @@ import { books } from '../src/data/books.ts'
 const COVERS = resolve(import.meta.dirname, '..', 'public', 'covers')
 const MANIFEST = resolve(import.meta.dirname, '..', 'src', 'data', 'covers.ts')
 const force = process.argv.includes('--force')
+
+/**
+ * Provenance is kept across runs so an incremental fetch doesn't forget how
+ * good the covers already on disk are. `--redo-approximate` re-tries only the
+ * ones we know are the wrong printing, which is the cheap way to pick up
+ * artwork Open Library has gained since.
+ */
+let previousProvenance = {}
+try {
+  const existing = await import('../src/data/covers.ts')
+  const approximate = new Set(existing.approximateCovers ?? [])
+  existing.coverIds.forEach((id) => {
+    previousProvenance[id] = approximate.has(id) ? 'approximate' : 'isbn'
+  })
+} catch {
+  previousProvenance = {}
+}
+
+// A full re-run re-derives provenance from scratch; carrying the old values
+// over would let a stale "exact" survive a fetch that actually fell back.
+if (force) previousProvenance = {}
+
+const refetch = new Set(
+  process.argv.includes('--redo-approximate')
+    ? Object.entries(previousProvenance).filter(([, kind]) => kind === 'approximate').map(([id]) => id)
+    : []
+)
 
 // Open Library asks for a contactable User-Agent and modest request rates.
 const HEADERS = { 'User-Agent': 'tomplum-profile/1.0 (https://github.com/TomPlum/profile)' }
@@ -92,8 +119,12 @@ const readImage = async (url) => {
   return bytes
 }
 
-const byIsbn = async (isbn) =>
-  isbn ? readImage(`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`) : undefined
+/** The exact printing on the shelf: Open Library resolves ISBN → edition. */
+const byIsbn = async (isbn) => {
+  if (!isbn) return undefined
+  const image = await readImage(`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`)
+  return image ? { image, provenance: 'isbn' } : undefined
+}
 
 const normalise = (value) =>
   value
@@ -108,6 +139,39 @@ const normalise = (value) =>
  * — an unfiltered search happily returns a Spanish translation of Red Rising,
  * or a box-set collage of the whole Witcher series, and both look like a bug
  * rather than a book on the shelf.
+ */
+const isEnglish = (entry) =>
+  (entry.languages ?? []).some((language) => language.key === '/languages/eng')
+
+const cover = (entry) => entry.covers?.find((id) => id > 0)
+
+/**
+ * How well an Open Library edition matches the one on Tom's shelf. Publisher
+ * and year come straight from the Goodreads row, so a printing that agrees on
+ * both is almost certainly the book he actually held — which matters, because
+ * a series shelved as a matching set looks wrong if one volume shows up in a
+ * different publisher's jacket.
+ */
+const editionScore = (entry, book) => {
+  if (!cover(entry) || !isEnglish(entry)) return -1
+
+  let score = 0
+  const publishers = (entry.publishers ?? []).map(normalise)
+  if (book.publisher && publishers.some((name) => name === normalise(book.publisher))) score += 3
+  else if (book.publisher && publishers.some((name) => name.includes(normalise(book.publisher).split(' ')[0]))) score += 2
+
+  const year = Number((entry.publish_date ?? '').match(/\d{4}/)?.[0])
+  if (book.editionYear && year === book.editionYear) score += 3
+  else if (book.editionYear && Math.abs(year - book.editionYear) <= 1) score += 1
+
+  return score
+}
+
+/**
+ * Fallback when the shelved ISBN has no artwork on Open Library. Finds the
+ * work, then picks the edition closest to the one on the shelf rather than
+ * whichever one Open Library happens to prefer — an unranked pick returns
+ * Spanish translations and box-set collages.
  */
 const bySearch = async (book) => {
   const query = new URLSearchParams({
@@ -129,22 +193,23 @@ const bySearch = async (book) => {
   })
   if (!work) return undefined
 
-  // The work's default cover is whichever edition Open Library happens to
-  // prefer — often a translation. Walk the editions for an English one that
-  // carries its own artwork instead.
   await sleep(PAUSE_MS)
-  const editions = await request(`https://openlibrary.org${work.key}/editions.json?limit=50`)
+  const editions = await request(`https://openlibrary.org${work.key}/editions.json?limit=100`)
   if (!editions?.ok) return undefined
 
   const { entries = [] } = await editions.json()
-  const english = entries.find(
-    (entry) =>
-      entry.covers?.some((id) => id > 0) &&
-      (entry.languages ?? []).some((language) => language.key === '/languages/eng')
-  )
-  const coverId = english?.covers.find((id) => id > 0)
+  const ranked = entries
+    .map((entry) => ({ entry, score: editionScore(entry, book) }))
+    .filter(({ score }) => score >= 0)
+    .sort((a, b) => b.score - a.score)
 
-  return coverId ? readImage(`https://covers.openlibrary.org/b/id/${coverId}-M.jpg`) : undefined
+  const best = ranked[0]
+  if (!best) return undefined
+
+  const image = await readImage(`https://covers.openlibrary.org/b/id/${cover(best.entry)}-M.jpg`)
+  // A publisher *and* year match is as good as the ISBN; anything less is a
+  // stand-in, and the manifest says so.
+  return image ? { image, provenance: best.score >= 6 ? 'edition' : 'approximate' } : undefined
 }
 
 mkdirSync(COVERS, { recursive: true })
@@ -158,18 +223,21 @@ const onDisk = new Set(
 let fetched = 0
 let missed = 0
 const misses = []
+/** id → 'isbn' | 'edition' | 'approximate'; carried into the manifest. */
+const provenance = new Map(Object.entries(previousProvenance))
 
 for (const book of books) {
-  if (onDisk.has(book.id) && !force) continue
+  if (onDisk.has(book.id) && !force && !refetch.has(book.id)) continue
 
-  const image =
+  const found =
     (await byIsbn(book.isbn13)) ?? (await byIsbn(book.isbn10)) ?? (await bySearch(book))
 
-  if (image) {
-    writeFileSync(resolve(COVERS, `${book.id}.jpg`), image)
+  if (found) {
+    writeFileSync(resolve(COVERS, `${book.id}.jpg`), found.image)
     onDisk.add(book.id)
+    provenance.set(book.id, found.provenance)
     fetched++
-    console.log(`  ✓ ${book.title} — ${book.author}`)
+    console.log(`  ✓ [${found.provenance.padEnd(11)}] ${book.title} — ${book.author}`)
   } else {
     missed++
     misses.push(`${book.title} — ${book.author}`)
@@ -180,19 +248,30 @@ for (const book of books) {
 }
 
 const have = books.filter((book) => onDisk.has(book.id)).map((book) => book.id)
+const exact = have.filter((id) => provenance.get(id) === 'isbn' || provenance.get(id) === 'edition')
 
 writeFileSync(
   MANIFEST,
   `/**
  * GENERATED by scripts/fetch-covers.mjs — the ids in public/covers.
  * Books absent from this list render the typographic fallback cover instead.
+ *
+ * approximateCovers are the ones where the jacket shown is a different
+ * printing from the edition on the shelf: either Goodreads recorded no ISBN
+ * (it usually doesn't for Kindle rows) or Open Library holds no artwork for
+ * that exact printing. The page counts them rather than pretending.
  */
 export const coverIds: string[] = [
 ${have.map((id) => `  '${id}'`).join(',\n')}
+]
+
+export const approximateCovers: string[] = [
+${have.filter((id) => provenance.get(id) === 'approximate').map((id) => `  '${id}'`).join(',\n')}
 ]
 `
 )
 
 console.log(`\nFetched ${fetched} new, ${missed} without a cover.`)
 console.log(`Manifest: ${have.length}/${books.length} books have artwork.`)
+console.log(`Editions: ${exact.length} match the shelved printing, ${have.length - exact.length} approximate.`)
 if (misses.length) console.log(`\nNo cover found for:\n  ${misses.join('\n  ')}`)

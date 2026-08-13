@@ -92,6 +92,20 @@ describe('shelf data integrity', () => {
     expect(new Set(wayward.map((book) => book.series)).size).toBe(1)
   })
 
+  it('keeps the edition identifiable, so covers can match the printing read', () => {
+    const shelved = books.filter((book) => book.shelf !== 'to-read')
+    const identified = shelved.filter((book) => book.isbn13 || book.isbn10)
+    // Most rows name an ISBN; Goodreads omits it for most Kindle editions,
+    // which is why publisher and year are kept as a fallback signal.
+    expect(identified.length / shelved.length).toBeGreaterThan(0.7)
+    shelved.forEach((book) => {
+      if (book.isbn13) expect(book.isbn13, `isbn13 of '${book.id}'`).toMatch(/^\d{13}$/)
+      if (book.editionYear) {
+        expect(book.editionYear, `edition year of '${book.id}'`).toBeGreaterThan(1900)
+      }
+    })
+  })
+
   it('carries no private column out of the export', () => {
     const allowed = new Set([
       'id',
@@ -106,7 +120,12 @@ describe('shelf data integrity', () => {
       'dateRead',
       'dateAdded',
       'isbn13',
-      'isbn10'
+      'isbn10',
+      // Bibliographic, not private: these identify the edition read, and
+      // scripts/fetch-covers.mjs uses them to fetch that printing's jacket.
+      'publisher',
+      'binding',
+      'editionYear'
     ])
     books.forEach((book) => {
       Object.keys(book).forEach((key) => {

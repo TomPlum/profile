@@ -107,6 +107,14 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   typographic fallback in `BookCard`. The fetcher rejects landscape images
   (Open Library sometimes serves a banner instead of a jacket) by reading the
   JPEG SOF marker, and retries a flaky connection rather than abandoning the run.
+- **Covers match the edition actually read, where the data allows.** The export
+  pins it: ISBN13 first (Open Library resolves ISBN → edition), then publisher
+  + edition year to rank candidate editions when that ISBN has no artwork. 183
+  of 211 match the shelved printing; the other 28 are listed in
+  `approximateCovers` in the generated manifest and *counted on the page* in the
+  caveat. Don't drop `publisher`/`binding`/`editionYear` from the import — they
+  are the only signal for the ~24 Kindle rows Goodreads gives no ISBN for.
+  `--redo-approximate` re-tries just those without refetching everything.
 - **Spine width is page count; hue is the series run; strength is the rating.**
   Runs cycle the four lane colours so adjacent runs on a shelf never share one
   (a run keeps its colour along its length — both are tested). The fill can
