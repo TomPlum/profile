@@ -104,7 +104,9 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   Re-export from Goodreads and re-run both; never hand-edit either file.
   Covers are committed rather than hotlinked so the colophon's "no tracking"
   line stays literally true — 211 of 232 have artwork, the rest render the
-  typographic fallback in `BookCard`.
+  typographic fallback in `BookCard`. The fetcher rejects landscape images
+  (Open Library sometimes serves a banner instead of a jacket) by reading the
+  JPEG SOF marker, and retries a flaky connection rather than abandoning the run.
 - **Spine width is page count; hue is the series run; strength is the rating.**
   Runs cycle the four lane colours so adjacent runs on a shelf never share one
   (a run keeps its colour along its length — both are tested). The fill can
@@ -112,8 +114,15 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   (`spineRamp` in `palette.ts`) stays pale and the head band — which carries no
   text — runs the full range. All sixteen tints are gated by `palette.test.ts`;
   0.22 is the ceiling for the top rung. **No new accent colours.**
+- **A favourites band heads the page** (`data/favourites.ts` → `Favourites`).
+  Entries name a series; everything factual on the card — books, pages, rating,
+  years, author — is computed from `books.ts`, and a test fails if a name
+  doesn't resolve to a run. `blurb` and `artwork` are Tom's to supply
+  (`TODO(tom)`); until artwork lands, the run's first three jackets stand in,
+  because one portrait cover stretched to a landscape band crops badly.
 - **Two views of the same books**: spine-out (default) and face-out covers,
-  toggled top-right. Same boards, same grouping, same order, same accessible
+  toggled top-right by the `ViewSwitch` segmented control (shared `segmented`/
+  `segment` styles in `controls.css`). Same boards, same grouping, same order, same accessible
   names — only the drawing changes, so selection and keyboard handling are
   shared. Covers wrap rather than scroll (a 39-book run face-out would be
   several screens sideways) and are lazy-loaded.

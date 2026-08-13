@@ -1,7 +1,8 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { BooksPage } from './BooksPage'
-import { groupByAuthor, shelfStats, shelved, spineWidth } from '../data/shelf'
+import { groupByAuthor, seriesSummary, shelfStats, shelved, spineWidth } from '../data/shelf'
+import { favouriteSeries } from '../data/favourites'
 import { books } from '../data/books'
 
 beforeAll(() => {
@@ -22,6 +23,8 @@ afterEach(cleanup)
 /** Books only — the toolbar's filter and view groups are groups of buttons too. */
 const boards = () => [...document.querySelectorAll('[data-board]')]
 const spines = () => boards().flatMap((board) => [...board.querySelectorAll('button')])
+/** Artwork on the wall itself — the favourites cards use covers too. */
+const boardImages = () => boards().flatMap((board) => [...board.querySelectorAll('img')])
 
 describe('the shelf page', () => {
   it('puts every shelved book on a board', () => {
@@ -121,20 +124,61 @@ describe('the shelf page', () => {
   it('turns the books face-out without changing what is on the shelf', () => {
     render(<BooksPage />)
     const before = spines().map((spine) => spine.getAttribute('aria-label'))
-    expect(document.querySelectorAll('img[src*="covers/"]').length).toBe(0)
+    expect(boardImages().length).toBe(0)
 
     fireEvent.click(screen.getByRole('button', { name: 'Covers' }))
 
     // Same books, same order, same accessible names — only the drawing changes.
     expect(spines().map((spine) => spine.getAttribute('aria-label'))).toEqual(before)
-    expect(document.querySelectorAll('img[src*="covers/"]').length).toBeGreaterThan(100)
+    expect(boardImages().length).toBeGreaterThan(100)
   })
 
   it('lazy-loads the cover artwork', () => {
     render(<BooksPage />)
     fireEvent.click(screen.getByRole('button', { name: 'Covers' }))
-    document.querySelectorAll('img[src*="covers/"]').forEach((img) => {
+    boardImages().forEach((img) => {
       expect(img.getAttribute('loading')).toBe('lazy')
+    })
+  })
+
+  it('every favourite series resolves to a run on the shelf', () => {
+    // A typo in favourites.ts would otherwise render a card with nothing in it.
+    favouriteSeries.forEach((favourite) => {
+      const run = seriesSummary(favourite.series)
+      expect(run, `'${favourite.series}' is not a series in books.ts`).toBeDefined()
+      expect(run!.books.length, `'${favourite.series}' run length`).toBeGreaterThan(1)
+    })
+  })
+
+  it('describes each favourite with computed figures, not typed-in ones', () => {
+    render(<BooksPage />)
+    favouriteSeries.forEach((favourite) => {
+      const run = seriesSummary(favourite.series)!
+      const card = screen.getByRole('heading', { level: 3, name: favourite.series }).parentElement!
+      expect(card.textContent).toContain(`${run.books.length} books`)
+      expect(card.textContent).toContain(run.pages.toLocaleString('en-GB'))
+      expect(card.textContent).toContain(run.author)
+    })
+  })
+
+  it('stands the run’s own jackets in until artwork is supplied', () => {
+    render(<BooksPage />)
+    favouriteSeries.forEach((favourite) => {
+      const run = seriesSummary(favourite.series)!
+      const card = screen.getByRole('heading', { level: 3, name: favourite.series }).parentElement!
+      const images = [...card.querySelectorAll('img')]
+      expect(images.length, `artwork for '${favourite.series}'`).toBeGreaterThan(0)
+      if (favourite.artwork) {
+        expect(images).toHaveLength(1)
+        expect(images[0]!.getAttribute('src')).toContain(favourite.artwork)
+      } else {
+        // Up to three jackets, all of them from this run.
+        expect(images.length).toBeLessThanOrEqual(3)
+        const ids = run.books.map((book) => book.id)
+        images.forEach((image) => {
+          expect(ids.some((id) => image.getAttribute('src')?.includes(id))).toBe(true)
+        })
+      }
     })
   })
 

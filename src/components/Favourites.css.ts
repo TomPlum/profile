@@ -1,0 +1,118 @@
+import { style } from '@vanilla-extract/css'
+import { vars } from '../styles/theme.css'
+
+export const section = style({
+  marginTop: '2.5rem'
+})
+
+export const heading = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.72rem',
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+  color: vars.colour.inkFaint,
+  paddingBottom: '0.75rem',
+  borderBottom: `1px solid ${vars.colour.line}`,
+  marginBottom: '1.25rem'
+})
+
+export const row = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+  gap: '1.5rem',
+  '@media': {
+    'screen and (max-width: 860px)': {
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+    },
+    'screen and (max-width: 560px)': {
+      gridTemplateColumns: 'minmax(0, 1fr)',
+      gap: '1.75rem'
+    }
+  }
+})
+
+export const card = style({
+  display: 'flex',
+  flexDirection: 'column',
+  minWidth: 0
+})
+
+/**
+ * Bespoke artwork when there is any; otherwise the opening book's jacket,
+ * cropped to the same band so the row stays even either way.
+ */
+export const artwork = style({
+  position: 'relative',
+  aspectRatio: '3 / 2',
+  overflow: 'hidden',
+  borderRadius: '8px',
+  border: `1px solid ${vars.colour.line}`,
+  backgroundColor: vars.colour.inset
+})
+
+export const artworkImage = style({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  objectPosition: 'center 32%',
+  display: 'block'
+})
+
+/**
+ * The stand-in until bespoke artwork arrives: the first few jackets of the run,
+ * stood side by side. A single cover stretched to a landscape band crops badly
+ * — portrait art either loses its title or letterboxes — whereas a row of them
+ * reads as a deliberate display of the series.
+ */
+export const jackets = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.5rem',
+  width: '100%',
+  height: '100%',
+  padding: '0.9rem'
+})
+
+export const jacket = style({
+  height: '100%',
+  width: 'auto',
+  maxWidth: '30%',
+  objectFit: 'contain',
+  borderRadius: '2px',
+  boxShadow: '0 4px 10px rgb(0 0 0 / 0.28)'
+})
+
+export const name = style({
+  fontFamily: vars.font.display,
+  fontVariationSettings: "'opsz' 40, 'WONK' 1",
+  fontSize: '1.15rem',
+  fontWeight: 600,
+  lineHeight: 1.2,
+  color: vars.colour.ink,
+  marginTop: '0.75rem'
+})
+
+export const author = style({
+  fontSize: '0.9rem',
+  color: vars.colour.inkMuted,
+  marginTop: '0.1rem'
+})
+
+export const meta = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.7rem',
+  color: vars.colour.inkFaint,
+  fontVariantNumeric: 'tabular-nums',
+  marginTop: '0.45rem',
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.1rem 0.5rem'
+})
+
+export const blurb = style({
+  fontSize: '0.92rem',
+  lineHeight: 1.55,
+  color: vars.colour.inkMuted,
+  marginTop: '0.6rem'
+})

@@ -93,6 +93,43 @@ export const filterChip = style({
   }
 })
 
+/**
+ * A segmented toggle: one bordered track holding mutually exclusive options,
+ * so the choice reads as one control rather than two loose chips.
+ */
+export const segmented = style({
+  display: 'inline-flex',
+  gap: '2px',
+  padding: '2px',
+  borderRadius: '999px',
+  border: `1px solid ${vars.colour.line}`
+})
+
+export const segment = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.78rem',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.45em',
+  padding: '0.36rem 0.75rem',
+  borderRadius: '999px',
+  border: '1px solid transparent',
+  backgroundColor: 'transparent',
+  color: vars.colour.inkMuted,
+  cursor: 'pointer',
+  transition: 'background-color 150ms ease, color 150ms ease',
+  selectors: {
+    '&:hover': {
+      color: vars.colour.ink
+    },
+    '&[aria-pressed="true"]': {
+      backgroundColor: vars.colour.ink,
+      color: vars.colour.bg,
+      fontWeight: 600
+    }
+  }
+})
+
 /** The tally on a filter chip. */
 export const filterCount = style({
   color: vars.colour.inkFaint,

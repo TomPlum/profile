@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { SiteShell } from '../SiteShell'
 import { Shelf, type ShelfView } from '../components/Shelf'
+import { Favourites } from '../components/Favourites'
+import { ViewSwitch } from '../components/ViewSwitch'
 import { filterChip, filterCount } from '../styles/controls.css'
 import { filterBooks, groupByAuthor, shelfStats, type ShelfFilter } from '../data/shelf'
 import { SHELF_ROOT } from '../lib/paths'
@@ -26,12 +28,6 @@ const SINGLES_HEADING: Record<ShelfFilter, string> = {
   'want-to-read': 'Next up'
 }
 
-/** Spine-out or face-out — the two ways a bookcase can hold the same books. */
-const VIEWS: Array<{ id: ShelfView; label: string }> = [
-  { id: 'spines', label: 'Spines' },
-  { id: 'covers', label: 'Covers' }
-]
-
 const STATS = [
   { number: number(shelfStats.books), label: 'books read' },
   { number: number(shelfStats.pages), label: 'pages' },
@@ -56,6 +52,8 @@ export const BooksPage = () => {
           </span>
           ls ~/bookshelf
         </h1>
+
+        <Favourites />
 
         <dl className={css.stats}>
           {STATS.map((item) => (
@@ -84,19 +82,7 @@ export const BooksPage = () => {
             ))}
           </div>
 
-          <div className={css.views} role="group" aria-label="Change the view">
-            {VIEWS.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                className={filterChip}
-                aria-pressed={view === option.id}
-                onClick={() => setView(option.id)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <ViewSwitch view={view} onChange={setView} />
         </div>
 
         <div id="shelf" className={css.shelves}>

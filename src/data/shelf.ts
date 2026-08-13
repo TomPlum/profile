@@ -149,6 +149,53 @@ export const shelfStats = {
     .sort((a, b) => b.count - a.count)[0]!
 }
 
+export interface SeriesSummary {
+  series: string
+  author: string
+  books: Book[]
+  pages: number
+  fiveStars: number
+  /** Mean of the rated books; 0 when none of the run was rated. */
+  rating: number
+  /** `2025` or `2023–2025`, or undefined — most of the shelf has no dates. */
+  years?: string
+  /** The run's opening book, whose cover stands in for missing artwork. */
+  first: Book
+}
+
+/**
+ * Everything a favourite-series card shows, computed from the export. Returns
+ * undefined for a series name that isn't on the shelf, so a typo in
+ * `favourites.ts` fails loudly in the test rather than rendering an empty card.
+ */
+export const seriesSummary = (name: string): SeriesSummary | undefined => {
+  const run = finished
+    .filter((book) => book.series === name)
+    .sort((a, b) => (a.seriesIndex ?? 0) - (b.seriesIndex ?? 0))
+  if (run.length === 0) return undefined
+
+  const rated = run.filter((book) => book.rating > 0)
+  const years = run
+    .map((book) => book.dateRead?.slice(0, 4))
+    .filter((year): year is string => Boolean(year))
+    .sort()
+
+  return {
+    series: name,
+    author: run[0]!.author,
+    books: run,
+    pages: sum(run, (book) => book.pages ?? 0),
+    fiveStars: run.filter((book) => book.rating === 5).length,
+    rating: rated.length ? sum(rated, (book) => book.rating) / rated.length : 0,
+    years: years.length
+      ? years[0] === years.at(-1)
+        ? years[0]
+        : `${years[0]}–${years.at(-1)}`
+      : undefined,
+    first: run[0]!
+  }
+}
+
 /**
  * Spine width, in pixels, from page count — the whole conceit of the wall.
  * Clamped so a 55-page novella is still clickable and an 1100-page doorstop

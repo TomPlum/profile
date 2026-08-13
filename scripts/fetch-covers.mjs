@@ -28,9 +28,50 @@ const PAUSE_MS = 250
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms))
 
+/**
+ * One flaky connection shouldn't abandon a 232-book run half-done. Retries a
+ * couple of times, then gives up on that book rather than the whole script —
+ * the manifest is rebuilt from what is on disk, so a rerun picks up the gaps.
+ */
+const request = async (url, attempt = 1) => {
+  try {
+    return await fetch(url, { headers: HEADERS })
+  } catch (error) {
+    if (attempt > 3) {
+      console.log(`  ! ${error.code ?? error.message} — giving up on ${url}`)
+      return undefined
+    }
+    await sleep(attempt * 2_000)
+    return request(url, attempt + 1)
+  }
+}
+
+/**
+ * JPEG dimensions, straight from the SOF marker — no image library needed.
+ * Open Library occasionally serves a landscape crop or a banner in place of a
+ * jacket, and those look obviously broken standing in a row of book covers.
+ */
+const jpegSize = (bytes) => {
+  let offset = 2
+  while (offset < bytes.length - 9) {
+    if (bytes[offset] !== 0xff) {
+      offset++
+      continue
+    }
+    const marker = bytes[offset + 1]
+    // SOF0–SOF15, skipping the non-frame markers in that range.
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+      return { height: bytes.readUInt16BE(offset + 5), width: bytes.readUInt16BE(offset + 7) }
+    }
+    offset += 2 + bytes.readUInt16BE(offset + 2)
+  }
+  return undefined
+}
+
 /** A cover-shaped response: 200, image/*, and big enough to be real artwork. */
 const readImage = async (url) => {
-  const response = await fetch(url, { headers: HEADERS })
+  const response = await request(url)
+  if (!response) return undefined
 
   if (response.status === 429 || response.status === 403) {
     console.log('  rate limited — waiting 60s')
@@ -41,7 +82,14 @@ const readImage = async (url) => {
   if (!(response.headers.get('content-type') ?? '').startsWith('image/')) return undefined
 
   const bytes = Buffer.from(await response.arrayBuffer())
-  return bytes.byteLength > 2_000 ? bytes : undefined
+  if (bytes.byteLength <= 2_000) return undefined
+
+  // Jackets are portrait, or square for an audiobook edition. Anything wider
+  // than it is tall is not a cover.
+  const size = jpegSize(bytes)
+  if (size && size.height < size.width) return undefined
+
+  return bytes
 }
 
 const byIsbn = async (isbn) =>
@@ -69,8 +117,8 @@ const bySearch = async (book) => {
     limit: '8',
     fields: 'key,title'
   })
-  const response = await fetch(`https://openlibrary.org/search.json?${query}`, { headers: HEADERS })
-  if (!response.ok) return undefined
+  const response = await request(`https://openlibrary.org/search.json?${query}`)
+  if (!response?.ok) return undefined
 
   const { docs = [] } = await response.json()
   const wanted = normalise(book.title)
@@ -85,10 +133,8 @@ const bySearch = async (book) => {
   // prefer — often a translation. Walk the editions for an English one that
   // carries its own artwork instead.
   await sleep(PAUSE_MS)
-  const editions = await fetch(`https://openlibrary.org${work.key}/editions.json?limit=50`, {
-    headers: HEADERS
-  })
-  if (!editions.ok) return undefined
+  const editions = await request(`https://openlibrary.org${work.key}/editions.json?limit=50`)
+  if (!editions?.ok) return undefined
 
   const { entries = [] } = await editions.json()
   const english = entries.find(

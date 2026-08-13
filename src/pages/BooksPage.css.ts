@@ -93,10 +93,6 @@ export const filters = style({
   gap: '0.45rem'
 })
 
-export const views = style({
-  display: 'flex',
-  gap: '0.45rem'
-})
 
 /**
  * The honest footnote. Goodreads recorded a finish date for a minority of
