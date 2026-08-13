@@ -16,21 +16,33 @@ const MoonIcon = () => (
   </svg>
 )
 
+export interface HeaderRoutes {
+  /** Where the name links back to. The shelf page points at the home page. */
+  homeHref?: string
+  /** The skip link's target — each page names its own main landmark. */
+  skipHref?: string
+  skipLabel?: string
+}
+
 /**
  * Deliberately boring. The always-visible routes to Contact and the CV live
  * here so nothing playful ever stands between a recruiter and either one.
  */
-export const Header = () => {
+export const Header = ({
+  homeHref = '#top',
+  skipHref = '#log',
+  skipLabel = 'Skip to the log'
+}: HeaderRoutes) => {
   const { theme, toggle } = useTheme()
 
   return (
     <header className={css.header}>
-      <a href="#log" className={css.skipLink}>
-        Skip to the log
+      <a href={skipHref} className={css.skipLink}>
+        {skipLabel}
       </a>
       <div className={css.inner}>
         <div className={css.identity}>
-          <a href="#top" className={css.name}>
+          <a href={homeHref} className={css.name}>
             {profile.name}
           </a>
           <span className={css.role}>{profile.role}</span>
