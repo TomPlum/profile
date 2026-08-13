@@ -16,6 +16,12 @@ const colourContract = {
     oss: null,
     languages: null,
     puzzles: null
+  },
+  spine: {
+    five: null,
+    four: null,
+    three: null,
+    low: null
   }
 }
 
