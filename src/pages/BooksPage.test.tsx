@@ -98,8 +98,7 @@ describe('the shelf page', () => {
     render(<BooksPage />)
     expect(screen.getByText(shelfStats.books.toLocaleString('en-GB'))).toBeDefined()
     expect(screen.getByText(shelfStats.pages.toLocaleString('en-GB'))).toBeDefined()
-    // The caveat has to state the real shortfall, not a rounded story.
-    expect(screen.getByText(new RegExp(`only recorded a finish date for ${shelfStats.withFinishDate}`))).toBeDefined()
+    expect(screen.getByText(shelfStats.authors.toLocaleString('en-GB'))).toBeDefined()
   })
 
   it('filters the wall down to five-star books', () => {

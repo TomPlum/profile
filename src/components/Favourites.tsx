@@ -1,5 +1,6 @@
-import type { CSSProperties } from 'react'
+import { type CSSProperties, type MouseEvent, useState } from 'react'
 import { favouriteSeries } from '../data/favourites'
+import type { Book } from '../data/types'
 import { coverSrc, hasCover, seriesSummary, type SeriesSummary } from '../data/shelf'
 import { SHELF_ROOT } from '../lib/paths'
 import * as css from './Favourites.css'
@@ -15,6 +16,61 @@ const summarise = (run: SeriesSummary) => {
   else if (run.rating > 0) parts.push(`${run.rating.toFixed(1)} average`)
   if (run.years) parts.push(run.years)
   return parts
+}
+
+/** How far the card leans at the edges of its own area. */
+const MAX_TILT = 9
+
+/**
+ * One jacket that leans toward the pointer, with a highlight that follows it.
+ *
+ * The rotation is derived from the cursor's position inside the card and
+ * written straight to CSS custom properties — no animation frames, no motion
+ * library, and the whole effect falls away under `prefers-reduced-motion`
+ * because both the transform and the highlight are disabled in CSS.
+ */
+const Jacket = ({ book }: { book: Book }) => {
+  const [tilt, setTilt] = useState<CSSProperties>({})
+  const [lifted, setLifted] = useState(false)
+
+  const track = (event: MouseEvent<HTMLSpanElement>) => {
+    const box = event.currentTarget.getBoundingClientRect()
+    // −0.5 … 0.5 from the centre of the card, on both axes.
+    const x = (event.clientX - box.left) / box.width - 0.5
+    const y = (event.clientY - box.top) / box.height - 0.5
+
+    setTilt({
+      // Leaning *toward* the pointer means rotateX follows -y, not y.
+      '--tilt-x': `${(-y * MAX_TILT * 2).toFixed(2)}deg`,
+      '--tilt-y': `${(x * MAX_TILT * 2).toFixed(2)}deg`,
+      '--tilt-scale': '1.06',
+      '--shine-x': `${((x + 0.5) * 100).toFixed(1)}%`,
+      '--shine-y': `${((y + 0.5) * 100).toFixed(1)}%`
+    } as CSSProperties)
+  }
+
+  return (
+    <span
+      className={css.jacket}
+      style={tilt}
+      data-lifted={lifted}
+      onMouseEnter={() => setLifted(true)}
+      onMouseMove={track}
+      onMouseLeave={() => {
+        setLifted(false)
+        setTilt({})
+      }}
+    >
+      <img
+        className={css.jacketImage}
+        src={coverSrc(book)}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+      <span className={css.shimmer} />
+    </span>
+  )
 }
 
 const Artwork = ({
@@ -50,25 +106,13 @@ const Artwork = ({
         .filter((book): book is NonNullable<typeof book> => Boolean(book))
     : withArt.slice(0, 3)
 
-  // Book jackets are 2:3, so N of them side by side tile a band of exactly
-  // 2N:3 — set that and they sit flush with nothing trimmed off the artwork.
+  // Each jacket keeps a book's 2:3, so the row's height follows from the
+  // covers rather than being imposed on them and cropping the artwork.
   return (
-    <div
-      className={css.artwork}
-      style={{ aspectRatio: `${jackets.length * 2} / 3` } as CSSProperties}
-    >
-      <div className={css.jackets} aria-hidden="true">
-        {jackets.map((book) => (
-          <img
-            key={book.id}
-            className={css.jacket}
-            src={coverSrc(book)}
-            alt=""
-            loading="lazy"
-            decoding="async"
-          />
-        ))}
-      </div>
+    <div className={css.jackets} aria-hidden="true">
+      {jackets.map((book) => (
+        <Jacket key={book.id} book={book} />
+      ))}
     </div>
   )
 }

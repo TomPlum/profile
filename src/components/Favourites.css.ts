@@ -37,14 +37,9 @@ export const card = style({
   minWidth: 0
 })
 
-/**
- * Bespoke artwork when there is any; otherwise the opening book's jacket,
- * cropped to the same band so the row stays even either way.
- */
+/** Bespoke artwork, when a series has any: one landscape band. */
 export const artwork = style({
   position: 'relative',
-  // Bespoke artwork is a landscape band; the jacket fallback overrides this
-  // with the ratio that makes its covers fit flush and uncropped.
   aspectRatio: '3 / 2',
   overflow: 'hidden',
   borderRadius: '8px',
@@ -61,25 +56,89 @@ export const artworkImage = style({
 })
 
 /**
- * The stand-in until bespoke artwork arrives: the jackets of the run, filling
- * the band edge to edge. Equal columns whatever the count, each jacket cropped
- * to fill its share rather than letterboxed inside it — a row of floating
- * thumbnails reads as a gallery, a flush band reads as one piece of artwork.
+ * The stand-in until bespoke artwork arrives: the jackets of the run, stood
+ * side by side in equal columns. Each keeps a book's own 2:3 so nothing is
+ * trimmed, and the row's height follows from that rather than being imposed.
  */
 export const jackets = style({
   display: 'grid',
   gridAutoFlow: 'column',
   gridAutoColumns: '1fr',
+  gap: '0.5rem',
   width: '100%',
-  height: '100%'
+  // Room for the tilt to lean out of the row without clipping its neighbours.
+  perspective: '700px'
 })
 
+/**
+ * A jacket that leans toward the pointer. The rotation and the highlight's
+ * origin both come from where the cursor is inside the card, set as CSS custom
+ * properties on mouse move — cheap enough to do without animation frames, and
+ * it reads as picking a book up rather than as a hover state.
+ */
 export const jacket = style({
+  position: 'relative',
+  display: 'block',
+  width: '100%',
+  aspectRatio: '2 / 3',
+  borderRadius: '3px',
+  overflow: 'hidden',
+  transformStyle: 'preserve-3d',
+  transform:
+    'perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-scale, 1))',
+  transition: 'transform 320ms cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 320ms ease',
+  boxShadow: '0 1px 3px rgb(0 0 0 / 0.18)',
+  selectors: {
+    '&[data-lifted="true"]': {
+      transition: 'transform 80ms linear, box-shadow 320ms ease',
+      boxShadow: '0 18px 34px rgb(0 0 0 / 0.34)',
+      zIndex: 1
+    }
+  },
+  '@media': {
+    // A tilt is motion; the highlight below goes with it.
+    '(prefers-reduced-motion: reduce)': {
+      transform: 'none',
+      transition: 'none'
+    }
+  }
+})
+
+export const jacketImage = style({
+  display: 'block',
   width: '100%',
   height: '100%',
-  // `cover` still, as a guard: a jacket that isn't quite 2:3 fills its column
-  // rather than leaving a gap in the band.
   objectFit: 'cover'
+})
+
+/**
+ * The shimmer: a soft specular highlight tracking the pointer, plus a fixed
+ * diagonal sheen so the card still catches light when the cursor is dead
+ * centre. Screen blending keeps it as light on the artwork rather than a grey
+ * film over it.
+ */
+export const shimmer = style({
+  position: 'absolute',
+  inset: 0,
+  pointerEvents: 'none',
+  opacity: 0,
+  transition: 'opacity 260ms ease',
+  mixBlendMode: 'screen',
+  backgroundImage: [
+    'radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 50%), rgb(255 255 255 / 0.45), rgb(255 255 255 / 0) 55%)',
+    'linear-gradient(105deg, rgb(255 255 255 / 0) 40%, rgb(255 255 255 / 0.22) 50%, rgb(255 255 255 / 0) 60%)'
+  ].join(','),
+  backgroundBlendMode: 'screen',
+  selectors: {
+    '[data-lifted="true"] &': {
+      opacity: 1
+    }
+  },
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      display: 'none'
+    }
+  }
 })
 
 export const name = style({

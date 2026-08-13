@@ -131,7 +131,11 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   Entries name a series; everything factual on the card — books, pages, rating,
   years, author — is computed from `books.ts`, and a test fails if a name
   doesn't resolve to a run. `blurb` and `artwork` are Tom's to supply
-  (`TODO(tom)`); until artwork lands, the run's first three jackets stand in,
+  (`TODO(tom)`). The jackets lean toward the pointer with a specular shimmer —
+  rotation and highlight origin are written to CSS custom properties on mouse
+  move, no animation frames and no motion library, and both are switched off
+  wholesale under `prefers-reduced-motion` (verified: `transform: none`).
+  Until artwork lands, the run's first three jackets stand in,
   cropped flush to equal columns rather than letterboxed. `jackets` names which
   volumes by series number when the opening three aren't the series at its best. Each
   card carries a `quote` from the books — **check any new one against the
@@ -159,9 +163,11 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   need the row's fixed `height`, or a long title stretches the shelf.
 - Boards use a roving tabindex (one tab stop each; arrows walk, Home/End jump)
   rather than making 232 books into 232 tab stops.
-- **The page states what the data can't support**: Goodreads recorded a finish
-  date for only 65 of 210, so there is no reading timeline — don't add one, and
-  don't invent dates to enable it.
+- **There is no reading timeline, and there shouldn't be**: Goodreads recorded
+  a finish date for only 65 of 210. Tom removed the caveat paragraph that used
+  to say so, but the constraint stands — don't add a timeline, and don't invent
+  dates to enable one. `shelfStats` still computes `withFinishDate`,
+  `unrated` and `approximateCovers` if a future design wants to state them.
 
 ## Verifying changes visually
 

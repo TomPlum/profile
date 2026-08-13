@@ -94,17 +94,3 @@ export const filters = style({
 })
 
 
-/**
- * The honest footnote. Goodreads recorded a finish date for a minority of
- * these, so there is no reading timeline to draw and the page says so rather
- * than inventing one.
- */
-export const caveat = style({
-  fontSize: '0.88rem',
-  lineHeight: 1.6,
-  color: vars.colour.inkFaint,
-  maxWidth: '62ch',
-  marginTop: '2.5rem',
-  paddingTop: '1.25rem',
-  borderTop: `1px solid ${vars.colour.line}`
-})
