@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { SiteShell } from '../SiteShell'
-import { Shelf } from '../components/Shelf'
+import { Shelf, type ShelfView } from '../components/Shelf'
 import { filterChip, filterCount } from '../styles/controls.css'
 import { filterBooks, groupByAuthor, shelfStats, type ShelfFilter } from '../data/shelf'
 import { SHELF_ROOT } from '../lib/paths'
@@ -26,6 +26,12 @@ const SINGLES_HEADING: Record<ShelfFilter, string> = {
   'want-to-read': 'Next up'
 }
 
+/** Spine-out or face-out — the two ways a bookcase can hold the same books. */
+const VIEWS: Array<{ id: ShelfView; label: string }> = [
+  { id: 'spines', label: 'Spines' },
+  { id: 'covers', label: 'Covers' }
+]
+
 const STATS = [
   { number: number(shelfStats.books), label: 'books read' },
   { number: number(shelfStats.pages), label: 'pages' },
@@ -36,21 +42,20 @@ const STATS = [
 
 export const BooksPage = () => {
   const [filter, setFilter] = useState<ShelfFilter>('all')
+  const [view, setView] = useState<ShelfView>('spines')
   const { shelves, singles } = groupByAuthor(filterBooks(filter))
 
   return (
     <SiteShell root={SHELF_ROOT} homeHref={SHELF_ROOT} skipHref="#shelf" skipLabel="Skip to the shelf">
       <div className={css.page}>
-        <p className={css.command}>
-          <span className={css.prompt}>$</span>ls ~/shelf
-        </p>
-        <h1 className={css.title}>The Shelf</h1>
-        <p className={css.intro}>
-          Everything I&rsquo;ve read, drawn as the shelf it would make. One spine per book, its
-          width set by the page count, grouped by author and standing in series order — so the
-          shape of the wall is the shape of the reading. Mostly fantasy and science fiction; I
-          don&rsquo;t pretend otherwise.
-        </p>
+        {/* The command line is the heading, as it is on the log — the page
+            keeps a real h1 without carrying a display title above the wall. */}
+        <h1 className={css.command}>
+          <span className={css.prompt} aria-hidden="true">
+            $
+          </span>
+          ls ~/bookshelf
+        </h1>
 
         <dl className={css.stats}>
           {STATS.map((item) => (
@@ -63,29 +68,35 @@ export const BooksPage = () => {
           ))}
         </dl>
 
-        <div className={css.filters}>
-          {FILTERS.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={filterChip}
-              aria-pressed={filter === option.id}
-              onClick={() => setFilter(option.id)}
-            >
-              {option.label}
-              <span className={filterCount}>{option.count}</span>
-            </button>
-          ))}
-        </div>
+        <div className={css.toolbar}>
+          <div className={css.filters} role="group" aria-label="Filter the shelf">
+            {FILTERS.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={filterChip}
+                aria-pressed={filter === option.id}
+                onClick={() => setFilter(option.id)}
+              >
+                {option.label}
+                <span className={filterCount}>{option.count}</span>
+              </button>
+            ))}
+          </div>
 
-        <div className={css.key} aria-hidden="true">
-          <span className={css.keyItem}>
-            <span className={css.keySwatch} />
-            wider spine = longer book
-          </span>
-          <span className={css.keyItem}>colour separates series runs</span>
-          <span className={css.keyItem}>darker = higher rating</span>
-          <span className={css.keyItem}>dashed = unrated</span>
+          <div className={css.views} role="group" aria-label="Change the view">
+            {VIEWS.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={filterChip}
+                aria-pressed={view === option.id}
+                onClick={() => setView(option.id)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div id="shelf" className={css.shelves}>
@@ -95,6 +106,7 @@ export const BooksPage = () => {
               heading={shelf.author}
               entries={shelf.entries}
               meta={`${shelf.entries.length} books · ${pages(shelf.pages)}`}
+              view={view}
             />
           ))}
 
@@ -103,6 +115,7 @@ export const BooksPage = () => {
               heading={SINGLES_HEADING[filter]}
               entries={singles}
               meta={singles.length === 1 ? '1 book' : `${singles.length} authors · one book each`}
+              view={view}
             />
           )}
         </div>

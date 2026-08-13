@@ -112,6 +112,16 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   (`spineRamp` in `palette.ts`) stays pale and the head band — which carries no
   text — runs the full range. All sixteen tints are gated by `palette.test.ts`;
   0.22 is the ceiling for the top rung. **No new accent colours.**
+- **Two views of the same books**: spine-out (default) and face-out covers,
+  toggled top-right. Same boards, same grouping, same order, same accessible
+  names — only the drawing changes, so selection and keyboard handling are
+  shared. Covers wrap rather than scroll (a 39-book run face-out would be
+  several screens sideways) and are lazy-loaded.
+- **No display title, no intro, no key** — Tom removed all three deliberately.
+  The mono command line (`$ ls ~/bookshelf`) is the `h1`, the same trick the
+  log uses; a test asserts the page still has exactly one top-level heading.
+  Don't reintroduce a legend: the encodings are meant to be discovered by
+  hovering a book, not explained up front.
 - **The book card tracks the pointer** (fixed position, above the cursor,
   flipping below near the top of the viewport) rather than anchoring to the
   shelf, so it never covers the spine being pointed at. On touch it's a bottom

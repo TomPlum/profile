@@ -62,6 +62,112 @@ export const shelfRow = style({
   }
 })
 
+/**
+ * Face-out view: the books turn to show their jackets, the way a bookshop
+ * displays the ones it wants you to notice. These wrap rather than scroll —
+ * a cover is wide enough that a 39-book run would otherwise be several
+ * screens of sideways scrolling.
+ */
+export const coversRow = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'flex-end',
+  gap: '0.6rem 0.5rem',
+  padding: '0 0.25rem 0.6rem',
+  borderBottom: `3px solid ${vars.colour.line}`
+})
+
+export const cover = style({
+  position: 'relative',
+  flexShrink: 0,
+  width: '4.25rem',
+  aspectRatio: '2 / 3',
+  padding: 0,
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '2px',
+  backgroundColor: vars.colour.inset,
+  cursor: 'pointer',
+  overflow: 'hidden',
+  transition: 'transform 160ms ease, box-shadow 160ms ease',
+  selectors: {
+    '&:hover, &:focus-visible': {
+      transform: 'translateY(-6px)',
+      boxShadow: '0 8px 18px rgb(0 0 0 / 0.24)',
+      outline: 'none'
+    },
+    '&[aria-pressed="true"]': {
+      transform: 'translateY(-6px)',
+      boxShadow: '0 8px 18px rgb(0 0 0 / 0.28)'
+    },
+    // The run's colour survives the view change, as a foot band.
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: '4px'
+    }
+  },
+  '@media': {
+    'screen and (max-width: 640px)': {
+      width: '3.6rem'
+    }
+  }
+})
+
+export const coverImage = style({
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover'
+})
+
+/** No artwork for 21 of them, so the jacket is set instead of left blank. */
+export const coverFallback = style({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  gap: '0.25rem',
+  width: '100%',
+  height: '100%',
+  padding: '0.4rem 0.35rem',
+  textAlign: 'left',
+  backgroundColor: vars.colour.surface
+})
+
+export const coverFallbackTitle = style({
+  fontFamily: vars.font.display,
+  fontVariationSettings: "'opsz' 9, 'WONK' 1",
+  fontSize: '0.54rem',
+  lineHeight: 1.15,
+  fontWeight: 600,
+  color: vars.colour.ink,
+  display: '-webkit-box',
+  WebkitLineClamp: 4,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden'
+})
+
+export const coverFallbackAuthor = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.44rem',
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  color: vars.colour.inkFaint,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap'
+})
+
+/** The foot band's colour, per run. */
+export const coverLane = styleVariants({
+  career: { selectors: { '&::after': { backgroundColor: vars.colour.lane.career } } },
+  oss: { selectors: { '&::after': { backgroundColor: vars.colour.lane.oss } } },
+  languages: { selectors: { '&::after': { backgroundColor: vars.colour.lane.languages } } },
+  puzzles: { selectors: { '&::after': { backgroundColor: vars.colour.lane.puzzles } } }
+})
+
 export const spine = style({
   vars: {
     [SPINE_WIDTH]: '20px',

@@ -1,6 +1,6 @@
 import { type CSSProperties, type KeyboardEvent, type MouseEvent, useEffect, useRef, useState } from 'react'
 import type { Book, LaneKey } from '../data/types'
-import { fitsLettering, spineWidth, type ShelfEntry } from '../data/shelf'
+import { coverSrc, fitsLettering, hasCover, spineWidth, type ShelfEntry } from '../data/shelf'
 import { shortHash } from '../lib/hash'
 import { BookCard, type CardAnchor } from './BookCard'
 import * as css from './Shelf.css'
@@ -28,13 +28,33 @@ const label = (book: Book) => {
   return `${book.title} by ${book.author}${series}${rating}`
 }
 
+export type ShelfView = 'spines' | 'covers'
+
 interface ShelfProps {
   /** Shown above the board — an author, or the label for the one-offs board. */
   heading: string
   entries: ShelfEntry[]
   /** Right-hand mono line: counts computed by the caller. */
   meta: string
+  view: ShelfView
 }
+
+/** Face-out: the jacket, or the set fallback when there is no artwork. */
+const Cover = ({ book }: { book: Book }) =>
+  hasCover(book) ? (
+    <img
+      className={css.coverImage}
+      src={coverSrc(book)}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  ) : (
+    <span className={css.coverFallback} aria-hidden="true">
+      <span className={css.coverFallbackTitle}>{book.title}</span>
+      <span className={css.coverFallbackAuthor}>{book.author}</span>
+    </span>
+  )
 
 /**
  * One shelf board. Spines stand on a rule, widths set by page count, hue set by
@@ -44,7 +64,7 @@ interface ShelfProps {
  * Keyboard: the board is a single tab stop with a roving tabindex, so 232 books
  * don't become 232 tab stops; arrows walk the shelf, Home/End jump to its ends.
  */
-export const Shelf = ({ heading, entries, meta }: ShelfProps) => {
+export const Shelf = ({ heading, entries, meta, view }: ShelfProps) => {
   const [active, setActive] = useState<number | undefined>(undefined)
   const [anchor, setAnchor] = useState<CardAnchor | undefined>(undefined)
   const [focusIndex, setFocusIndex] = useState(0)
@@ -114,40 +134,55 @@ export const Shelf = ({ heading, entries, meta }: ShelfProps) => {
       )}
 
       <div
-        className={css.shelfRow}
+        className={view === 'covers' ? css.coversRow : css.shelfRow}
         ref={rowRef}
         role="group"
+        data-board
         aria-label={`${heading} — ${entries.length} books`}
         onKeyDown={onKeyDown}
         onMouseLeave={close}
       >
-        {entries.map(({ book, lane }, index) => (
-          <button
-            key={book.id}
-            type="button"
-            className={`${css.spine} ${tintClass(lane, book.rating)}`}
-            style={
-              {
-                [css.SPINE_WIDTH]: `${spineWidth(book)}px`,
-                [css.SPINE_HEIGHT]: `${spineHeight(book)}%`
-              } as CSSProperties
-            }
-            tabIndex={index === focusIndex ? 0 : -1}
-            aria-pressed={index === active}
-            aria-label={label(book)}
-            onMouseEnter={(event) => open(index, event)}
-            onMouseMove={(event) => open(index, event)}
-            onFocus={(event) => openFromSpine(index, event.currentTarget)}
-            onBlur={() => setActive((current) => (current === index ? undefined : current))}
-            onClick={(event) => open(index, event)}
-          >
-            {fitsLettering(book) && (
-              <span className={css.spineLabel} aria-hidden="true">
-                {book.title}
-              </span>
-            )}
-          </button>
-        ))}
+        {entries.map(({ book, lane }, index) => {
+          // Both views are the same list of books in the same order; only the
+          // way each one is drawn changes, so selection and keyboard handling
+          // are shared.
+          const shared = {
+            key: book.id,
+            type: 'button' as const,
+            tabIndex: index === focusIndex ? 0 : -1,
+            'aria-pressed': index === active,
+            'aria-label': label(book),
+            onMouseEnter: (event: MouseEvent<HTMLButtonElement>) => open(index, event),
+            onMouseMove: (event: MouseEvent<HTMLButtonElement>) => open(index, event),
+            onFocus: (event: { currentTarget: HTMLElement }) =>
+              openFromSpine(index, event.currentTarget),
+            onBlur: () => setActive((current) => (current === index ? undefined : current)),
+            onClick: (event: MouseEvent<HTMLButtonElement>) => open(index, event)
+          }
+
+          return view === 'covers' ? (
+            <button {...shared} className={`${css.cover} ${css.coverLane[lane]}`}>
+              <Cover book={book} />
+            </button>
+          ) : (
+            <button
+              {...shared}
+              className={`${css.spine} ${tintClass(lane, book.rating)}`}
+              style={
+                {
+                  [css.SPINE_WIDTH]: `${spineWidth(book)}px`,
+                  [css.SPINE_HEIGHT]: `${spineHeight(book)}%`
+                } as CSSProperties
+              }
+            >
+              {fitsLettering(book) && (
+                <span className={css.spineLabel} aria-hidden="true">
+                  {book.title}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
     </section>
   )

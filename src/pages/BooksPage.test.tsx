@@ -19,9 +19,9 @@ beforeAll(() => {
 
 afterEach(cleanup)
 
-/** Spines only — the filter chips are buttons with aria-pressed too. */
-const spines = () =>
-  screen.getAllByRole('group').flatMap((board) => [...board.querySelectorAll('button')])
+/** Books only — the toolbar's filter and view groups are groups of buttons too. */
+const boards = () => [...document.querySelectorAll('[data-board]')]
+const spines = () => boards().flatMap((board) => [...board.querySelectorAll('button')])
 
 describe('the shelf page', () => {
   it('puts every shelved book on a board', () => {
@@ -70,8 +70,7 @@ describe('the shelf page', () => {
 
   it('keeps the shelf to a single tab stop per board', () => {
     render(<BooksPage />)
-    const boards = screen.getAllByRole('group')
-    boards.forEach((board) => {
+    boards().forEach((board) => {
       const tabbable = [...board.querySelectorAll('button')].filter(
         (spine) => spine.getAttribute('tabindex') === '0'
       )
@@ -110,6 +109,33 @@ describe('the shelf page', () => {
     render(<BooksPage />)
     fireEvent.click(screen.getByRole('button', { name: /next up/i }))
     expect(spines().length).toBe(shelfStats.wantToRead)
+  })
+
+  it('keeps a single top-level heading once the display title is gone', () => {
+    render(<BooksPage />)
+    const headings = screen.getAllByRole('heading', { level: 1 })
+    expect(headings.length).toBe(1)
+    expect(headings[0]!.textContent).toContain('~/bookshelf')
+  })
+
+  it('turns the books face-out without changing what is on the shelf', () => {
+    render(<BooksPage />)
+    const before = spines().map((spine) => spine.getAttribute('aria-label'))
+    expect(document.querySelectorAll('img[src*="covers/"]').length).toBe(0)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Covers' }))
+
+    // Same books, same order, same accessible names — only the drawing changes.
+    expect(spines().map((spine) => spine.getAttribute('aria-label'))).toEqual(before)
+    expect(document.querySelectorAll('img[src*="covers/"]').length).toBeGreaterThan(100)
+  })
+
+  it('lazy-loads the cover artwork', () => {
+    render(<BooksPage />)
+    fireEvent.click(screen.getByRole('button', { name: 'Covers' }))
+    document.querySelectorAll('img[src*="covers/"]').forEach((img) => {
+      expect(img.getAttribute('loading')).toBe('lazy')
+    })
   })
 
   it('routes back to the log', () => {
