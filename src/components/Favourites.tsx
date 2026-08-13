@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { favouriteSeries } from '../data/favourites'
 import { coverSrc, hasCover, seriesSummary, type SeriesSummary } from '../data/shelf'
 import { SHELF_ROOT } from '../lib/paths'
@@ -49,8 +50,13 @@ const Artwork = ({
         .filter((book): book is NonNullable<typeof book> => Boolean(book))
     : withArt.slice(0, 3)
 
+  // Book jackets are 2:3, so N of them side by side tile a band of exactly
+  // 2N:3 — set that and they sit flush with nothing trimmed off the artwork.
   return (
-    <div className={css.artwork}>
+    <div
+      className={css.artwork}
+      style={{ aspectRatio: `${jackets.length * 2} / 3` } as CSSProperties}
+    >
       <div className={css.jackets} aria-hidden="true">
         {jackets.map((book) => (
           <img

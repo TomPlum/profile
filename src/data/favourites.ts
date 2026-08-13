@@ -43,7 +43,12 @@ export interface FavouriteSeries {
 export const favouriteSeries: FavouriteSeries[] = [
   {
     series: 'Mistborn',
-    quote: { text: 'There’s always another secret.', source: 'Kelsier, The Final Empire' }
+    quote: {
+      text: 'I write these words in steel, for anything not set in metal cannot be trusted.',
+      // Kwaan's inscription, which supplies the epigraphs of book two — not
+      // The Final Empire, whose epigraphs are Alendi's journal.
+      source: 'Kwaan, The Well of Ascension'
+    }
   },
   {
     series: 'The Stormlight Archive',

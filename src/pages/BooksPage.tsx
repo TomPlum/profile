@@ -107,13 +107,18 @@ export const BooksPage = () => {
         </div>
 
         <p className={css.caveat}>
-          Three honest caveats. Goodreads only recorded a finish date for{' '}
+          Two honest caveats. Goodreads only recorded a finish date for{' '}
           {shelfStats.withFinishDate} of the {number(shelfStats.books)} — the rest were shelved
-          from memory years later, so there is no reading timeline here to draw.{' '}
+          from memory years later, so there is no reading timeline here to draw. And{' '}
           {shelfStats.unrated} of them never got a rating, which is why some spines are blank
-          rather than guessed at. And {shelfStats.approximateCovers} of the jackets are a
-          different printing from the edition I actually read: the export names no ISBN for
-          them, or Open Library holds no artwork for that printing.
+          rather than guessed at.
+          {shelfStats.approximateCovers > 0 && (
+            <>
+              {' '}
+              A further {shelfStats.approximateCovers} jackets are a different printing from the
+              edition I read, where no artwork for that printing could be found.
+            </>
+          )}
         </p>
 
         <a className={css.back} href={SHELF_ROOT}>

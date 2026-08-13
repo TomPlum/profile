@@ -100,28 +100,26 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
 - **Data is generated, not authored.** `scripts/import-goodreads.mjs` turns a
   Goodreads CSV export into `src/data/books.ts` (series are parsed out of the
   title, private columns dropped); `scripts/fetch-covers.mjs` pulls covers once
-  from Open Library into `public/covers/` and writes `src/data/covers.ts`.
-  Re-export from Goodreads and re-run both; never hand-edit either file.
-  Covers are committed rather than hotlinked so the colophon's "no tracking"
-  line stays literally true — 211 of 232 have artwork, the rest render the
-  typographic fallback in `BookCard`. The fetcher rejects landscape images
-  (Open Library sometimes serves a banner instead of a jacket) by reading the
-  JPEG SOF marker, and retries a flaky connection rather than abandoning the run.
-- **Covers match the edition actually read, where the data allows.** The export
-  pins it: ISBN13 first (Open Library resolves ISBN → edition), then publisher
-  + edition year to rank candidate editions when that ISBN has no artwork. 183
-  of 211 match the shelved printing; the other 28 are listed in
-  `approximateCovers` in the generated manifest and *counted on the page* in the
-  caveat. Don't drop `publisher`/`binding`/`editionYear` from the import — they
-  are the only signal for the ~24 Kindle rows Goodreads gives no ISBN for.
-  `--redo-approximate` re-tries just those without refetching everything.
-- **Some editions simply aren't in Open Library.** The Sun Eater's UK Gollancz /
-  Head of Zeus paperbacks — the ones Tom read — have no artwork there for four
-  volumes. `data/coverOverrides.ts` lists ids whose jacket is supplied by hand
-  in `public/covers/`; the fetcher never touches those, even under `--force`,
-  and counts them as the edition read. That is the escape hatch when a cover is
-  wrong and no lookup can fix it — don't reach for it before checking the
-  Goodreads row itself is right.
+  into `public/covers/` and writes `src/data/covers.ts`. Re-export from
+  Goodreads and re-run both; never hand-edit either file.
+- **Covers come from Goodreads' own edition id**, the `Book Id` column of the
+  export — so the jacket is by construction the edition Tom shelved, which no
+  amount of ISBN matching against Open Library could guarantee (whole editions
+  are missing there, and records carry other printings' artwork). The script
+  reads `/book/show/<id>`, takes `og:image`, and asks Amazon's image server for
+  a `._SX200_` copy: 232 of 232 books have artwork, all edition-exact, in 4.5MB.
+  Open Library remains the fallback for a row with no Goodreads id.
+  - `/book/show` is permitted by Goodreads' robots.txt for general agents;
+    **`/review/list` is explicitly disallowed** — don't scrape the shelf listing.
+  - The pages are ~750KB and `og:image` is in the `<head>`, so the body is read
+    in chunks and the request aborted as soon as the tag appears.
+  - Covers are committed rather than hotlinked so the colophon's "no tracking"
+    line stays literally true.
+  - `data/coverOverrides.ts` pins ids whose jacket is supplied by hand in
+    `public/covers/`; the fetcher never touches those, even under `--force`.
+    Nothing needs it today — it exists for when a source has no usable artwork.
+  - `BookCard`'s typographic fallback is currently unused (nothing is missing a
+    cover) and should stay as the safety net for a future export.
 - **Spine width is page count; hue is the series run; strength is the rating.**
   Runs cycle the four lane colours so adjacent runs on a shelf never share one
   (a run keeps its colour along its length — both are tested). The fill can

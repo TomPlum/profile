@@ -34,7 +34,7 @@ try {
   const existing = await import('../src/data/covers.ts')
   const approximate = new Set(existing.approximateCovers ?? [])
   existing.coverIds.forEach((id) => {
-    previousProvenance[id] = approximate.has(id) ? 'approximate' : 'isbn'
+    previousProvenance[id] = approximate.has(id) ? 'approximate' : 'goodreads'
   })
 } catch {
   previousProvenance = {}
@@ -122,6 +122,50 @@ const readImage = async (url) => {
   if (size && size.height < size.width) return undefined
 
   return bytes
+}
+
+/**
+ * The jacket Goodreads shows for this exact edition — which is, by definition,
+ * the one on the shelf, since the id comes from the export row itself. Far more
+ * reliable than matching an ISBN against Open Library's catalogue, where whole
+ * editions are missing or carry another printing's artwork.
+ *
+ * `/book/show` is permitted by Goodreads' robots.txt for general agents
+ * (`/review/list` is not, so the shelf listing is never touched). The pages are
+ * ~750KB, and og:image sits in the <head>, so the body is read in chunks and
+ * the request aborted the moment the tag appears — a few KB instead of 170MB
+ * across the whole shelf.
+ */
+const byGoodreads = async (book) => {
+  if (!book.goodreadsId) return undefined
+
+  const controller = new AbortController()
+  let head = ''
+  try {
+    const response = await fetch(`https://www.goodreads.com/book/show/${book.goodreadsId}`, {
+      headers: HEADERS,
+      signal: controller.signal
+    })
+    if (!response.ok) return undefined
+
+    for await (const chunk of response.body) {
+      head += Buffer.from(chunk).toString('utf8')
+      if (head.includes('og:image') || head.length > 200_000) break
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') return undefined
+  } finally {
+    controller.abort()
+  }
+
+  const url = head.match(/<meta property="og:image" content="([^"]+)"/)?.[1]
+  if (!url || url.includes('nophoto')) return undefined
+
+  // Ask Amazon's image server for a 200px-wide copy rather than the full size:
+  // same jacket, a fifth of the bytes, and still sharper than Open Library's.
+  const sized = url.replace(/\.jpg$/, '._SX200_.jpg')
+  const image = (await readImage(sized)) ?? (await readImage(url))
+  return image ? { image, provenance: 'goodreads' } : undefined
 }
 
 /** The exact printing on the shelf: Open Library resolves ISBN → edition. */
@@ -239,7 +283,10 @@ for (const book of books) {
   if (onDisk.has(book.id) && !force && !refetch.has(book.id)) continue
 
   const found =
-    (await byIsbn(book.isbn13)) ?? (await byIsbn(book.isbn10)) ?? (await bySearch(book))
+    (await byGoodreads(book)) ??
+    (await byIsbn(book.isbn13)) ??
+    (await byIsbn(book.isbn10)) ??
+    (await bySearch(book))
 
   if (found) {
     writeFileSync(resolve(COVERS, `${book.id}.jpg`), found.image)
@@ -257,7 +304,9 @@ for (const book of books) {
 }
 
 const have = books.filter((book) => onDisk.has(book.id)).map((book) => book.id)
-const exact = have.filter((id) => ['isbn', 'edition', 'pinned'].includes(provenance.get(id)))
+const exact = have.filter((id) =>
+  ['goodreads', 'isbn', 'edition', 'pinned'].includes(provenance.get(id))
+)
 
 writeFileSync(
   MANIFEST,

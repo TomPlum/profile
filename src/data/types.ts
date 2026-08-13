@@ -91,6 +91,8 @@ export interface Book {
    */
   isbn13?: string
   isbn10?: string
+  /** Goodreads' edition id — the `/book/show/<id>` URL, and the best cover key. */
+  goodreadsId?: number
   publisher?: string
   binding?: string
   /** The edition's year, as opposed to `published` (the work's first). */

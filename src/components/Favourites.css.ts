@@ -43,6 +43,8 @@ export const card = style({
  */
 export const artwork = style({
   position: 'relative',
+  // Bespoke artwork is a landscape band; the jacket fallback overrides this
+  // with the ratio that makes its covers fit flush and uncropped.
   aspectRatio: '3 / 2',
   overflow: 'hidden',
   borderRadius: '8px',
@@ -75,8 +77,9 @@ export const jackets = style({
 export const jacket = style({
   width: '100%',
   height: '100%',
-  objectFit: 'cover',
-  objectPosition: 'center 38%'
+  // `cover` still, as a guard: a jacket that isn't quite 2:3 fills its column
+  // rather than leaving a gap in the band.
+  objectFit: 'cover'
 })
 
 export const name = style({

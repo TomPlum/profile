@@ -121,6 +121,7 @@ describe('shelf data integrity', () => {
       'dateAdded',
       'isbn13',
       'isbn10',
+      'goodreadsId',
       // Bibliographic, not private: these identify the edition read, and
       // scripts/fetch-covers.mjs uses them to fetch that printing's jacket.
       'publisher',

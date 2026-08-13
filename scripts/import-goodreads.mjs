@@ -7,9 +7,10 @@
  * The generated file is the committed artefact — the export itself is not kept
  * in the repo (re-export from Goodreads → Settings → Import/Export and re-run).
  * Columns that are private or unused are dropped here rather than in the UI, so
- * nothing personal can leak into the bundle by accident: Book Id, My Review,
- * Private Notes, Spoiler, Owned Copies and the shelf-position column never
- * reach `books.ts`.
+ * nothing personal can leak into the bundle by accident: My Review, Private
+ * Notes, Spoiler, Owned Copies and the shelf-position column never reach
+ * `books.ts`. Book Id is kept — it identifies the *edition*, not the reader,
+ * and it is what `fetch-covers.mjs` uses to get the right jacket.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
@@ -137,6 +138,9 @@ const parsed = rows
 
     return {
       id: slug(`${author}-${title}`),
+      // Goodreads' own id for this *edition*. Public (it's the /book/show/
+      // URL), and the only reliable key to the jacket Tom actually shelved.
+      goodreadsId: Number(cell(row, 'Book Id')) || undefined,
       title,
       author,
       series,
