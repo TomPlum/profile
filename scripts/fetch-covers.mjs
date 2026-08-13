@@ -136,16 +136,31 @@ const readImage = async (url) => {
  * the request aborted the moment the tag appears — a few KB instead of 170MB
  * across the whole shelf.
  */
-const byGoodreads = async (book) => {
-  if (!book.goodreadsId) return undefined
+let goodreadsBlocked = false
+const missedGoodreads = []
+
+const byGoodreads = async (book, attempt = 1) => {
+  if (!book.goodreadsId || goodreadsBlocked) {
+    if (book.goodreadsId) missedGoodreads.push(book)
+    return undefined
+  }
 
   const controller = new AbortController()
   let head = ''
+  let throttled = false
   try {
     const response = await fetch(`https://www.goodreads.com/book/show/${book.goodreadsId}`, {
       headers: HEADERS,
       signal: controller.signal
     })
+    // Goodreads answers a rate-limited client with 202 and an empty body.
+    // That is not "this book has no cover" — falling through to Open Library
+    // here silently swaps the shelved edition for a guess, so it has to be
+    // told apart from a genuine miss.
+    if (response.status === 202 || response.status === 429 || response.status === 403) {
+      throttled = true
+      return undefined
+    }
     if (!response.ok) return undefined
 
     for await (const chunk of response.body) {
@@ -156,6 +171,18 @@ const byGoodreads = async (book) => {
     if (error.name !== 'AbortError') return undefined
   } finally {
     controller.abort()
+  }
+
+  if (throttled || (!head && !goodreadsBlocked)) {
+    if (attempt < 2) {
+      console.log('  … Goodreads is throttling; waiting 90s before retrying')
+      await sleep(90_000)
+      return byGoodreads(book, attempt + 1)
+    }
+    goodreadsBlocked = true
+    missedGoodreads.push(book)
+    console.log('  ! Goodreads still throttling — falling back for the rest of this run')
+    return undefined
   }
 
   const url = head.match(/<meta property="og:image" content="([^"]+)"/)?.[1]
@@ -333,3 +360,11 @@ console.log(`\nFetched ${fetched} new, ${missed} without a cover.`)
 console.log(`Manifest: ${have.length}/${books.length} books have artwork.`)
 console.log(`Editions: ${exact.length} match the shelved printing, ${have.length - exact.length} approximate.`)
 if (misses.length) console.log(`\nNo cover found for:\n  ${misses.join('\n  ')}`)
+
+if (missedGoodreads.length) {
+  console.log(
+    `\n${missedGoodreads.length} books fell back to Open Library because Goodreads was ` +
+      `throttling. Their jacket may not be the edition on the shelf. Re-run later to fix:\n` +
+      `  npm run fetch:covers -- --redo-approximate`
+  )
+}
