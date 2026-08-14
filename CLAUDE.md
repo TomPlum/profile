@@ -33,6 +33,8 @@ These were explicit choices, made against alternatives. Don't drift from them:
 
 ```sh
 npm run dev / test / build / preview   # build = tsc && vite build
+npm run import:books [path.csv]        # Goodreads export  → src/data/books.ts
+npm run fetch:covers [-- --force]      # jackets → public/covers + covers.ts
 ```
 
 ## Architecture notes
@@ -107,7 +109,7 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   amount of ISBN matching against Open Library could guarantee (whole editions
   are missing there, and records carry other printings' artwork). The script
   reads `/book/show/<id>`, takes `og:image`, and asks Amazon's image server for
-  a `._SX200_` copy: 232 of 232 books have artwork, all edition-exact, in 4.5MB.
+  a `._SX200_` copy: 232 of 232 books have artwork, all edition-exact, in ~4.5MB.
   Open Library remains the fallback for a row with no Goodreads id.
   - `/book/show` is permitted by Goodreads' robots.txt for general agents;
     **`/review/list` is explicitly disallowed** — don't scrape the shelf listing.
@@ -120,6 +122,19 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
     Nothing needs it today — it exists for when a source has no usable artwork.
   - `BookCard`'s typographic fallback is currently unused (nothing is missing a
     cover) and should stay as the safety net for a future export.
+- **Refreshing from a new export is a three-step job, not a re-run.** The
+  fetcher skips any cover already on disk, so an edition that changed keeps its
+  old jacket, and a retitled book changes its slug and orphans the old file.
+  Snapshot `books.ts` first, re-import, then diff old against new and delete
+  exactly the covers whose `goodreadsId` changed (plus any file whose id is no
+  longer in `books.ts`) before fetching. A real refresh moved 18 editions and
+  renamed 2 books while adding none.
+- **Goodreads throttles at the IP, not the User-Agent**: a few hundred
+  `/book/show` requests in a session and it starts answering **202 with an empty
+  body**. That is not "no cover" — the script tells the two apart, backs off and
+  reports, because falling through to Open Library silently swapped four Skyward
+  novellas for their Audible audiobook jackets. The block cleared in ~4 minutes;
+  don't run full refetches back to back.
 - **Spine width is page count; hue is the series run; strength is the rating.**
   Runs cycle the four lane colours so adjacent runs on a shelf never share one
   (a run keeps its colour along its length — both are tested). The fill can
@@ -180,6 +195,10 @@ expanded commit, a filtered branch, and `reducedMotion: 'reduce'`.
 **Screenshot gotchas:** the rail's draw-in is scroll-triggered, so
 `fullPage` screenshots can catch it undrawn — `scrollIntoView` the log and
 wait ~1s first; sticky headers also smear across `fullPage` captures.
+**Selector gotcha:** vanilla-extract hashes class names in a production build,
+so `[class*="jacket"]` matches nothing against `dist/`. Drive the page by its
+`data-*` hooks instead — `[data-board]` for a shelf, `[data-lifted]` for a
+favourite's jacket — which exist partly for this reason.
 
 ## Data policy
 
