@@ -25,6 +25,8 @@ const boards = () => [...document.querySelectorAll('[data-board]')]
 const spines = () => boards().flatMap((board) => [...board.querySelectorAll('button')])
 /** Artwork on the wall itself — the favourites cards use covers too. */
 const boardImages = () => boards().flatMap((board) => [...board.querySelectorAll('img')])
+/** Face-out jackets, as opposed to the wash of one down a spine. */
+const boardCovers = () => boardImages().filter((image) => !image.hasAttribute('data-wash'))
 
 describe('the shelf page', () => {
   it('puts every shelved book on a board', () => {
@@ -123,20 +125,29 @@ describe('the shelf page', () => {
   it('turns the books face-out without changing what is on the shelf', () => {
     render(<BooksPage />)
     const before = spines().map((spine) => spine.getAttribute('aria-label'))
-    expect(boardImages().length).toBe(0)
+    // The page opens face-out — the jackets are the draw, and the spine wall is
+    // the denser second look.
+    expect(boardCovers().length).toBeGreaterThan(100)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Covers' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Spines' }))
 
     // Same books, same order, same accessible names — only the drawing changes.
     expect(spines().map((spine) => spine.getAttribute('aria-label'))).toEqual(before)
-    expect(boardImages().length).toBeGreaterThan(100)
+    expect(boardCovers().length).toBe(0)
   })
 
-  it('lazy-loads the cover artwork', () => {
+  it('lazy-loads every jacket, face-out as well as spine-out', () => {
+    // The spine wash is a jacket too. It has to stay an <img> rather than a CSS
+    // background, or turning the wall spine-out fetches all 232 at once.
     render(<BooksPage />)
-    fireEvent.click(screen.getByRole('button', { name: 'Covers' }))
-    boardImages().forEach((img) => {
+    const faceOut = boardImages()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Spines' }))
+    const washes = boardImages()
+    expect(washes.length).toBeGreaterThan(100)
+    ;[...faceOut, ...washes].forEach((img) => {
       expect(img.getAttribute('loading')).toBe('lazy')
+      expect(img.getAttribute('alt')).toBe('')
     })
   })
 

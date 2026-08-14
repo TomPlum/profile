@@ -38,7 +38,9 @@ const STATS = [
 
 export const BooksPage = () => {
   const [filter, setFilter] = useState<ShelfFilter>('all')
-  const [view, setView] = useState<ShelfView>('spines')
+  // Face-out by default: the jackets are the draw, and the spine wall is the
+  // denser second look rather than the first impression.
+  const [view, setView] = useState<ShelfView>('covers')
   const { shelves, singles } = groupByAuthor(filterBooks(filter))
 
   return (
@@ -51,6 +53,7 @@ export const BooksPage = () => {
             $
           </span>
           ls ~/bookshelf
+          <span className={css.caret} aria-hidden="true" />
         </h1>
 
         <Favourites />

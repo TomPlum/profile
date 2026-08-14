@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
+import { commandCaret, commandLine, commandPrompt } from '../styles/controls.css'
 
 export const page = style({
   maxWidth: '1000px',
@@ -7,20 +8,14 @@ export const page = style({
   padding: 'clamp(1.5rem, 5vh, 3rem) clamp(1rem, 4vw, 2rem) clamp(3rem, 8vh, 5rem)'
 })
 
-/** With no display title above the wall, this carries the page on its own. */
-export const command = style({
-  fontFamily: vars.font.mono,
-  fontSize: 'clamp(0.95rem, 2.4vw, 1.15rem)',
-  fontWeight: 600,
-  color: vars.colour.ink,
-  marginBottom: '0.5rem'
-})
-
-export const prompt = style({
-  color: vars.colour.accent,
-  marginRight: '0.5em',
-  userSelect: 'none'
-})
+/**
+ * With no display title above the wall, this carries the page on its own — so
+ * it is the log's command line exactly, blinking caret included, rather than a
+ * quieter echo of it. Shared from `controls.css`.
+ */
+export const command = commandLine
+export const prompt = commandPrompt
+export const caret = commandCaret
 
 export const back = style({
   fontFamily: vars.font.mono,

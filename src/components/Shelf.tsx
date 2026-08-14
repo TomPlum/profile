@@ -175,6 +175,16 @@ export const Shelf = ({ heading, entries, meta, view }: ShelfProps) => {
                 } as CSSProperties
               }
             >
+              {hasCover(book) && (
+                <img
+                  className={css.spineArt}
+                  src={coverSrc(book)}
+                  alt=""
+                  data-wash
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
               {fitsLettering(book) && (
                 <span className={css.spineLabel} aria-hidden="true">
                   {book.title}

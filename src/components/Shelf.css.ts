@@ -1,5 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
+import { spineWash } from '../styles/palette'
 
 /**
  * Set per spine from the book's page count, and a per-spine height wobble so a
@@ -266,11 +267,59 @@ export const spineTint = {
   puzzles: rungs('puzzles')
 }
 
+/**
+ * A wash of the book's own jacket down the spine.
+ *
+ * A real wrapped jacket continues around the hinge, so the slice taken is the
+ * cover's left-hand edge (`object-fit: cover` fills the spine's height and
+ * crops the overflowing width) rather than the middle, which is where the
+ * title and the face usually are. It is held well back: the lettering above it
+ * is plain `ink`, and unlike the flat tints in `spineRamp` an image can't be
+ * gated by `palette.test.ts` — so the tint stays the thing carrying contrast
+ * and the artwork only has to hint at the book.
+ *
+ * An `<img>` rather than a background: the row scrolls sideways, and this is
+ * the one thing that keeps the spine view from downloading all 232 jackets up
+ * front the way a CSS background would.
+ */
+export const SPINE_ART_OPACITY = '--spine-art-opacity'
+
+export const spineArt = style({
+  // 0.18, not higher: a jacket is mostly *type*, and by 0.3 the ghost of the
+  // author's name is legible enough to fight the spine's own lettering. The
+  // figure comes from `palette.ts` because `palette.test.ts` gates the tint it
+  // produces — raise it there and the contrast gate answers.
+  vars: { [SPINE_ART_OPACITY]: String(spineWash.light) },
+  position: 'absolute',
+  // Physical offsets: `inset` is the top/right/bottom/left shorthand, so it is
+  // safe in the spine's vertical writing mode where logical ones would flip.
+  inset: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  objectPosition: 'left center',
+  opacity: `var(${SPINE_ART_OPACITY})`,
+  // Multiply keeps the run's tint reading through the artwork on paper; on the
+  // dark theme it would crush the spine to black, so the wash lightens instead.
+  mixBlendMode: 'multiply',
+  pointerEvents: 'none',
+  selectors: {
+    ':root[data-theme="dark"] &': {
+      mixBlendMode: 'screen',
+      opacity: String(spineWash.dark)
+    }
+  }
+})
+
 export const spineLabel = style({
   display: 'block',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  maxHeight: '100%'
+  maxHeight: '100%',
+  // Both the wash and the label are positioned with `z-index: auto`, so they
+  // paint in DOM order — without this the absolutely positioned wash would sit
+  // over the lettering.
+  position: 'relative'
 })
 
 /** Books too thin to letter still need an accessible name. */

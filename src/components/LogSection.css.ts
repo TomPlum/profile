@@ -1,5 +1,6 @@
-import { keyframes, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { vars } from '../styles/theme.css'
+import { commandCaret, commandLine, commandPrompt } from '../styles/controls.css'
 
 export const section = style({
   maxWidth: '1000px',
@@ -7,50 +8,10 @@ export const section = style({
   padding: '0 clamp(1rem, 4vw, 2rem) clamp(3rem, 8vh, 5rem)'
 })
 
-export const command = style({
-  fontFamily: vars.font.mono,
-  fontSize: 'clamp(0.95rem, 2.4vw, 1.15rem)',
-  fontWeight: 600,
-  color: vars.colour.ink,
-  display: 'flex',
-  alignItems: 'center',
-  width: '100%',
-  padding: '0.62rem 0.8rem',
-  border: `1px solid ${vars.colour.line}`,
-  borderRadius: '8px',
-  backgroundColor: vars.colour.inset,
-  boxShadow: `inset 0 1px 0 ${vars.colour.surface}`,
-  marginBottom: '0.8rem',
-  overflowX: 'auto',
-  whiteSpace: 'nowrap'
-})
-
-export const prompt = style({
-  color: vars.colour.accent,
-  marginRight: '0.5em',
-  userSelect: 'none'
-})
-
-const blink = keyframes({
-  '0%, 49%': { opacity: 1 },
-  '50%, 100%': { opacity: 0 }
-})
-
-/** A terminal-style block cursor at the end of the command line. */
-export const caret = style({
-  display: 'inline-block',
-  width: '0.28em',
-  height: '1.15em',
-  marginLeft: '0.5em',
-  flexShrink: 0,
-  backgroundColor: vars.colour.accent,
-  animation: `${blink} 1.05s steps(1, start) infinite`,
-  '@media': {
-    '(prefers-reduced-motion: reduce)': {
-      animation: 'none'
-    }
-  }
-})
+/** Both pages are headed by the same command line — see `controls.css`. */
+export const command = commandLine
+export const prompt = commandPrompt
+export const caret = commandCaret
 
 export const caption = style({
   fontSize: '0.98rem',

@@ -153,19 +153,37 @@ A second, deliberately low-key page: Tom's reading, drawn as a bookcase.
   Until artwork lands, the run's first three jackets stand in,
   cropped flush to equal columns rather than letterboxed. `jackets` names which
   volumes by series number when the opening three aren't the series at its best. Each
-  card carries a `quote` from the books — **check any new one against the
-  published text before adding it**, as the committed three were; an
+  card carries one or two `quotes` from the books — **check any new one against
+  the published text before adding it**, as the committed six were; an
   unattributed or misremembered line is exactly the unverifiable claim the
-  data policy rules out. `source` names the volume.
-- **Two views of the same books**: spine-out (default) and face-out covers,
+  data policy rules out. `source` names the volume. The second quote is a
+  *layout* device: the band is a row of equal columns, so one card with a long
+  passage leaves a hole under its short neighbours. A test gates the spread.
+- **Two views of the same books**: face-out covers (default) and spine-out,
   toggled top-right by the `ViewSwitch` segmented control (shared `segmented`/
   `segment` styles in `controls.css`). Same boards, same grouping, same order, same accessible
   names — only the drawing changes, so selection and keyboard handling are
   shared. Covers wrap rather than scroll (a 39-book run face-out would be
   several screens sideways) and are lazy-loaded.
+- **Spines carry a wash of their own jacket** at 18% — the cover's *left edge*,
+  the slice that would wrap round the hinge on a real book. Two things were
+  tried and rejected: the centre slice (half-letters of SANDERSON down every
+  spine) and 0.3 opacity (the ghosted author name fights the real lettering).
+  Jacket art is mostly type, which is what makes this delicate.
+  - **It is contrast-gated like a colour.** An image is the one background
+    `palette.test.ts` can't read, so `washedSpine()` in `palette.ts` stands in
+    for the worst pixel a cover can hold — black multiplied into the tint on
+    paper, white screened over it in the dark — and all 16 tints are tested
+    against it (worst case 7.4:1 light, 5.8:1 dark). The opacity lives in
+    `palette.ts` as `spineWash` and is imported by `Shelf.css.ts`, so raising
+    it makes the gate answer instead of silently degrading.
+  - It must stay an `<img loading="lazy">`, never a CSS background: a
+    background would fetch all 232 jackets the moment the wall turns spine-out.
 - **No display title, no intro, no key** — Tom removed all three deliberately.
   The mono command line (`$ ls ~/bookshelf`) is the `h1`, the same trick the
-  log uses; a test asserts the page still has exactly one top-level heading.
+  log uses — literally the same styles, `commandLine`/`commandPrompt`/
+  `commandCaret` in `controls.css`, blinking caret included, so the two pages
+  can't drift. A test asserts the page still has exactly one top-level heading.
   Don't reintroduce a legend: the encodings are meant to be discovered by
   hovering a book, not explained up front.
 - **The book card tracks the pointer** (fixed position, above the cursor,

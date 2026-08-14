@@ -67,6 +67,24 @@ const spineRamp = (lane: string, surface: string): SpineRamp => ({
   low: mix(lane, surface, 0.042)
 })
 
+/**
+ * How much of a book's own jacket is allowed to show through its spine.
+ *
+ * Shared with `Shelf.css.ts` so the figure the contrast gate below reasons
+ * about is the one actually rendered. Paper multiplies the artwork into the
+ * tint; the dark theme screens it, or the spines would crush to black.
+ */
+export const spineWash = { light: 0.18, dark: 0.135 } as const
+
+/**
+ * The worst a wash can do to a spine, which is what the lettering has to hold
+ * against. Jacket art is full-range, so assume the extreme pixel: a black one
+ * multiplied into the tint on paper, a white one screened over it in the dark.
+ * Anything less extreme lands between that and the bare tint.
+ */
+export const washedSpine = (tint: string, mode: keyof typeof spineWash): string =>
+  mix(tint, mode === 'light' ? '#000000' : '#FFFFFF', 1 - spineWash[mode])
+
 const spines = (lanes: Palette['lane'], surface: string): Palette['spine'] => ({
   career: spineRamp(lanes.career, surface),
   oss: spineRamp(lanes.oss, surface),

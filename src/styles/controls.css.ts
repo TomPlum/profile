@@ -1,5 +1,55 @@
-import { style } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
 import { vars } from './theme.css'
+
+/**
+ * The command line both pages are headed by — `git log --graph` on the log,
+ * `ls ~/bookshelf` on the shelf. It stands in for a display title on each, so
+ * it lives here rather than in either page: the two must not drift.
+ */
+export const commandLine = style({
+  fontFamily: vars.font.mono,
+  fontSize: 'clamp(0.95rem, 2.4vw, 1.15rem)',
+  fontWeight: 600,
+  color: vars.colour.ink,
+  display: 'flex',
+  alignItems: 'center',
+  width: '100%',
+  padding: '0.62rem 0.8rem',
+  border: `1px solid ${vars.colour.line}`,
+  borderRadius: '8px',
+  backgroundColor: vars.colour.inset,
+  boxShadow: `inset 0 1px 0 ${vars.colour.surface}`,
+  marginBottom: '0.8rem',
+  overflowX: 'auto',
+  whiteSpace: 'nowrap'
+})
+
+export const commandPrompt = style({
+  color: vars.colour.accent,
+  marginRight: '0.5em',
+  userSelect: 'none'
+})
+
+const blink = keyframes({
+  '0%, 49%': { opacity: 1 },
+  '50%, 100%': { opacity: 0 }
+})
+
+/** A terminal-style block cursor at the end of the command line. */
+export const commandCaret = style({
+  display: 'inline-block',
+  width: '0.28em',
+  height: '1.15em',
+  marginLeft: '0.5em',
+  flexShrink: 0,
+  backgroundColor: vars.colour.accent,
+  animation: `${blink} 1.05s steps(1, start) infinite`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      animation: 'none'
+    }
+  }
+})
 
 /** Buttons and chips are set in mono — the "machine" voice of the site. */
 const buttonBase = style({
