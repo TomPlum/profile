@@ -165,6 +165,21 @@ export const author = style({
  * as four and four-fifths rather than rounding up to a full house. Plain ink,
  * no gold: the rating is a fact, not a badge.
  */
+/** Stars and the figure they stand for, on one line. */
+export const rating = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  marginTop: '0.5rem'
+})
+
+export const ratingNote = style({
+  fontFamily: vars.font.mono,
+  fontSize: '0.7rem',
+  color: vars.colour.inkFaint,
+  fontVariantNumeric: 'tabular-nums'
+})
+
 export const stars = style({
   position: 'relative',
   display: 'inline-block',
@@ -172,7 +187,6 @@ export const stars = style({
   // span is as wide as the card and the fill percentage below is measured
   // against the wrong box, so every rating renders as a full five.
   alignSelf: 'flex-start',
-  marginTop: '0.5rem',
   lineHeight: 0
 })
 

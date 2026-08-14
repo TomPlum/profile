@@ -50,17 +50,26 @@ const Stars = ({ rating }: { rating: number }) => {
     </svg>
   )
 
+  // Every favourite is, by definition, a top-rated run — 4.8 to 5.0 — so the
+  // clipped last star differs by a couple of pixels at its tapering tip and
+  // reads as full. The figure beside it carries the distinction the stars
+  // can't.
   return (
-    <span
-      className={css.stars}
-      role="img"
-      aria-label={`Rated ${rating.toFixed(1)} out of 5`}
-    >
-      {row(false)}
-      <span className={css.starsFill} style={{ width: `${(rating / 5) * 100}%` }}>
-        {row(true)}
+    <p className={css.rating}>
+      <span
+        className={css.stars}
+        role="img"
+        aria-label={`Rated ${rating.toFixed(1)} out of 5`}
+      >
+        {row(false)}
+        <span className={css.starsFill} style={{ width: `${(rating / 5) * 100}%` }}>
+          {row(true)}
+        </span>
       </span>
-    </span>
+      {/* Only when the stars can't say it: an average of exactly five already
+          means every book was a five, so the note would just repeat them. */}
+      {rating < 5 && <span className={css.ratingNote}>{rating.toFixed(1)} average</span>}
+    </p>
   )
 }
 
