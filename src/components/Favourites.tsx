@@ -207,11 +207,15 @@ export const Favourites = () => {
             </p>
             {run.rating > 0 && <Stars rating={run.rating} />}
 
-            {favourite.quote && (
-              <blockquote className={css.quote}>
-                “{favourite.quote.text}”
-                <cite className={css.quoteSource}>— {favourite.quote.source}</cite>
-              </blockquote>
+            {favourite.quotes && favourite.quotes.length > 0 && (
+              <div className={css.quotes}>
+                {favourite.quotes.map((quote) => (
+                  <blockquote key={quote.source} className={css.quote}>
+                    “{quote.text}”
+                    <cite className={css.quoteSource}>— {quote.source}</cite>
+                  </blockquote>
+                ))}
+              </div>
             )}
 
             {favourite.blurb && <p className={css.blurb}>{favourite.blurb}</p>}

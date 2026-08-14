@@ -215,6 +215,18 @@ export const meta = style({
 })
 
 /**
+ * A run's quotes, stacked. They are the last thing in the card and the only
+ * part of it that varies in length, so they are what levels one card against
+ * the next — hence the gap living here rather than on each quote.
+ */
+export const quotes = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.9rem',
+  marginTop: '0.7rem'
+})
+
+/**
  * A line from the books themselves. Set in Fraunces italic with the display
  * axes wound up — the one place on this page the type is allowed to perform.
  */
@@ -225,7 +237,6 @@ export const quote = style({
   fontSize: '1rem',
   lineHeight: 1.4,
   color: vars.colour.ink,
-  marginTop: '0.7rem',
   paddingLeft: '0.8rem',
   borderLeft: `2px solid ${vars.colour.line}`
 })

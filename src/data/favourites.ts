@@ -24,8 +24,13 @@ export interface FavouriteSeries {
   artwork?: string
   /** Tom's own words. Omitted until written. */
   blurb?: string
-  /** A line from the books themselves, with the volume it comes from. */
-  quote?: { text: string; source: string }
+  /**
+   * Lines from the books themselves, each with the volume it comes from. One
+   * or two: a card with a single short quote sits noticeably shorter than one
+   * with a long passage, so a second line is how a run's card is brought level
+   * with its neighbours' rather than by padding it out.
+   */
+  quotes?: Array<{ text: string; source: string }>
   /**
    * Which volumes to show when there is no bespoke `artwork`, by series
    * number — `[3, 6, 7]` picks those three jackets. Defaults to the first
@@ -43,36 +48,65 @@ export interface FavouriteSeries {
 export const favouriteSeries: FavouriteSeries[] = [
   {
     series: 'Mistborn',
-    quote: {
-      text: 'I write these words in steel, for anything not set in metal cannot be trusted.',
-      // Kwaan's inscription, which supplies the epigraphs of book two — not
-      // The Final Empire, whose epigraphs are Alendi's journal.
-      source: 'Kwaan, The Well of Ascension'
-    }
+    quotes: [
+      {
+        text: 'I write these words in steel, for anything not set in metal cannot be trusted.',
+        // Kwaan's inscription, which supplies the epigraphs of book two — not
+        // The Final Empire, whose epigraphs are Alendi's journal.
+        source: 'Kwaan, The Well of Ascension'
+      },
+      {
+        // Kelsier to the Lord Ruler in the square. Both "that thing" and "that
+        // one thing" are in circulation; this is the wording Tom read it as.
+        text:
+          'But you can’t kill me, Lord Tyrant. I represent that one thing you’ve ' +
+          'never been able to kill, no matter how hard you try. I am hope.',
+        source: 'Kelsier, The Final Empire'
+      }
+    ]
   },
   {
     series: 'The Stormlight Archive',
-    quote: {
-      text: 'Life before death. Strength before weakness. Journey before destination.',
-      source: 'The First Ideal, The Way of Kings'
-    }
+    quotes: [
+      {
+        text: 'Life before death. Strength before weakness. Journey before destination.',
+        source: 'The First Ideal, The Way of Kings'
+      },
+      {
+        // Dalinar swearing the Third Ideal of the Bondsmiths.
+        text: 'If I must fall, I will rise each time a better man.',
+        source: 'Dalinar, Oathbringer'
+      }
+    ]
   },
   {
     series: 'The Books of Babel',
-    quote: {
-      text:
-        'We are, each of us, a multitude. I am not the man I was this morning, ' +
-        'nor the man of yesterday. I am a throng of myself queued through time. ' +
-        'We are, gentle reader, each a crowd within a crowd.',
-      source: 'Arm of the Sphinx'
-    }
+    // One quote only — the passage is long enough to stand a card on its own,
+    // and it is what the other three are levelled against.
+    quotes: [
+      {
+        text:
+          'We are, each of us, a multitude. I am not the man I was this morning, ' +
+          'nor the man of yesterday. I am a throng of myself queued through time. ' +
+          'We are, gentle reader, each a crowd within a crowd.',
+        source: 'Arm of the Sphinx'
+      }
+    ]
   },
   {
     series: 'The Sun Eater',
     jackets: [3, 6, 7],
-    quote: {
-      text: 'Always forward, always down, and never left or right.',
-      source: 'Howling Dark'
-    }
+    quotes: [
+      {
+        text: 'Always forward, always down, and never left or right.',
+        source: 'Howling Dark'
+      },
+      {
+        text:
+          'Dangerous things, names. A kind of curse, defining us that we might ' +
+          'live up to them, or giving us something to run away from.',
+        source: 'Empire of Silence'
+      }
+    ]
   }
 ]

@@ -220,13 +220,29 @@ describe('the shelf page', () => {
   it('attributes every quote to a volume', () => {
     render(<BooksPage />)
     favouriteSeries.forEach((favourite) => {
-      if (!favourite.quote) return
-      // An unattributed quote is the kind of unverifiable claim this site avoids.
-      expect(favourite.quote.source.length, `source for '${favourite.series}'`).toBeGreaterThan(3)
       const card = screen.getByRole('heading', { level: 3, name: favourite.series }).parentElement!
-      expect(card.textContent).toContain(favourite.quote.text)
-      expect(card.textContent).toContain(favourite.quote.source)
+      const quotes = favourite.quotes ?? []
+      quotes.forEach((quote) => {
+        // An unattributed quote is the kind of unverifiable claim this site avoids.
+        expect(quote.source.length, `source for '${favourite.series}'`).toBeGreaterThan(3)
+        expect(card.textContent).toContain(quote.text)
+        expect(card.textContent).toContain(quote.source)
+      })
+      // The volume names key the rendered list, so two quotes from the same one
+      // would drop silently rather than fail here.
+      expect(new Set(quotes.map((quote) => quote.source)).size).toBe(quotes.length)
+      expect(card.querySelectorAll('blockquote')).toHaveLength(quotes.length)
     })
+  })
+
+  it('keeps the quoted cards within a paragraph of each other in length', () => {
+    // The band is a row of equal columns: one card with a long passage and its
+    // neighbour with a single short line leaves a visible hole under the short
+    // one. Second quotes are how that is closed, so the spread is worth gating.
+    const lengths = favouriteSeries.map((favourite) =>
+      (favourite.quotes ?? []).reduce((total, quote) => total + quote.text.length, 0)
+    )
+    expect(Math.min(...lengths)).toBeGreaterThan(Math.max(...lengths) * 0.5)
   })
 
   it('routes back to the log', () => {
