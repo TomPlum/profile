@@ -1,0 +1,28 @@
+name: CI
+
+# The deploy workflow only runs the quality gates once a change is already on
+# main. Renovate automerges its own minor/patch PRs, so the same gates have to
+# run on the pull request too — that check is what automerge waits to go green.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

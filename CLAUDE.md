@@ -249,3 +249,11 @@ project-page URL and at a custom-domain root; internal asset links must stay
 relative (`cvHref` is `cv.pdf`, not `/cv.pdf`). For `tomplumpton.me`, add
 `public/CNAME` + set the domain in Pages settings — no code change. The domain
 currently serves his activity-trends dashboard, so cutting over is Tom's call.
+
+`.github/workflows/ci.yml` runs the same `npm test` + `npm run build` on every
+pull request. It exists because `renovate.json` automerges minor and patch
+bumps: the deploy only gates main *after* a merge, so without a PR check a bad
+bump would land unattended and surface as a failed deploy. Renovate holds
+automerge until that check is green — **it is the gate, don't remove it while
+automerge is on**. Renovate raises weekly (`schedule:weekly`, before 4am
+Monday); majors are left for Tom to read.
