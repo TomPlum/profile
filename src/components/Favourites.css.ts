@@ -16,13 +16,16 @@ export const heading = style({
   marginBottom: '1.25rem'
 })
 
+/** One column per favourite, so the band never leaves an orphan on its own row. */
 export const row = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-  gap: '1.5rem',
+  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+  gap: '1.25rem',
+  alignItems: 'start',
   '@media': {
-    'screen and (max-width: 860px)': {
-      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+    'screen and (max-width: 900px)': {
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+      gap: '1.5rem'
     },
     'screen and (max-width: 560px)': {
       gridTemplateColumns: 'minmax(0, 1fr)',
@@ -155,6 +158,35 @@ export const author = style({
   fontSize: '0.9rem',
   color: vars.colour.inkMuted,
   marginTop: '0.1rem'
+})
+
+/**
+ * Five outlined stars with a filled row clipped over them, so 4.8 of 5 shows
+ * as four and four-fifths rather than rounding up to a full house. Plain ink,
+ * no gold: the rating is a fact, not a badge.
+ */
+export const stars = style({
+  position: 'relative',
+  display: 'inline-block',
+  // The card is a flex column, which stretches its children — without this the
+  // span is as wide as the card and the fill percentage below is measured
+  // against the wrong box, so every rating renders as a full five.
+  alignSelf: 'flex-start',
+  marginTop: '0.5rem',
+  lineHeight: 0
+})
+
+export const starsFill = style({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  overflow: 'hidden',
+  lineHeight: 0
+})
+
+export const star = style({
+  display: 'block',
+  color: vars.colour.ink
 })
 
 export const meta = style({

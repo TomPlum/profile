@@ -11,11 +11,57 @@ import * as css from './Favourites.css'
  * for a blurb until one is written, and stays true when the export changes.
  */
 const summarise = (run: SeriesSummary) => {
+  // The rating moved to the stars below, so the line is counts and dates only.
   const parts = [`${run.books.length} books`, `${run.pages.toLocaleString('en-GB')} pp`]
-  if (run.fiveStars === run.books.length) parts.push('every one five stars')
-  else if (run.rating > 0) parts.push(`${run.rating.toFixed(1)} average`)
   if (run.years) parts.push(run.years)
   return parts
+}
+
+const STAR =
+  'M8 1.2l2.06 4.3 4.69.63-3.43 3.24.87 4.65L8 11.78 3.81 14.02l.87-4.65L1.25 6.13l4.69-.63z'
+
+/**
+ * The run's rating, drawn as five stars filled to the exact fraction earned.
+ * The outline row sits underneath and a filled row is clipped over it, so a
+ * 4.8 reads as very nearly five rather than being rounded into one.
+ */
+const Stars = ({ rating }: { rating: number }) => {
+  const width = 16
+  const row = (filled: boolean) => (
+    <svg
+      width={width * 5}
+      height={width}
+      viewBox={`0 0 ${width * 5} ${width}`}
+      className={css.star}
+      aria-hidden="true"
+      focusable="false"
+    >
+      {[0, 1, 2, 3, 4].map((i) => (
+        <path
+          key={i}
+          d={STAR}
+          transform={`translate(${i * width} 0)`}
+          fill={filled ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth={1.3}
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
+  )
+
+  return (
+    <span
+      className={css.stars}
+      role="img"
+      aria-label={`Rated ${rating.toFixed(1)} out of 5`}
+    >
+      {row(false)}
+      <span className={css.starsFill} style={{ width: `${(rating / 5) * 100}%` }}>
+        {row(true)}
+      </span>
+    </span>
+  )
 }
 
 /** How far the card leans at the edges of its own area. */
@@ -150,6 +196,8 @@ export const Favourites = () => {
                 </span>
               ))}
             </p>
+            {run.rating > 0 && <Stars rating={run.rating} />}
+
             {favourite.quote && (
               <blockquote className={css.quote}>
                 “{favourite.quote.text}”

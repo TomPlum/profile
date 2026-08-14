@@ -58,6 +58,16 @@ export const favouriteSeries: FavouriteSeries[] = [
     }
   },
   {
+    series: 'The Books of Babel',
+    quote: {
+      text:
+        'We are, each of us, a multitude. I am not the man I was this morning, ' +
+        'nor the man of yesterday. I am a throng of myself queued through time. ' +
+        'We are, gentle reader, each a crowd within a crowd.',
+      source: 'Arm of the Sphinx'
+    }
+  },
+  {
     series: 'The Sun Eater',
     jackets: [3, 6, 7],
     quote: {

@@ -199,6 +199,24 @@ describe('the shelf page', () => {
     })
   })
 
+  it('fills the stars to the exact rating, not a rounded one', () => {
+    render(<BooksPage />)
+    favouriteSeries.forEach((favourite) => {
+      const run = seriesSummary(favourite.series)!
+      // Scoped to the card: two series can share a rating.
+      const card = screen.getByRole('heading', { level: 3, name: favourite.series }).parentElement!
+      const stars = card.querySelector('[role="img"]') as HTMLElement
+      expect(stars.getAttribute('aria-label')).toBe(`Rated ${run.rating.toFixed(1)} out of 5`)
+      // The fill is a percentage of the star row, so a 4.8 must clip short of
+      // full. It renders inside a flex column, which will stretch the row and
+      // silently defeat the clip unless the span opts out.
+      const fill = stars.querySelector('span') as HTMLElement
+      const expected = (run.rating / 5) * 100
+      expect(Number.parseFloat(fill.style.width)).toBeCloseTo(expected, 1)
+      if (run.rating < 5) expect(Number.parseFloat(fill.style.width)).toBeLessThan(100)
+    })
+  })
+
   it('attributes every quote to a volume', () => {
     render(<BooksPage />)
     favouriteSeries.forEach((favourite) => {
