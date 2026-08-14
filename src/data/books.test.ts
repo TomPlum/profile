@@ -78,6 +78,18 @@ describe('shelf data integrity', () => {
     })
   })
 
+  it('takes the first series when a book belongs to two', () => {
+    // Goodreads writes these as "(Wheel of Time, #13; A Memory of Light, #2)".
+    // A lazy match over the whole parenthetical swallows the first series and
+    // its number into the name, splitting the run in two on the shelf.
+    const towers = books.find((book) => book.title === 'Towers of Midnight')
+    expect(towers?.series).toBe('Wheel of Time')
+    expect(towers?.seriesIndex).toBe(13)
+    books.forEach((book) => {
+      expect(book.series ?? '', `series of '${book.id}'`).not.toMatch(/[;#]/)
+    })
+  })
+
   it('imprints are not mistaken for series', () => {
     const series = new Set(books.map((book) => book.series).filter(Boolean))
     expect(series.has('S.F. Masterworks')).toBe(false)

@@ -89,6 +89,8 @@ const isoDate = (value) => {
  *   `The Way of Kings, Part 1 (…, #1, Part 1 of 2)`→ split volumes
  *   `The Assassin's Blade (Throne of Glass, #0.1-0.5)` → omnibus range
  *   `Pines (Wayward Pines Trilogy Book 1)`         → "Book N" instead of #N
+ *   `Towers of Midnight (Wheel of Time, #13; A Memory of Light, #2)`
+ *                                                  → two series, ";"-separated
  *   `Hyperion (S.F. Masterworks)`                  → an imprint, NOT a series
  * The last shape is why bare parentheticals are only accepted in a second pass,
  * once we know which names appear as real numbered series elsewhere.
@@ -97,8 +99,14 @@ const splitSeries = (rawTitle) => {
   const match = rawTitle.match(/^(.*?)\s*\(([^()]*)\)\s*$/)
   if (!match) return { title: rawTitle.trim() }
 
-  const [, title, inner] = match
+  const [, title, rawInner] = match
   const trimmed = title.trim()
+
+  // A book can belong to two series at once — Towers of Midnight is both
+  // Wheel of Time #13 and A Memory of Light #2. Only the first is the shelf
+  // run; without this the lazy match below swallows "Wheel of Time, #13" whole
+  // and calls the *whole string* the series name.
+  const inner = rawInner.split(';')[0].trim()
 
   // `Series, #4, Part 1 of 2` / `Series #2` / `Series, #0.1-0.5`
   const numbered = inner.match(/^(.*?),?\s*#\s*([\d.]+)(?:\s*-\s*[\d.]+)?(?:\s*,\s*Part\s+.*)?$/i)
